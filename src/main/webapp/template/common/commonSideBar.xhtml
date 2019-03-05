@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:body>
+
+	<ui:composition >
+
+      <!-- Profile -->
+      <div class="w3-card w3-round w3-white" style="font: italic 14px/18px Georgia, serif">
+        <div class="w3-container">
+    
+         <span class="w3-left"><h:graphicImage class="w3-circle" style="width:50%;margin: 5px" alt="userImage" value="/images/dynamic/?file=#{loadUserInformationsController.users.image}" /> </span>
+        
+         <p style="font: italic bold 14px/18px Georgia, serif"><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk"><h:outputText style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.fname}"></h:outputText></span></p> 
+         <p><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk"><h:outputText  style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.lname}"></h:outputText></span></p> 
+         <p><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk"><h:outputText  style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.address}"></h:outputText></span></p> 
+       <p><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk" style="font-weight: bold;color:blue;"><h:outputText style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.userCategory.usercategoryName}"></h:outputText></span></p> 
+        </div>
+      </div>
+      <br/>
+
+      <!-- Accordion -->
+  <div class="w3-card w3-round" style="font: italic 14px/18px Georgia, serif">
+		<div class="w3-white">
+			<ui:repeat value="#{loadUserInformationsController.getListMenuGroup()}" var="menuGp">
+						
+						<button onclick='myFunction("Demo#{menuGp.menuGroupId}")'
+								class="w3-button w3-block w3-theme-l1 w3-left-align">
+								<i class="glyphicon glyphicon-tasks fa-fw w3-margin-right"></i>
+									#{menuGp.menuGroupName}  
+						</button>
+					
+							<div id="Demo#{menuGp.menuGroupId}" class="w3-hide w3-container">
+								<ui:repeat value="#{loadUserInformationsController.menuAssignmentDetails}" var="menuAss">
+								   <h:panelGroup rendered="#{menuAss.listOfMenu.menuGroup.menuGroupId == menuGp.menuGroupId}">
+           								<div style="margin: 4px; background-color: #edf8ff; color: withe; border-radius: 6px; color: white">
+										       <a style="text-decoration: none; color: black;"
+											   class="glyphicon glyphicon-asterisk"
+											   href="#{loadUserInformationsController.getContextPath()}#{menuAss.listOfMenu.urlName}"><label style="font: italic 13px/16px Georgia, serif">#{menuAss.listOfMenu.description} </label></a>
+									       </div>
+									         </h:panelGroup>
+									</ui:repeat>
+									
+							  </div>
+			  </ui:repeat>
+			</div>
+	</div>
+	
+	</ui:composition>
+
+</h:body>
+
+</html>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	
+
+<h:head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+	<h:outputStylesheet name="cssTheme.css" library="css" />
+	<h:outputStylesheet name="fontMin.css" library="css" />
+	<h:outputStylesheet name="google.css" library="css" />
+	<h:outputStylesheet name="w3.css" library="css" />
+	<h:outputStylesheet name="style.css" library="css" />
+	<h:outputStylesheet name="materialdesignicons.min.css" library="css" />
+	<h:outputScript library="js" name="jquery-3.js" target="head"/>
+	<h:outputStylesheet name="bootstrap.min_1.css" library="css" />
+    <h:outputStylesheet name="bootstrap-glyphicons.css" library="css"/>
+  
+	<h:outputScript library="js" name="bootstrap.min.js" />
+	<!-- For date Picker -->
+	<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" />
+	 <h:outputStylesheet name="jquery-ui.css" library="css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+	<h:outputScript library="js" name="formatDatePicker.js"/>
+	
+		<!--End  For date Picker -->
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet"/>
+
+<style>
+html, body, h1, h2, h3, h4, h5 {
+	font-family: "Open Sans", sans-serif
+}
+.errorMsg1{color:red}
+.help-block{color:red}
+.form-control.hasDatepicker{
+background:url("resources/image/calendar1.png") no-repeat 98% center!important;
+}
+</style>
+</h:head>
+
+<h:body class="w3-theme-l5">
+
+<!--  Header -->
+<div class="w3-top">
+ <div class="w3-bar w3-theme-d3 w3-left-align w3-large">
+		<div id="header">
+			<ui:insert name="header">
+				<ui:include src="/templateHome/common/commonHeader.xhtml" />
+			</ui:insert>
+		</div>
+</div>
+</div>
+<!--  main container-->
+<div class="w3-container w3-content" style="max-width:91%;margin-top:63px"> 
+	<div class="w3-row">
+	
+		<!-- Content -->
+		<div id="page">
+		 	<div class="w3-col m14 ">
+    			<div class="w3-row-padding">
+        			<div class="w3-col m12">
+         				 <div class="w3-card w3-round w3-white">
+           						 <div class="w3-container w3-padding">
+              						<div class="container-2">
+    					 				<div id="page-wrappe">  
+		
+											<ui:insert name="content">
+												<ui:include src="/template/common/commonContent.xhtml" />
+											</ui:insert>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+   </div>
+</div>
+	<!-- end main Content -->
+	
+		<!-- footer  -->
+<div id="footer" style="margin-top: 10%"  > 
+	<footer  class="w3-container w3-theme-d5">
+		<ui:insert name="footer">
+			<ui:include src="/templateHome/common/commonFooter.xhtml" />
+		</ui:insert>
+		</footer>
+</div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".sidebar-toggle").click(function(){
+            $(this).hide();
+            
+           $("#user-profil").show();
+            
+           $("#hide-btn").show();
+            
+           $(".container-2").css("width", "85%");
+            
+             
+        });
+        
+        $("#hide-btn").click(function(){
+            $(this).hide();
+            
+           $("#user-profil").hide();
+            
+           $(".sidebar-toggle").show();
+            
+           $(".container-2").css("width", "100%");
+            
+             
+        });
+    });
+</script>
+
+<script>
+
+function myFunction(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+        x.previousElementSibling.className += " w3-theme-d1";
+    } else { 
+        x.className = x.className.replace("w3-show", "");
+        x.previousElementSibling.className = 
+        x.previousElementSibling.className.replace(" w3-theme-d1", "");
+    }
+}
+
+// Used to toggle the menu on smaller screens when clicking on the menu button
+function openNav() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else { 
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+
+</h:body>
+
+</html>

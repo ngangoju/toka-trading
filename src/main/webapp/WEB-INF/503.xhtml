@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+       xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:b="http://bootsfaces.net/ui">
+         
+    <h:body>
+    	
+    	<ui:composition template="../templateHome/common/commonLayout.xhtml">
+    	 
+    	 
+    	 	<ui:define name="content">
+
+<div class="row" >
+
+						    <div class="col-md-12">
+            <div class="error-template">
+                <h1>Oops!</h1>
+              	<div style="color:#FF6347;font-size:14pt">#{msg['error.content.gateway.error']} <br/></div>
+                <div class="error-details">
+                 	<h3>
+									
+									<h:outputText value="#{msg['error.content.server.error']}" escape="true" />
+								<br/>
+									<h:outputText value="#{msg['error.content.server.error.try']}" escape="true" />																
+									
+								</h3>
+                </div>
+                <div class="error-actions">
+                    <a href="../home.xhtml" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-home"></span>
+                        #{msg['error.take.me.home']} </a>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    		</ui:define>
+</ui:composition>
+    </h:body>
+
+</html>

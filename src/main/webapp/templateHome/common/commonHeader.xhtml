@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+       xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:f="http://java.sun.com/jsf/core"
+      >
+<body class="w3-theme-l5">
+  <ui:composition>
+<span style="display: none">#{manageLanguages.getLang()}</span>
+
+<!-- Navbar -->
+
+  <a href="home.xhtml" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="glyphicon glyphicon-home fa fa-home w3-margin-right"></i></a>
+ 
+  <h:panelGroup rendered="#{additinalInformation.currentPage() eq 'home.xhtml'}">
+  
+  
+ 
+ <div class="w3-dropdown-hover w3-right">
+    <button class="w3-button w3-padding-large" title="Internationalisation"><span class="w3-badge w3-right w3-small w3-green">#{msg[manageLanguages.getLocale()]}</span></button>     
+    <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:200px">
+     <h:form id="form">
+ <f:loadBundle var="msg"
+  basename="messages"></f:loadBundle>
+      <h:commandLink action="#{manageLanguages.changeLanguage('en')}"  value="#{msg['label.language.massage.anglais']}"  class="w3-bar-item w3-button"><img src="resources/image/en.png" style="width:10%;" alt="en"/></h:commandLink>
+      <h:commandLink action="#{manageLanguages.changeLanguage('rw')}" value="#{msg['label.language.massage.kinya']}" class="w3-bar-item w3-button"><img src="resources/image/rw.jpg" style="width:10%;"/></h:commandLink>
+      <h:commandLink action="#{manageLanguages.changeLanguage('fr')}" value="#{msg['label.language.massage.french']}"  class="w3-bar-item w3-button"><img src="resources/image/fr.png" style="width:10%;"/></h:commandLink>
+   </h:form>
+    </div>
+  </div>
+ </h:panelGroup>
+</ui:composition>
+    </body>
+</html>
+
+
