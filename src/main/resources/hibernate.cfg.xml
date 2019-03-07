@@ -25,6 +25,12 @@
 		<mapping class="toka.domain.MenuAssignment" />
 		<mapping class="toka.domain.Documents" />
 		<mapping class="toka.domain.UploadingFiles" />
+		<mapping class="toka.domain.Branch" />
+		<mapping class="toka.domain.Product" />
+		<mapping class="toka.domain.PerishedProduct" />
+		<mapping class="toka.domain.SoldProduct" />
+		<mapping class="toka.domain.OrderProduct" />
+		<mapping class="toka.domain.ProductCategory" />
 	</session-factory>
 </hibernate-configuration>
 

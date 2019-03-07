@@ -47,7 +47,7 @@ public class UserImpl extends AbstractDao<Long, Users> implements IUsers {
 	}
 
 	public String myNane() {
-		return "nBAGO ERIC";
+		return "Ribakare Fred";
 	}
 
 	public UserImpl() {

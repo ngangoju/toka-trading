@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  *
- * @author Emmanuel
+ * @author Ngango
  */
 public interface IUsers {
 	public Users saveUsers(Users users);
