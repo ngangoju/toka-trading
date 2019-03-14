@@ -14570,7 +14570,7 @@ pre {
   .card-weather .card-body {
     background: #ffffff; }
     .card-weather .card-body:first-child {
-      background: url("../image/samples/weather.svg") no-repeat center;
+      background: url("../images/samples/weather.svg") no-repeat center;
       background-size: cover; }
   .card-weather .weather-date-location {
     padding: 0 0 38px; }
@@ -16279,10 +16279,10 @@ ul {
   .auth.theme-two .banner-section .slide-content {
     width: 100%; }
     .auth.theme-two .banner-section .slide-content.bg-1 {
-      background: url("../image/auth/login_2.jpg") no-repeat center center;
+      background: url("../image/auth/login_12.jpg") no-repeat center center;
       background-size: cover; }
     .auth.theme-two .banner-section .slide-content.bg-2 {
-      background: url("../image/auth/register_2.jpg") no-repeat center center;
+      background: url("../image/auth/register1.jpg") no-repeat center center;
       background-size: cover; }
 
 /* Error */

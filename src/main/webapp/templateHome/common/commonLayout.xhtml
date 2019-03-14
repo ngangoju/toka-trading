@@ -4,149 +4,171 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
-	
-
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 <h:head>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
- 
-	<h:outputStylesheet name="cssTheme.css" library="css" />
-	<h:outputStylesheet name="fontMin.css" library="css" />
-	<h:outputStylesheet name="google.css" library="css" />
-	<h:outputStylesheet name="w3.css" library="css" />
-	<h:outputStylesheet name="style.css" library="css" />
+	<link rel="shortcut icon" href="img/fav.png" />
+	<link rel="shortcut icon" href="image/favicon.png" />
+	<!-- Author Meta -->
+	<meta name="author" content="codepixer" />
+	<!-- Meta Description -->
+	<meta name="description" content="" />
+	<!-- Meta Keyword -->
+	<meta name="keywords" content="" />
 	<h:outputStylesheet name="materialdesignicons.min.css" library="css" />
-	<h:outputScript library="js" name="jquery-3.js" target="head"/>
-	<h:outputStylesheet name="bootstrap.min_1.css" library="css" />
-    <h:outputStylesheet name="bootstrap-glyphicons.css" library="css"/>
-  
-	<h:outputScript library="js" name="bootstrap.min.js" />
-	<!-- For date Picker -->
-	<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" />
-	 <h:outputStylesheet name="jquery-ui.css" library="css" />
-	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
-	<h:outputScript library="js" name="formatDatePicker.js"/>
+	<h:outputStylesheet name="style.css" library="css" />
+	<h:outputStylesheet name="vendor.bundle.base.css" library="css" />
+	<h:outputStylesheet name="vendor.bundle.addons.css" library="css" />
 	
-		<!--End  For date Picker -->
-	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet"/>
-
-<style>
+	<h:outputScript library="js" name="vendor.bundle.base.js" />
+	<h:outputScript library="js" name="vendor.bundle.addons.js" />
+	<h:outputScript library="js" name="off-canvas.js" />
+	<h:outputScript library="js" name="misc.js" />
+	<link
+		href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700"
+		rel="stylesheet" />
+	<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" />
+	<style>
 html, body, h1, h2, h3, h4, h5 {
 	font-family: "Open Sans", sans-serif
 }
-.errorMsg1{color:red}
-.help-block{color:red}
-.form-control.hasDatepicker{
-background:url("resources/image/calendar1.png") no-repeat 98% center!important;
+
+.errorMsg1 {
+	color: red
 }
+
+.help-block {
+	color: red
+}
+
+/*#home {
+	background: url(./resources/image/nationteam.jpg) center;
+	background-size: cover;
+}*/
+
+#sendNewsLetter {
+	background-color: #fab700;
+	color: #fff;
+	border-radius: 0;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	padding: 10px 12px;
+	border: 0;
+}
+
+.modal-header, h3, .close {
+	background-color: #5cb85c;
+	color: white !important;
+	text-align: center;
+	font-family: Open Sans sans-serif !important;
+	font-size: 20px !important;
+}
+
+.modal-footer {
+	background-color: #f9f9f9;
+	font-family: Open Sans sans-serif !important;
+	font-size: 14px !important;
+}
+
+.modal-body {
+	font-family: Open Sans sans-serif !important;
+	font-size: 14px !important;
+}
+
+h3 {
+	margin-left: 35%;
+}
+.auth.auth-bg-1 {
+  background: url("./resources/image/auth/login_1.jpg");
+  background-size: cover; }
+  
+ .auth.register-bg-1 {
+  background: url("./resources/image/auth/register.jpg") center center no-repeat;
+  background-size: cover; }
+  .label{
+   font-family: "Poppins", sans-serif;
+  } 
 </style>
 </h:head>
 
-<h:body class="w3-theme-l5">
-
-<!--  Header -->
-<div class="w3-top">
- <div class="w3-bar w3-theme-d3 w3-left-align w3-large">
-		<div id="header">
-			<ui:insert name="header">
-				<ui:include src="/templateHome/common/commonHeader.xhtml" />
-			</ui:insert>
-		</div>
-</div>
-</div>
-<!--  main container-->
-<div class="w3-container w3-content" style="max-width:91%;margin-top:63px"> 
-	<div class="w3-row">
-	
-		<!-- Content -->
-		<div id="page">
-		 	<div class="w3-col m14 ">
-    			<div class="w3-row-padding">
-        			<div class="w3-col m12">
-         				 <div class="w3-card w3-round w3-white">
-           						 <div class="w3-container w3-padding">
-              						<div class="container-2">
-    					 				<div id="page-wrappe">  
-		
-											<ui:insert name="content">
-												<ui:include src="/template/common/commonContent.xhtml" />
-											</ui:insert>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-   </div>
-</div>
-	<!-- end main Content -->
-	
-		<!-- footer  -->
-<div id="footer" style="margin-top: 10%"  > 
-	<footer  class="w3-container w3-theme-d5">
-		<ui:insert name="footer">
-			<ui:include src="/templateHome/common/commonFooter.xhtml" />
-		</ui:insert>
-		</footer>
-</div>
-
-
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $(".sidebar-toggle").click(function(){
-            $(this).hide();
-            
-           $("#user-profil").show();
-            
-           $("#hide-btn").show();
-            
-           $(".container-2").css("width", "85%");
-            
-             
-        });
-        
-        $("#hide-btn").click(function(){
-            $(this).hide();
-            
-           $("#user-profil").hide();
-            
-           $(".sidebar-toggle").show();
-            
-           $(".container-2").css("width", "100%");
-            
-             
-        });
-    });
-</script>
-
-<script>
-
-function myFunction(id) {
-    var x = document.getElementById(id);
-    if (x.className.indexOf("w3-show") == -1) {
-        x.className += " w3-show";
-        x.previousElementSibling.className += " w3-theme-d1";
-    } else { 
-        x.className = x.className.replace("w3-show", "");
-        x.previousElementSibling.className = 
-        x.previousElementSibling.className.replace(" w3-theme-d1", "");
-    }
-}
-
-// Used to toggle the menu on smaller screens when clicking on the menu button
-function openNav() {
-    var x = document.getElementById("navDemo");
-    if (x.className.indexOf("w3-show") == -1) {
-        x.className += " w3-show";
-    } else { 
-        x.className = x.className.replace(" w3-show", "");
-    }
-}
-</script>
-
+<h:body>
+	<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper auth-page">
+      <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
+        <div class="row w-100">
+          <div class="col-lg-4 mx-auto">
+            <div class="auto-form-wrapper">
+              <h:form action="#">
+                <div class="form-group">
+                  <label class="label">Username</label>
+                  <div class="input-group">
+                    <h:inputText type="text" class="form-control" a:placeholder="Username"/>
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="mdi mdi-check-circle-outline"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="label">Password</label>
+                  <div class="input-group">
+                    <h:inputText a:type="password" class="form-control" a:placeholder="*********"/>
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="mdi mdi-check-circle-outline"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <h:commandButton class="btn btn-primary submit-btn btn-block label"
+                  action="#{loginController.validateUsernamePassword}"
+						value="#{msg['label.subimit.message.login']}">
+                  </h:commandButton>
+                </div>
+                <div class="form-group d-flex justify-content-between">
+                  <div class="form-check form-check-flat mt-0">
+                    <label class="form-check-label label">
+                      <h:inputText a:type="checkbox" class="form-check-input"/> Keep me signed in
+                    </label>
+                  </div>
+                  <a href="#" class="text-small forgot-password text-black label">Forgot Password</a>
+                </div>
+                <div class="form-group">
+                  <button class="btn btn-block g-login label">
+                  <!-- <img src="./resources/image/header.png"
+							alt="" title="" /> -->
+                    <img class="mr-3 "  alt=""/>Log in with Google</button>
+                </div>
+                <div class="text-block text-center my-3">
+                  <span class="text-small font-weight-semibold label">Not a member ?</span>
+                  <a href="register.xhtml" class="text-black text-small label">Create new account</a>
+                </div>
+              </h:form>
+            </div>
+            <ul class="auth-footer label">
+              <li>
+                <a href="#" style="color:white;">Conditions</a>
+              </li>
+              <li>
+                <a href="#" style="color:white;">Help</a>
+              </li>
+              <li>
+                <a href="#" style="color:white;">Terms</a>
+              </li>
+            </ul>
+            <p class="footer-text text-center label" style="color:white;">copyright © 2018 Bootstrapdash. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
 </h:body>
 
 </html>
