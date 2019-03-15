@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+	<ui:composition template="/template/common/commonLayout.xhtml">
+
+		<ui:define name="content">
+
+
+
+
+
+			<h:panelGroup id="menuGroupPanel">
+				<h:form>
+					<p:outputPanel>
+						<h:commandLink style="color:white;float:top;"
+							class="btn btn-success 	glyphicon glyphicon-user"
+							value=" Add New MenuGroup"
+							action="#{groupOfMenuController.addNewMenuGroup()}">
+							<f:ajax render="@form" execute="@form" onevent="showProgress" />
+						</h:commandLink>
+
+					</p:outputPanel>
+					<p:dataTable value="#{groupOfMenuController.menuGroupDtoDetails}"
+						var="menu" rows="10" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15" id="tables">
+						<!-- <f:facet name="header">
+							<p:outputPanel style="margin-left:250px;">
+								<h:outputText value="Search all fields:" />
+								<h:inputText style="width:180px;"
+									placeholder="Enter keyword" value="{userContactController.keySearch}" >
+									  <p:ajax listener="{userContactController.searchAllFields()}" update="tables" event="keyup"/>	
+									</h:inputText>
+							</p:outputPanel>
+						</f:facet> -->
+
+						<p:column headerText="Group Menu Name">
+
+							<h:inputText value="#{menu.menuGroupName}" size="10"
+								rendered="#{menu.editable}" />
+
+							<h:outputText value="#{menu.menuGroupName}"
+								rendered="#{not menu.editable}" />
+						</p:column>
+
+
+						<p:column headerText="Default Group Menu">
+
+
+							<h:inputText value="#{menu.defaultGroupMenu}" size="10"
+								rendered="#{menu.editable}" />
+
+							<h:outputText value="#{menu.defaultGroupMenu}"
+								rendered="#{not menu.editable}" />
+
+						</p:column>
+
+
+
+						<p:column headerText="User Category">
+
+							<h:selectOneMenu id="cat" styleClass="form-control"
+								rendered="#{menu.editable}" required="true"
+								value="#{menu.userCategory.userCatid}"
+								requiredMessage="#{msg['requiered.categoryname.message']}">
+								<f:selectItem
+									itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+									itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+								<f:selectItems
+									value="#{groupOfMenuController.userCategoryDetails}"
+									var="option" itemValue="#{option.userCatid}"
+									itemLabel="#{option.usercategoryName}" itemLabelEscaped="true" />
+								<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+							</h:selectOneMenu>
+
+							<h:outputText value="#{menu.userCategory.usercategoryName}"
+								rendered="#{not menu.editable}" />
+
+						</p:column>
+						<p:column headerText="Menu Status">
+							<h:outputText value="#{menu.genericStatus}" />
+
+						</p:column>
+						<p:column headerText=" Change Status">
+
+							<h:commandLink style="color:white"
+								class="btn btn-success 	glyphicon glyphicon-refresh"
+								value="#{menu.action}"
+								action="#{groupOfMenuController.updateStatus(menu)}">
+								<f:ajax render="@form" execute="@form" onevent="showProgress" />
+							</h:commandLink>
+						</p:column>
+						<p:column headerText="Action">
+
+
+							<h:commandLink style="color:white"
+								class="btn btn-success 	glyphicon glyphicon-edit" value="Edit"
+								action="#{groupOfMenuController.editAction(menu)}"
+								rendered="#{not menu.editable}" />
+
+							<h:commandLink style="margin-left:2px;color:white"
+								class="btn btn-danger 	glyphicon glyphicon-remove"
+								value="Cancel" action="#{groupOfMenuController.cancel(menu)}"
+								rendered="#{menu.editable}" />
+
+
+							<h:commandButton value="Save Changes" class="btn btn-primary"
+								action="#{groupOfMenuController.newAction(menu)}"
+								rendered="#{menu.editable}" render="menuGroupPanel">
+								<f:ajax render="@form" execute="@form" onevent="showProgress" />
+							</h:commandButton>
+						</p:column>
+
+					</p:dataTable>
+					<br />
+
+
+				</h:form>
+			</h:panelGroup>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

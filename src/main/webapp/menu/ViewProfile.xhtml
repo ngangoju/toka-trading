@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+	<ui:composition template="/template/common/commonLayout.xhtml">
+
+		<ui:define name="content">
+					<style>
+.ui-growl-item-container {
+	background-color: #337ab7;
+}
+
+.ui-growl-icon-close {
+	cursor: pointer;
+	position: absolute;
+	left: 335px;
+	top: 15px;
+}
+
+.ui-growl-title {
+	font: 13px"Open Sans sans-serif !important;
+	/* text-align: center; */
+}
+
+.ui-growl-message p {
+	font: 12px"Open Sans sans-serif !important;
+	letter-spacing: -1px;
+}
+
+.ui-growl-image-info ~ .ui-growl-message {
+	color: #fff;
+}
+
+.ui-growl-image-error ~ .ui-growl-message {
+	color: black;
+}
+
+.ui-growl-image-warn ~ .ui-growl-message {
+	color: black;
+}
+
+.ui-growl-image-fatal ~ .ui-growl-message {
+	color: black;
+}
+</style>
+
+			<div class="panel panel-default">
+
+				<div class="panel-body"
+					style="border: 0px solid blue; margin-top: 4px; height: auto; font: italic 14px/18px Georgia, serif;">
+
+
+					<h:form>
+						<div class="form-group row">
+
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<!--error massage  -->
+								<h:panelGroup layout="block"
+									rendered="#{not userAccountController.valid and not facesContext.validationFailed}">
+									<ul>
+										<ui:repeat value="#{facesContext.messageList}"
+											var="facesMessage">
+											<li class="alert"
+												style="list-style: none; background-color: #FF2400; color: white">
+												<center>
+													<h:outputText value="#{facesMessage.summary}"
+														escape="false" />
+												</center>
+											</li>
+										</ui:repeat>
+									</ul>
+								</h:panelGroup>
+								<h:panelGroup layout="block"
+									rendered="#{userAccountController.valid and  not facesContext.validationFailed}">
+									<ul>
+										<ui:repeat value="#{facesContext.messageList}"
+											var="facesMessage">
+											<li
+												style="list-style: none; background-color: #32CD32; color: white; margin-left: -4.9%"
+												class="alert alert-success"><center>
+													<h:outputText value="#{facesMessage.summary}"
+														escape="false" />
+												</center></li>
+										</ui:repeat>
+									</ul>
+								</h:panelGroup>
+							</div>
+
+						</div>
+						<p:outputPanel id="toTable"
+								rendered="#{userAccountController.renderRepContactDash}"
+								autoUpdate="true">
+						<ui:repeat var="user"
+							value="#{userAccountController.userDtoDetails}">
+							<table class="table table-hover"
+								style="font-size: 15px; font-family: Times New Roman; width: 50%; margin-left: 20px;">
+
+								<thead>
+									<tr>
+										<th colspan="2" bgcolor="#99b1bf"><center>
+												<label style="color: white;font: italic bold 15px/20px Georgia, serif">Account Information</label>
+											</center></th>
+									</tr>
+								</thead>
+								<tbody class="details">
+
+									<tr>
+
+										<td colspan="2"><span><h:commandLink
+													style="color:white"
+													class="btn btn-success glyphicon glyphicon-edit"
+													value="Edit"
+													action="#{userAccountController.editAction(user)}"
+													rendered="#{not user.editable}">
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress" />
+												</h:commandLink></span> <h:commandLink style="margin-left:2px;color:white"
+												class="btn btn-danger 	glyphicon glyphicon-remove"
+												value="Cancel"
+												action="#{userAccountController.cancel(user)}"
+												rendered="#{user.editable}">
+												<f:ajax render="@form" execute="@form"
+													onevent="showProgress" />
+											</h:commandLink></td>
+
+									</tr>
+									<tr>
+										<td style="font: italic bold 14px/18px Georgia, serif"><br />First name:</td>
+										<td><h:inputText value="#{user.fname}" size="20"
+												required="true" rendered="#{user.editable}" id="fname"
+												requiredMessage="#{msg['requiered.fname.message']}"
+												converterMessage="#{msg['error.enter.invalid.fname']}"
+												validatorMessage="#{msg['error.enter.invalid.fname']}">
+												<f:validateRegex
+													pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
+												<f:validateLength maximum="100"></f:validateLength>
+
+											</h:inputText> <br /> <h:message errorClass="errorMsg1" for="fname"
+												style="font-size:12px;font-family:Time New Roman;"></h:message>
+											<h:outputText value="#{user.fname}"
+												rendered="#{not user.editable}" /></td>
+									</tr>
+									<tr>
+
+										<td style="font: italic bold 14px/18px Georgia, serif"><br />Last name:</td>
+										<td><h:inputText value="#{user.lname}" size="20"
+												id="lname" rendered="#{user.editable}" required="true"
+												requiredMessage="#{msg['requiered.lname.message']}"
+												converterMessage="#{msg['error.enter.invalid.lname']}"
+												validatorMessage="#{msg['error.enter.invalid.lname']}">
+												<f:validateRegex
+													pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
+												<f:validateLength maximum="100"></f:validateLength>
+											</h:inputText><br /> <h:message errorClass="errorMsg1" for="lname"
+												style="font-size:12px;font-family:Time New Roman;"></h:message>
+											<h:outputText value="#{user.lname}"
+												rendered="#{not user.editable}" /></td>
+									</tr>
+									<tr>
+										<td style="font: italic bold 14px/18px Georgia, serif"><br />Address:</td>
+										<td><h:inputText value="#{user.address}" size="20"
+												id="addr" rendered="#{user.editable}" required="true"
+												requiredMessage="#{msg['requiered.address.message']}"
+												converterMessage="#{msg['error_institution.enter.invalid.institutioAddress']}"
+												validatorMessage="#{msg['error_institution.enter.invalid.institutioAddress']}">
+												<f:validateRegex
+													pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
+												<f:validateLength maximum="100"></f:validateLength>
+											</h:inputText> <br /> <h:message errorClass="errorMsg1" for="addr"
+												style="font-size:12px;font-family:Time New Roman;"></h:message>
+											<h:outputText value="#{user.address}"
+												rendered="#{not user.editable}" /></td>
+
+									</tr>
+									
+									<tr>
+									<td style="font: italic bold 14px/18px Georgia, serif"><br/> Board name:</td>
+									<td>
+									<h:selectOneMenu id="brd" styleClass="form-control"
+											rendered="#{user.renderBoard}"
+											style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+											>
+											<f:selectItem
+												itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+												itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+											<f:selectItems value="#{userAccountController.boardList}"
+												var="option" itemValue="#{option.boardId}"
+												itemLabel="#{option.boardName}" itemLabelEscaped="true" />
+
+										</h:selectOneMenu>
+										 <br /><h:message errorClass="errorMsg1" for="brd"
+												style="font-size:12px;font-family:Time New Roman;"></h:message>
+										<h:outputText value="#{user.board.boardName}"
+											rendered="#{not user.renderBoard}" />
+									</td>
+									</tr>
+									<tr>
+										<td style="font: italic bold 14px/18px Georgia, serif"><br />Date of birth:</td>
+										<td><br />
+											<h:outputText value="#{userAccountController.getMyFormattedDate()}"/></td>
+
+									</tr>
+									<tr>
+										<td style="font: italic bold 14px/18px Georgia, serif"><br />Position:</td>
+										<td><br />
+											<h:outputText value="#{user.userCategory.usercategoryName}"/></td>
+
+									</tr>
+									<tr>
+										<td style="font: italic bold 14px/18px Georgia, serif"><br />Gender:</td>
+										<td>
+											<br />
+											<h:outputText value="#{user.gender}"/></td>
+
+									</tr>
+									<tr>
+										<td style="font: italic bold 14px/18px Georgia, serif"><br />Login status:</td>
+										<td>
+										<br />
+											<h:outputText value="#{user.loginStatus}"/></td>
+
+									</tr>
+									<!--Change Password option  -->
+									<p:outputPanel id="yesOrNo"
+										rendered="#{userAccountController.renderForeignCountry}"
+										autoUpdate="true">
+										<tr>
+											<td style="font: italic bold 14px/18px Georgia, serif"><br />#{msg['PswdEdit.option']}</td>
+											<td><h:selectOneRadio style="margin-top:18px;"
+													value="#{userAccountController.option}">
+													<f:selectItem itemLabel="Yes &nbsp;&nbsp;" itemValue="yes" />
+													<f:selectItem itemLabel="No" itemValue="no" />
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress"
+														listener="#{userAccountController.changeOption()}" />
+												</h:selectOneRadio></td>
+
+										</tr>
+									</p:outputPanel>
+									<!-- End of password option -->
+									<!-- Start of profile change -->
+									<p:outputPanel id="profilepage"
+										rendered="#{userAccountController.renderprofile}"
+										autoUpdate="true">
+										<tr>
+											<td style="font: italic bold 14px/18px Georgia, serif"><br />#{msg['profileEdit.option']}</td>
+											<td><h:selectOneRadio style="margin-top:18px;"
+													value="#{userAccountController.redirect}">
+													<f:selectItem itemLabel="Yes &nbsp;&nbsp;" itemValue="next" />
+													<f:selectItem itemLabel="No" itemValue="back" />
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress"
+														listener="#{userAccountController.profilePage(user)}" />
+												</h:selectOneRadio></td>
+
+										</tr>
+									</p:outputPanel>
+									
+									<!-- End of profile change -->
+									<p:outputPanel id="changepswd"
+										rendered="#{userAccountController.rendered}" autoUpdate="true">
+										<tr>
+											<td style="font: italic bold 14px/18px Georgia, serif"><br />Change password:</td>
+											<td><h:inputSecret size="20" id="pswds"
+													value="#{userAccountController.password}" maxlength="35">
+													<f:validateRegex
+														pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
+												</h:inputSecret> <br /> <h:message errorClass="errorMsg1" for="pswds"
+													style="font-size:12px;font-family:Time New Roman;"></h:message>
+											</td>
+
+										</tr>
+										<tr>
+											<td style="font: italic bold 14px/18px Georgia, serif"><br />Confirm password:</td>
+											<td><h:inputSecret size="20" id="confpswds"
+													value="#{userAccountController.confirmPswd}" maxlength="35">
+													<f:validateRegex
+														pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
+												</h:inputSecret> <br /> <h:message errorClass="errorMsg1" for="confpswds"
+													style="font-size:12px;font-family:Time New Roman;"></h:message>
+											</td>
+
+										</tr>
+									</p:outputPanel>
+									<!-- End of change pswd -->
+
+
+
+								</tbody>
+
+							</table>
+							<p:outputPanel id="toButton"
+								rendered="#{userAccountController.rendersaveButton}"
+								autoUpdate="true">
+								<h:commandButton value="Save Changes" 
+									styleClass="btn btn-primary" style="margin-left:20px;font: italic bold 14px/18px Georgia, serif"
+									action="#{userAccountController.saveAction(user)}" >
+									<f:ajax render="@form" execute="@form" onevent="showProgress" />
+								</h:commandButton>
+							</p:outputPanel>
+						</ui:repeat>
+						</p:outputPanel>
+						<p:outputPanel id="nextButton"
+										rendered="#{userAccountController.nextButoon}"
+										autoUpdate="true">
+										<h:panelGroup id="fromDatePanel" layout="block">
+
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black;font: italic bold 14px/18px Georgia, serif">Change Your Image</label>
+												<div class="col-md-4">
+													<span class="tooltips-input-main"><a
+														class="tooltips-input"> <h:panelGroup
+																id="tooltips-contactDetails" layout="block">
+																<img
+																	src="#{loadUserInformationsController.getContextPath()}/resources/image/question.jpg"
+																	style="width: 8%" alt="question" />
+															</h:panelGroup> <p:tooltip id="toolTipContent"
+																for="tooltips-contactDetails" position="bottom">
+																<span> <label style="font: italic bold 14px/18px Georgia, serif;">#{msg['help.userImage.message']}</label> </span>
+															</p:tooltip>
+													</a></span>
+
+												</div>
+												<h:message for="from_dob_date_id" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+									<div class="cols-sm-10">
+
+										<h:form>
+											<p:fileUpload accept="image/*"
+											oncomplete="window.location.reload();"
+											style="width:70%;font: italic bold 14px/18px Georgia, serif;"
+											uploadLabel="Upload image" cancelLabel="Cancel"
+											fileUploadListener="#{formSampleController.uploadProfile}"
+											mode="advanced" dragDropSupport="true" multiple="true"
+											update="messages" sizeLimit="500000" fileLimit="1"
+											allowTypes="/(\.|\/)(jpe?g|png)$/" />
+										<p:growl id="messages" life="300000" />
+										</h:form>
+											
+										<a
+											href="#{loadUserInformationsController.getContextPath()}/menu/ViewProfile.xhtml"
+											class="btn btn-primary glyphicon glyphicon-chevron-left"
+											style="font-size: 14px !important;">
+											<label style="font: italic bold 14px/18px Georgia, serif;">#{msg['UserCatForm.BackBoardButtom']}</label> </a>
+									</div>
+									</p:outputPanel>
+					</h:form>
+				</div>
+			</div>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

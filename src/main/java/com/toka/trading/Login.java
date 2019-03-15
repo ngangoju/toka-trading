@@ -123,9 +123,9 @@ public class Login implements Serializable, DbConstant {
 				ex.printStackTrace();
 			}
 
-			if (user != null && user.getUserCategory().getUserCatid() == 1) {// ADMIN
+			if (user != null && user.getUserCategory().getUserCatid() == 1) {// CEO
 
-				LOGGER.info(CLASSNAME + ":::ADMIN ");
+				LOGGER.info(CLASSNAME + ":::CEO ");
 
 				return "page1.xhtml?faces-redirect=true";
 				// return "";

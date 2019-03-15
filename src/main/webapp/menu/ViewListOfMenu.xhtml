@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+	<ui:composition template="/template/common/commonLayout.xhtml">
+
+		<ui:define name="content">
+
+
+
+
+
+			<h:panelGroup id="listGroupPanel">
+				<h:form>
+					<p:outputPanel>
+						<h:commandLink style="color:white;float:top;"
+							class="btn btn-success 	glyphicon glyphicon-user"
+							value=" Add New List Of Menu"
+							action="#{listOfMenuController.addNewListOfMenu()}">
+							<f:ajax render="@form" execute="@form" onevent="showProgress" />
+						</h:commandLink>
+
+					</p:outputPanel>
+					<p:dataTable value="#{listOfMenuController.listOfMenuDtoDetails}"
+						var="list" rows="10" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15" id="tables">
+						<!-- <f:facet name="header">
+							<p:outputPanel style="margin-left:250px;">
+								<h:outputText value="Search all fields:" />
+								<h:inputText style="width:180px;"
+									placeholder="Enter keyword" value="{userContactController.keySearch}" >
+									  <p:ajax listener="{userContactController.searchAllFields()}" update="tables" event="keyup"/>	
+									</h:inputText>
+							</p:outputPanel>
+						</f:facet> -->
+
+						<p:column headerText="Description">
+
+							<h:inputText value="#{list.description}" size="10"
+								rendered="#{list.editable}" />
+
+							<h:outputText value="#{list.description}"
+								rendered="#{not list.editable}" />
+						</p:column>
+
+
+						<p:column headerText="Url Name">
+
+
+							<h:inputText value="#{list.urlName}" size="10"
+								rendered="#{list.editable}" />
+
+							<h:outputText value="#{list.urlName}"
+								rendered="#{not list.editable}" />
+
+						</p:column>
+
+
+
+						<p:column headerText="Menu Group">
+
+							<h:selectOneMenu id="cat" styleClass="form-control"
+								rendered="#{list.editable}" required="true"
+								value="#{list.menuGroup.menuGroupId}"
+								requiredMessage="#{msg['listofmenu.menugroup.required']}">
+								<f:selectItem
+									itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+									itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+								<f:selectItems value="#{listOfMenuController.menuGroupDetails}"
+									var="option" itemValue="#{option.menuGroupId}"
+									itemLabel="#{option.menuGroupName}" itemLabelEscaped="true" />
+								<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+							</h:selectOneMenu>
+
+							<h:outputText value="#{list.menuGroup.menuGroupName}"
+								rendered="#{not list.editable}" />
+
+						</p:column>
+
+						<p:column headerText="Icon Image">
+
+							<h:selectOneMenu id="cat12" styleClass="form-control"
+								rendered="#{list.editable}" required="true"
+								value="#{list.iconImage}"
+								requiredMessage="#{msg['message.iconImage.required']}">
+								<f:selectItem
+									itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+									itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+								<f:selectItems value="#{listOfMenuController.listOfMenuDetails}"
+									var="option" itemValue="#{option.iconImage}"
+									itemLabel="#{option.iconImage}" itemLabelEscaped="true" />
+								<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+							</h:selectOneMenu>
+
+							<h:outputText value="#{list.iconImage}"
+								rendered="#{not list.editable}" />
+
+						</p:column>
+
+						<p:column headerText="Menu Color">
+
+							<h:selectOneMenu id="cat13" styleClass="form-control"
+								rendered="#{list.editable}" required="true"
+								value="#{list.menuColor}"
+								requiredMessage="#{msg['listofmenu.menugroup.required']}">
+								<f:selectItem
+									itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+									itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+								<f:selectItems value="#{listOfMenuController.listOfMenuDetails}"
+									var="option" itemValue="#{option.menuColor}"
+									itemLabel="#{option.menuColor}" itemLabelEscaped="true" />
+								<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+							</h:selectOneMenu>
+
+							<h:outputText value="#{list.menuColor}"
+								rendered="#{not list.editable}" />
+
+						</p:column>
+
+						<p:column headerText="Menu Status">
+							<h:outputText value="#{list.genericStatus}" />
+
+						</p:column>
+						<p:column headerText=" Change Status">
+
+							<h:commandLink style="color:white"
+								class="btn btn-success 	glyphicon glyphicon-refresh"
+								value="#{list.action}"
+								action="#{listOfMenuController.updateStatus(list)}">
+								<f:ajax render="@form" execute="@form" onevent="showProgress" />
+							</h:commandLink>
+						</p:column>
+						<p:column headerText="Action">
+
+
+							<h:commandLink style="color:white"
+								class="btn btn-success 	glyphicon glyphicon-edit" value="Edit"
+								action="#{listOfMenuController.editAction(list)}"
+								rendered="#{not list.editable}">
+								<f:ajax render="@form" execute="@form" onevent="showProgress" />
+							</h:commandLink>
+
+							<h:commandLink style="margin-left:2px;color:white"
+								class="btn btn-danger 	glyphicon glyphicon-remove"
+								value="Cancel" action="#{listOfMenuController.cancel(list)}"
+								rendered="#{list.editable}" />
+
+
+							<h:commandButton value="Save Changes" class="btn btn-primary"
+								action="#{listOfMenuController.newAction(list)}"
+								rendered="#{list.editable}" render="listGroupPanel">
+								<f:ajax render="@form" execute="@form" onevent="showProgress" />
+							</h:commandButton>
+						</p:column>
+
+					</p:dataTable>
+					<br />
+
+
+				</h:form>
+			</h:panelGroup>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

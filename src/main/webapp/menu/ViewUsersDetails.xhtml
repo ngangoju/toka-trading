@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+	<ui:composition template="/template/common/commonLayout.xhtml">
+
+		<ui:define name="content">
+
+			<h4 style="font: italic bold 14px/25px Georgia, serif;">
+				#{loadUserInformationsController.users.userCategory.usercategoryName}
+				<span class="glyphicon glyphicon-dashboard" >
+					<label style="font: italic 13px/18px Georgia, serif">#{msg['message.com.userManagement.dashaboard']}</label></span>
+			</h4>
+			<div
+				style="border-bottom: 1.5px solid #91DBFA; margin-bottom: 6px; width: 100%"></div>
+			<!-- Start of user management Dashboard -->
+
+			<div class="panel panel-default">
+
+				<div class="panel-body"
+					style="border: 0px solid blue; margin-top: 4px; height: auto;font: italic 14px/25px Georgia, serif">
+
+					<h:form>
+						<h:panelGroup layout="block"
+							rendered="#{not userAccountController.valid and not facesContext.validationFailed}">
+							<ul>
+								<ui:repeat value="#{facesContext.messageList}"
+									var="facesMessage">
+									<li class="alert alert-danger"
+										style="list-style: none; background-color: #FF2400; color: white">
+										<center>
+											<h:outputText value="#{facesMessage.summary}" escape="false" />
+										</center>
+									</li>
+								</ui:repeat>
+							</ul>
+						</h:panelGroup>
+
+						<h:panelGroup layout="block"
+							rendered="#{userAccountController.valid and  not facesContext.validationFailed}">
+							<ul>
+								<ui:repeat value="#{facesContext.messageList}"
+									var="facesMessage">
+									<li
+										style="list-style: none; background-color: #32CD32; color: white; margin-left: -4.9%"
+										class="alert alert-success"><h:outputText
+											value="#{facesMessage.summary}" escape="false" /></li>
+								</ui:repeat>
+							</ul>
+						</h:panelGroup>
+						<fieldset>
+							<legend
+								style="font: italic bold 18px/25px Georgia, serif;">
+								#{msg['message.com.Staff.dashaboard']}</legend>
+
+							<a href="UsersAccount.xhtml" style="color: white; float: left;font: italic bold 13px/16px Georgia, serif"
+								class="btn btn-primary  glyphicon glyphicon-pencil  ">#{msg['UserRegForm.addButton']}<b><span
+									style="background-color: red; color: white" class="badge"></span></b>
+							</a> <br />
+							<hr />
+
+							<!-- USERS VIEW BY PAGE RECORDS-->
+
+							<p:outputPanel id="toTable"
+								rendered="#{userAccountController.renderBoard}"
+								autoUpdate="true">
+
+								<div class=" col-md-12"
+									style="height: 450px; overflow-y: scroll;">
+									<h:dataTable id="staffTable" binding="#{tabl}"
+										style="font: italic 13px/25px Georgia, serif;box-sizing: border-box; width:100% !important;
+       						 -webkit-box-shadow: none;
+       							 box-shadow: none !important;
+       								 margin: 17px 5px 0 !important;"
+										value="#{userAccountController.userDtosDetails}" var="user"
+										class="table table-striped table-hover table-bordered tableUpdated ">
+										<f:facet name="header">
+											<label
+												style="font: italic bold 16px/30px Georgia, serif; color: black; font-weight: bold; margin-top: 10px; margin-left: 20%; font-size: 18px;">
+												#{msg['message.header.userList.filter']}</label>
+
+											<h:inputText id="staffnames"
+												a:placeholder="Search staff"
+												style=" font:italic 14px/25px Georgia, serif;margin-left:10%;width:25%;"
+												value="#{userAccountController.searchKey}">	 
+											</h:inputText>
+											<h:commandButton value="#{msg['com.client.side.button.search']}"  style=" font:italic 14px/25px Georgia, serif;margin-left:2%;width:10%;" action="#{userAccountController.searchStaff()}">
+											<f:ajax  render="staffTable" onevent="showProgress"  execute="@form" />
+											</h:commandButton>
+										</f:facet>
+
+										<h:column>
+											<f:facet name="header">
+												<label>No</label>
+											</f:facet>
+											<h:outputText value="#{tabl.rowIndex + 1}" />
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<label>First name</label>
+											</f:facet>
+											<h:inputText value="#{user.fname}" size="10" id="fname"
+												rendered="#{user.editable}" required="true"
+												requiredMessage="#{msg['requiered.fname.message']}"
+												converterMessage="#{msg['error.enter.invalid.fname']}"
+												validatorMessage="#{msg['error.enter.invalid.fname']}">
+												<f:validateRegex
+													pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
+												<f:validateLength maximum="100"></f:validateLength>
+											</h:inputText>
+											<h:outputText value="#{user.fname}"
+												rendered="#{not user.editable}" />
+											<h:message errorClass="errorMsg1" for="fname"
+												style="font-size:12px;font-family:Time New Roman;"></h:message>
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<label>Last name</label>
+											</f:facet>
+
+											<h:inputText value="#{user.lname}" size="10" id="lname"
+												rendered="#{user.editable}" required="true"
+												requiredMessage="#{msg['requiered.lname.message']}"
+												converterMessage="#{msg['error.enter.invalid.lname']}"
+												validatorMessage="#{msg['error.enter.invalid.lname']}">
+												<f:validateRegex
+													pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
+												<f:validateLength maximum="100"></f:validateLength>
+											</h:inputText>
+											<h:outputText value="#{user.lname}"
+												rendered="#{not user.editable}" />
+											<h:message errorClass="errorMsg1" for="lname"
+												style="font-size:12px;font-family:Time New Roman;"></h:message>
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<label>Board</label>
+											</f:facet>
+
+											<h:selectOneMenu id="brd" styleClass="form-control"
+												rendered="#{user.editable}"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+												required="true" value="#{user.board.boardId}"
+												requiredMessage="#{msg[required.boardName.message]}">
+												<f:selectItem
+													itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+													itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+												<f:selectItems value="#{userAccountController.boardList}"
+													var="option" itemValue="#{option.boardId}"
+													itemLabel="#{option.boardName}" itemLabelEscaped="true" />
+
+											</h:selectOneMenu>
+
+											<h:outputText value="#{user.board.boardName}"
+												rendered="#{not user.editable}" />
+											<h:message errorClass="errorMsg1" for="brd"
+												style="font-size:12px;font-family:Time New Roman;"></h:message>
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<label>Position</label>
+											</f:facet>
+											<h:selectOneMenu id="cat" styleClass="form-control"
+												rendered="#{user.editable}" required="true"
+												value="#{user.userCategory.userCatid}"
+												requiredMessage="#{msg['requiered.categoryname.message']}">
+												<f:selectItem
+													itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+													itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+												<f:selectItems
+													value="#{userAccountController.staffPosition}" var="option"
+													itemValue="#{option.userCatid}"
+													itemLabel="#{option.usercategoryName}"
+													itemLabelEscaped="true" />
+												<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+											</h:selectOneMenu>
+
+											<h:outputText value="#{user.userCategory.usercategoryName}"
+												rendered="#{not user.editable}" />
+											<h:message errorClass="errorMsg1" for="cat"
+												style="font-size:12px;font-family:Time New Roman;"></h:message>
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<label>Status</label>
+											</f:facet>
+											<h:outputText value="#{user.status}" />
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<label>Login status</label>
+											</f:facet>
+											<h:outputText value="#{user.loginStatus}" />
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<label>Change status</label>
+											</f:facet>
+											<h:message errorClass="errorMsg1" for="email"></h:message>
+											<div class="btn-group btn btn-sm" role="group"
+												aria-label="Basic example">
+												<!-- Start of change Status Action -->
+												<h:commandLink data-toggle="tooltip" data-placement="left"
+													title="#{msg['UserCategoryView.changeButton']}"
+													class="btn btn-sm btn-success glyphicon glyphicon-refresh"
+													action="#{userAccountController.renderAction(user)}"
+													rendered="#{not user.notify}">
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress" />
+												</h:commandLink>
+												<!-- End -->
+												<!-- EMail text Box -->
+												<h:outputText rendered="#{user.notify}"
+													value="Notify Staff by email:"
+													style="font-family: Open Sans sans-serif !important; font-size: 12px !important; color: black; font-weight: bold;float:left;" />
+
+												<h:selectOneMenu id="email" styleClass="form-control"
+													rendered="#{user.notify}"
+													value="#{userAccountController.useremail}">
+													<f:selectItem
+														itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+														itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+													<f:selectItems
+														value="#{userAccountController.contactDetails}"
+														var="option" itemValue="#{option.email}"
+														itemLabel="#{option.email}" itemLabelEscaped="true" />
+													<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+													<f:validateRegex
+														pattern="#{regex['regex.validation.email']}" />
+													<f:validateLength maximum="100" />
+												</h:selectOneMenu>
+												<!-- End of Email Box -->
+
+												<!-- Cancel Button -->
+												<h:commandLink data-toggle="tooltip" data-placement="left"
+													title="#{msg['UserCategoryView.cancelButton']}"
+													class="btn btn-sm btn-danger 	glyphicon glyphicon-remove"
+													action="#{userAccountController.cancelChange(user)}"
+													rendered="#{user.notify}">
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress" />
+												</h:commandLink>
+												<!-- End of Cancel Btn -->
+												<h:commandLink style="color:white" rendered="#{user.notify}"
+													class="btn btn-sm btn-success 	glyphicon glyphicon-refresh"
+													data-toggle="tooltip" data-placement="left"
+													title="#{user.action}"
+													action="#{userAccountController.updateStatus(user)}">
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress" />
+												</h:commandLink>
+											</div>
+										</h:column>
+
+										<h:column>
+											<f:facet name="header">
+												<label>Action</label>
+											</f:facet>
+											<div class="btn-group btn btn-sm" role="group"
+												aria-label="Basic example">
+												<h:commandLink data-toggle="tooltip" data-placement="left"
+													title="Edit"
+													class="btn btn-sm btn-success 	glyphicon glyphicon-edit"
+													style="color:white;"
+													action="#{userAccountController.editAction(user)}"
+													rendered="#{not user.editable}">
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress" />
+												</h:commandLink>
+
+												<h:commandLink data-toggle="tooltip" data-placement="left"
+													title="Cancel"
+													class="btn btn-sm btn-danger 	glyphicon glyphicon-remove"
+													action="#{userAccountController.cancel(user)}"
+													style="color:white;" rendered="#{user.editable}">
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress" />
+												</h:commandLink>
+												<h:commandLink
+													class="btn btn-sm btn-primary glyphicon glyphicon-floppy-disk"
+													style="color:white;" data-toggle="tooltip"
+													data-placement="right" title="Save Changes"
+													action="#{userAccountController.newAction(user)}"
+													rendered="#{user.editable}" execute="@this">
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress" />
+
+												</h:commandLink>
+											</div>
+										</h:column>
+										<f:facet name="footer">
+											<p:outputPanel
+												rendered="#{userAccountController.renderDatePanel}"
+												autoUpdate="true">
+												<label>Choose records per page:</label>
+												<h:selectOneMenu value="#{userAccountController.range}"
+													style="width:25%;">
+													<f:selectItem itemLabel="5 Records" itemValue="6" />
+													<f:selectItem itemLabel="10 Records" itemValue="11" />
+													<f:selectItem itemLabel="15 Records" itemValue="16" />
+													<f:selectItem itemLabel="Board" itemValue="Board" />
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress"
+														listener="#{userAccountController.showUsers()}" />
+												</h:selectOneMenu>
+
+												<a
+													href="#{loadUserInformationsController.getContextPath()}/menu/ViewUsersList.xhtml"
+													class="btn btn-primary glyphicon glyphicon-chevron-left"
+													style="font-size: 14px !important; margin-left: 25%;">
+													#{msg['UserCatForm.BackBoardButtom']} </a>
+											</p:outputPanel>
+											<p:outputPanel id="toboard"
+												rendered="#{userAccountController.renderBoardOption}"
+												autoUpdate="true">
+												<label>Select the board:</label>
+												<h:selectOneMenu id="brds" style="width:25%;"
+													value="#{userAccountController.choice}">
+													<f:selectItem
+														itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+														itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+													<f:selectItems value="#{userAccountController.boardList}"
+														var="option" itemValue="#{option.boardName}"
+														itemLabel="#{option.boardName}" itemLabelEscaped="true" />
+													<f:ajax render="@form" execute="@form"
+														onevent="showProgress"
+														listener="#{userAccountController.displayUsersByBoard()}" />
+												</h:selectOneMenu>
+
+												<a
+													href="#{loadUserInformationsController.getContextPath()}/menu/ViewUsersDetails.xhtml"
+													class="btn btn-primary glyphicon glyphicon-chevron-left"
+													style="font-size: 14px !important; margin-left: 25%;">
+													#{msg['UserCatForm.BackBoardButtom']} </a>
+											</p:outputPanel>
+
+										</f:facet>
+									</h:dataTable>
+								</div>
+							</p:outputPanel>
+							<!-- ENDS USERS VIEW BY PAGE RECORDS -->
+						</fieldset>
+
+					</h:form>
+
+				</div>
+			</div>
+
+			<!-- End of Dashboard -->
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

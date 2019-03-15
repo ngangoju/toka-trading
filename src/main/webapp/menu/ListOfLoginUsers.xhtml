@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+<h:body>
+
+	<ui:composition template="/template/common/commonLayout.xhtml">
+
+		<ui:define name="content">
+
+			<h1>File Sample</h1>
+			<h:form>
+				<p:fileUpload
+					fileUploadListener="#{formSampleController.fileUpload}"
+					mode="advanced" dragDropSupport="true" multiple="true"
+					update="messages" sizeLimit="1000000" fileLimit="3"
+					allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+
+				<p:growl id="messages" showDetail="true" />
+			</h:form>
+
+
+
+
+			<p:dataTable value="#{formSampleController.fileList()}"
+				var="fileDetails">
+
+				<p:column headerText="File name">
+					<h:outputText value="#{fileDetails.documents.originalFileName}" />
+
+				</p:column>
+				<p:column headerText="System file name">
+					<h:outputText value="#{fileDetails.documents.sysFilename}" />
+
+				</p:column>
+
+				<p:column headerText="View Image">
+					<h:graphicImage style="width:50%;margin: 5px"
+						value="/images/dynamic/?file=#{fileDetails.documents.sysFilename}" />
+
+				</p:column>
+
+				<p:column headerText="Download Image">
+					<h:form>
+						<h:commandLink target="_blank"
+							value="#{fileDetails.documents.originalFileName}"
+							action="#{formSampleController.downloadFile}">
+							<f:param name="docId" value="#{fileDetails.documents.docId}" />
+						</h:commandLink>
+					</h:form>
+				</p:column>
+
+
+			</p:dataTable>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

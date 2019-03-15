@@ -50,7 +50,7 @@ public class Product extends CommonDomain implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date ExpireDate;
 
-	@Column(name = "sellingUnitPrice")
+	@Column(name = "quantity")
 	private double quantity;
 
 	public int getProductId() {

@@ -103,11 +103,12 @@ h3 {
               <h:form action="#">
                 <div class="form-group">
                   <label class="label">Username</label>
-                  <div class="input-group">
-                    <h:inputText type="text" class="form-control" a:placeholder="Username"/>
+                  <div class="input-group">         
+							     <h:inputText  class="form-control" id="username" value="#{login.users.viewId}" required="true"   autocomplete="off" requiredMessage="#{msg['requiered.username.message']}"/>
+							       
                     <div class="input-group-append">
                       <span class="input-group-text">
-                        <i class="mdi mdi-check-circle-outline"></i>
+<!--                         <i class="mdi mdi-check-circle-outline"></i> -->
                       </span>
                     </div>
                   </div>
@@ -115,17 +116,17 @@ h3 {
                 <div class="form-group">
                   <label class="label">Password</label>
                   <div class="input-group">
-                    <h:inputText a:type="password" class="form-control" a:placeholder="*********"/>
-                    <div class="input-group-append">
+                                           	<h:inputSecret class="form-control"  required="true" requiredMessage="#{msg['requiered.username.password']}" id="password" autocomplete="off" value="#{login.users.viewName}"></h:inputSecret>
+		<div class="input-group-append">
                       <span class="input-group-text">
-                        <i class="mdi mdi-check-circle-outline"></i>
+<!--                         <i class="mdi mdi-check-circle-outline"></i> -->
                       </span>
                     </div>
                   </div>
                 </div>
                 <div class="form-group">
                   <h:commandButton class="btn btn-primary submit-btn btn-block label"
-                  action="#{loginController.validateUsernamePassword}"
+                  action="#{login.validateUsernamePassword}"
 						value="#{msg['label.subimit.message.login']}">
                   </h:commandButton>
                 </div>
@@ -149,19 +150,8 @@ h3 {
                 </div>
               </h:form>
             </div>
-            <ul class="auth-footer label">
-              <li>
-                <a href="#" style="color:white;">Conditions</a>
-              </li>
-              <li>
-                <a href="#" style="color:white;">Help</a>
-              </li>
-              <li>
-                <a href="#" style="color:white;">Terms</a>
-              </li>
-            </ul>
-            <p class="footer-text text-center label" style="color:white;">copyright © 2018 Bootstrapdash. All rights reserved.</p>
-          </div>
+    <center><span> <h:outputLink value="http://www.hoovers.com/company-information/cs/company-profile.toka_trading_coltd.53b765c966389ac5.html" >#{msg['label.text.com.message.copy.right']}</h:outputLink> @2019</span></center>
+</div>
         </div>
       </div>
       <!-- content-wrapper ends -->

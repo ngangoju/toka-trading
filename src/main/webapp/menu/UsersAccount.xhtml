@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:body>
+
+	<ui:composition template="/template/common/commonLayout.xhtml">
+		<ui:define name="content">
+			<h:form>
+				<div class="panel panel-info">
+					<!-- Default panel contents -->
+					<div class="panel-heading" style="font: italic bold 14px/25px Georgia, serif;">
+						<table>
+							<tr>
+								<td>
+									<div>
+										<h:commandLink action="#{userAccountController.backPage()}"
+											value="#{msg['UserCatForm.BackBoardButtom']}"
+											class="btn btn-primary btn-xlg btn-block glyphicon glyphicon-chevron-left"
+											style="font-size: 14px;">
+											<f:ajax onevent="showProgress" />
+										</h:commandLink>
+										<!-- <a href="ViewUsersDetails.xhtml"
+												>
+												 </a> -->
+									</div>
+								</td>
+								<td>&nbsp;&nbsp;<span style="color: white; font-size: 10pt">#{msg['header.title.fieldmarked']}
+										<span style="color: red;font: italic 13px/16px Georgia, serif;">#{msg['header.title.asteriks']}</span>
+										#{msg['header.title.mandatory']}
+								</span></td>
+
+							</tr>
+						</table>
+					</div>
+					<div class="panel-body"
+						style="border: 0px solid blue; margin-top: 4px; height: auto; font: italic 14px/18px Georgia, serif;">
+
+
+						<h:form>
+							<h:panelGroup layout="block"
+								rendered="#{not userAccountController.valid and not facesContext.validationFailed}">
+								<ul>
+									<ui:repeat value="#{facesContext.messageList}"
+										var="facesMessage">
+										<li class="alert alert-danger"
+											style="list-style: none; background-color: #FF2400; color: white">
+											<center>
+												<h:outputText value="#{facesMessage.summary}" escape="false" />
+											</center>
+										</li>
+									</ui:repeat>
+								</ul>
+							</h:panelGroup>
+
+							<h:panelGroup layout="block"
+								rendered="#{userAccountController.valid and  not facesContext.validationFailed}">
+								<ul>
+									<ui:repeat value="#{facesContext.messageList}"
+										var="facesMessage">
+										<li
+											style="list-style: none; background-color: #32CD32; color: white; margin-left: -4.9%"
+											class="alert alert-success"><h:outputText
+												value="#{facesMessage.summary}" escape="false" /></li>
+									</ui:repeat>
+								</ul>
+							</h:panelGroup>
+							<fieldset>
+
+								<legend><label style="font: italic bold 14px/18px Georgia, serif;"> #{msg['message.header.usersAccount.info']}</label></legend>
+								<h:panelGroup id="countryPanel" layout="block" rendered="true">
+									<div class="form-group row" style="font: italic 12px/15px Georgia, serif;">
+										<label for="todate"
+											class="col-md-2 col-sm-2 col-xs-2 control-label"
+											style="color: black">#{msg['institutionForm.message.country']}<span
+											style="color: red">*</span></label>
+										<div class="col-md-6 col-sm-6 col-xs-6">
+											<h:selectOneMenu id="countryId" styleClass="form-control"
+												value="#{userAccountController.choice}">
+												<p:ajax listener="#{userAccountController.updateTable()}"
+													update="ProvincePanel,DistrictPanel,SectorPanel,toUpdate,CellPanel,VillagePanel
+										,secondPanel,tochange,firstPanel,FnamePanel,LnamePanel,genderPanel,addressPanel,fromDatePanel,surnamePanl,PasswordPanl,ConfpasswordPanl,CategoryPanel,BoardPanel,FourthPanel,tobutton,ButtonPanel" />
+												<f:ajax onevent="showProgress" />
+												<!-- <f:selectItem itemLabel="Select the country"
+												noSelectionOption="true" />
+											<f:selectItem itemLabel="Rwanda" itemValue="Rwanda" />
+											<f:selectItem itemLabel="Uganda" itemValue="Uganda" /> -->
+
+												<f:selectItem
+													itemLabel="#{msg['institutionForm.select.PLACEHOLDER']}"
+													itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+												<f:selectItems value="#{institutionController.countries}"
+													var="option" itemValue="#{option.countryName_en}"
+													itemLabel="#{option.countryName_en}"
+													itemLabelEscaped="true" />
+											</h:selectOneMenu>
+										</div>
+										<h:message for="countryId" styleClass="help-block"></h:message>
+									</div>
+								</h:panelGroup>
+
+
+								<h:panelGroup id="secondPanel" layout="block">
+									<p:outputPanel id="toUpdate" autoUpdate="true"
+										rendered="#{userAccountController.rendered}">
+
+
+										<h:panelGroup id="ProvincePanel" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.province']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:selectOneMenu id="prov" styleClass="form-control"
+														style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+														required="true"
+														value="#{userAccountController.provinceId}"
+														requiredMessage="#{msg['requiered.province.message']}">
+														<f:selectItem
+															itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+															itemValue="#{null}" escapeItem="true"
+															itemDisabled="false" />
+														<f:selectItems
+															value="#{userAccountController.provinceList}"
+															var="option" itemValue="#{option.provenceId}"
+															itemLabel="#{option.provenceName_en}"
+															itemLabelEscaped="true" />
+														<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+
+														<f:ajax
+															listener="#{userAccountController.changeDistrict()}"
+															render="dist" onevent="showProgress" />
+													</h:selectOneMenu>
+												</div>
+												<h:message for="prov" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										<h:panelGroup id="DistrictPanel" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.district']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:selectOneMenu id="Dist" styleClass="form-control"
+														style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+														required="true"
+														value="#{userAccountController.districtId}"
+														requiredMessage="#{msg['requiered.district.message']}">
+														<f:selectItem
+															itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+															itemValue="#{null}" escapeItem="true"
+															itemDisabled="false" />
+														<f:selectItems
+															value="#{userAccountController.districtByProv}"
+															var="option" itemValue="#{option.districtId}"
+															itemLabel="#{option.districtName_en}"
+															itemLabelEscaped="true" />
+														<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+														<f:ajax listener="#{userAccountController.changeSector()}"
+															render="sect" onevent="showProgress" />
+													</h:selectOneMenu>
+												</div>
+												<h:message for="Dist" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										<h:panelGroup id="SectorPanel" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.sector']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:selectOneMenu id="sect" styleClass="form-control"
+														style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+														required="true" value="#{userAccountController.sectorId}"
+														requiredMessage="#{msg['requiered.sector.message']}">
+														<f:selectItem
+															itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+															itemValue="#{null}" escapeItem="true"
+															itemDisabled="false" />
+														<f:selectItems
+															value="#{userAccountController.sectorByDistrict}"
+															var="option" itemValue="#{option.sectorId}"
+															itemLabel="#{option.sectorName_en}"
+															itemLabelEscaped="true" />
+														<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+														<f:ajax listener="#{userAccountController.changeCell()}"
+															render="cel" onevent="showProgress" />
+
+													</h:selectOneMenu>
+												</div>
+												<h:message for="sect" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										<h:panelGroup id="CellPanel" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.cell']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+
+													<h:selectOneMenu id="cell" styleClass="form-control"
+														style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+														required="true" value="#{userAccountController.cellId}"
+														requiredMessage="#{msg['requiered.cel.message']}">
+														<f:selectItem
+															itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+															itemValue="#{null}" escapeItem="true"
+															itemDisabled="false" />
+														<f:selectItems
+															value="#{userAccountController.cellBySector}"
+															var="option" itemValue="#{option.cellId}"
+															itemLabel="#{option.cellName_en}" itemLabelEscaped="true" />
+														<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+														<f:ajax
+															listener="#{userAccountController.changeVillage()}"
+															render="vil" onevent="showProgress" />
+
+													</h:selectOneMenu>
+												</div>
+												<h:message for="cell" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										<h:panelGroup id="VillagePanel" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.village']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:selectOneMenu id="village" styleClass="form-control"
+														style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+														required="true" value="#{userAccountController.villageId}"
+														requiredMessage="#{msg['requiered.village.message']}">
+														<f:selectItem
+															itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+															itemValue="#{null}" escapeItem="true"
+															itemDisabled="false" />
+														<f:selectItems
+															value="#{userAccountController.villageByCell}"
+															var="option" itemValue="#{option.villageId}"
+															itemLabel="#{option.villageName_en}"
+															itemLabelEscaped="true" />
+														<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+													</h:selectOneMenu>
+												</div>
+												<h:message for="village" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+									</p:outputPanel>
+									<!-- End of Second Panel -->
+								</h:panelGroup>
+								<h:panelGroup id="firstPanel" layout="block">
+									<p:outputPanel id="tochange" autoUpdate="true"
+										rendered="#{userAccountController.renderForeignCountry}">
+
+										<h:panelGroup id="FnamePanel" layout="block">
+
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['massages.cmn.common.first.fname']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:inputText id="fname" styleClass="form-control"
+														value="#{userAccountController.users.fname}"
+														maxlength="35" required="true"
+														validatorMessage="#{msg['error.enter.invalid.fname']}"
+														converterMessage="#{msg['error.enter.invalid.fname']}"
+														requiredMessage="#{msg['requiered.fname.message']}">
+														<f:validateRegex
+															pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}" />
+														<f:validateLength maximum="35" />
+													</h:inputText>
+												</div>
+												<h:message for="fname" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+
+										<h:panelGroup id="LnamePanel" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['massages.cmn.common.last.lname']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:inputText id="lname" styleClass="form-control"
+														value="#{userAccountController.users.lname}"
+														maxlength="35" required="true"
+														requiredMessage="#{msg['requiered.lname.message']}"
+														converterMessage="#{msg['error.enter.invalid.lname']}"
+														validatorMessage="#{msg['error.enter.invalid.lname']}">
+														<f:validateRegex
+															pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}" />
+														<f:validateLength maximum="35" />
+													</h:inputText>
+												</div>
+												<h:message for="lname" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										<h:panelGroup id="genderPanel" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.gender']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6" style="">
+													<h:selectOneMenu id="gender" styleClass="form-control"
+														style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+														required="true"
+														value="#{userAccountController.users.gender}"
+														requiredMessage="#{msg['requiered.gender.message']}">
+														<f:selectItem
+															itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+															itemValue="#{null}" escapeItem="true" itemDisabled="true" />
+														<f:selectItem itemLabel="Male" itemValue="Male" />
+														<f:selectItem itemLabel="Female" itemValue="Female" />
+
+													</h:selectOneMenu>
+												</div>
+												<h:message for="gender" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										<h:panelGroup id="addressPanel" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.addr']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:inputText id="addres" styleClass="form-control"
+														value="#{userAccountController.users.address}"
+														maxlength="35" required="true"
+														validatorMessage="#{msg['error_institution.enter.invalid.institutioAddress']}"
+														converterMessage="#{msg['error_institution.enter.invalid.institutioAddress']}"
+														requiredMessage="#{msg['requiered.address.message']}">
+														<f:validateRegex
+															pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}" />
+														<f:validateLength maximum="35" />
+													</h:inputText>
+												</div>
+												<h:message for="addres" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										<h:panelGroup id="fromDatePanel" layout="block">
+
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.dob']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:inputText locale="#{facesContext.viewRoot.locale}"
+														autocomplete="off" id="from_dob_date_id"
+														binding="#{from_dob_date_id}" class="form-control"
+														escape="true" value="#{userAccountController.dateofBirth}"
+														maxlength="35" required="true"
+														converterMessage="#{msg['validation.message.DATE_FORMAT']}"
+														requiredMessage="#{msg['dob.message']}">
+														<f:convertDateTime type="date" dateType="short"
+															pattern="dd/MM/yyyy" />
+														<f:validateLength maximum="35" />
+													</h:inputText>
+													<script>
+														$(function() {
+															$(
+																	'input[id*="from_dob_date_id"]')
+																	.datepicker(
+																			{
+																				changeMonth : true,
+																				changeYear : true,
+																				maxDate : 0,
+																				//minDate: 0,
+																				dateFormat : "dd/mm/yy",
+																				yearRange : "-100:+0",
+																				buttonImage : "./resources/image/calendar1.png"
+																			});
+														});
+													</script>
+												</div>
+												<div class="col-md-2">
+													<span class="tooltips-input-main"><a
+														class="tooltips-input"> <h:panelGroup
+																id="tooltips-contactDetails" layout="block">
+																<img
+																	src="#{loadUserInformationsController.getContextPath()}/resources/image/question.jpg"
+																	style="width: 8%" alt="question" />
+															</h:panelGroup> <p:tooltip id="toolTipContent"
+																for="tooltips-contactDetails" position="bottom">
+																<span> #{msg['help.userdob.message']} </span>
+															</p:tooltip>
+													</a></span>
+
+												</div>
+												<h:message for="from_dob_date_id" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+
+
+
+										<h:panelGroup id="surnamePanl" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.username']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:inputText id="surnameId" binding="#{surnameId}"
+														styleClass="form-control"
+														value="#{userAccountController.users.viewId}"
+														maxlength="35" required="true"
+														validatorMessage="#{msg['error.enter.invalid.username']}"
+														converterMessage="#{msg['error.enter.invalid.username']}"
+														requiredMessage="#{msg['requiered.username.message']}">
+														<f:validateRegex
+															pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}" />
+														<f:validateLength maximum="35" />
+													</h:inputText>
+												</div>
+												<h:message for="surnameId" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										<h:panelGroup id="PasswordPanl" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.password']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<p:password id="pswd" binding="#{pswd}" feedback="true"
+														styleClass="form-control pwd"
+														value="#{userAccountController.password}" maxlength="35"
+														required="true"
+														validatorMessage="#{msg['error.enter.invalid.pswd']}"
+														converterMessage="#{msg['error.enter.invalid.username']}"
+														requiredMessage="#{msg['requiered.username.password']}">
+														<f:validateRegex
+															pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,})" />
+													</p:password>
+
+												</div>
+												<h:message for="pswd" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										<h:panelGroup id="ConfpasswordPanl" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.confirmpassword']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<p:password id="confpswd" binding="#{confpswd}"
+														feedback="true" styleClass="form-control pswd"
+														value="#{userAccountController.confirmPswd}"
+														maxlength="35" required="true"
+														requiredMessage="#{msg['requiered.username.confirmpassword']}"
+														validatorMessage="#{msg['error.enter.invalid.pswd']}"
+														converterMessage="#{msg['error.enter.invalid.username']}">
+														<f:validateRegex
+															pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,})" />
+													</p:password>
+
+												</div>
+												<h:message for="confpswd" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										<p:outputPanel rendered="#{userAccountController.renderBoard}"
+											autoUpdate="true">
+										<h:panelGroup id="CategoryPanel" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.catname']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:selectOneMenu id="categ" styleClass="form-control"
+														style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+														required="true"
+														value="#{userAccountController.categoryId}"
+														requiredMessage="#{msg['requiered.categoryname.message']}">
+														<f:selectItem
+															itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+															itemValue="#{null}" escapeItem="true"
+															itemDisabled="false" />
+														<f:selectItems value="#{userAccountController.userCatDetails}"
+															var="option" itemValue="#{option.userCatid}"
+															itemLabel="#{option.usercategoryName}"
+															itemLabelEscaped="true" />
+														<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+													</h:selectOneMenu>
+												</div>
+												<h:message for="categ" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										</p:outputPanel>
+										<!-- ADMIN CATEGORY -->
+										<p:outputPanel rendered="#{userAccountController.nextButoon}"
+											autoUpdate="true">
+										<h:panelGroup id="CategoryPanel2" layout="block">
+											<div class="form-group row"
+												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black">#{msg['label.message.catname']}<span
+													style="color: red">*</span></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:selectOneMenu id="categ2" styleClass="form-control"
+														style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+														required="true"
+														value="#{userAccountController.categoryId}"
+														requiredMessage="#{msg['requiered.categoryname.message']}">
+														<f:selectItem
+															itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+															itemValue="#{null}" escapeItem="true"
+															itemDisabled="false" />
+														<f:selectItems value="#{userAccountController.catDetails}"
+															var="option" itemValue="#{option.userCatid}"
+															itemLabel="#{option.usercategoryName}"
+															itemLabelEscaped="true" />
+														<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+													</h:selectOneMenu>
+												</div>
+												<h:message for="categ2" styleClass="help-block"></h:message>
+											</div>
+										</h:panelGroup>
+										</p:outputPanel>
+										<!-- END FOREIGN STATE CAT -->
+										<p:outputPanel rendered="#{userAccountController.renderBoard}"
+											autoUpdate="true">
+											<h:panelGroup id="BoardPanel" layout="block">
+												<div class="form-group row"
+													style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
+													<label for="todate"
+														class="col-md-2 col-sm-2 col-xs-2 control-label"
+														style="color: black">#{msg['label.message.board']}<span
+														style="color: red">*</span></label>
+													<div class="col-md-6 col-sm-6 col-xs-6">
+														<h:selectOneMenu id="brd" styleClass="form-control"
+															style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+															required="true" value="#{userAccountController.boardId}"
+															requiredMessage="#{msg[required.boardName.message]}">
+															<f:selectItem
+																itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+																itemValue="#{null}" escapeItem="true"
+																itemDisabled="false" />
+															<f:selectItems value="#{userAccountController.boardList}"
+																var="option" itemValue="#{option.boardId}"
+																itemLabel="#{option.boardName}" itemLabelEscaped="true" />
+
+														</h:selectOneMenu>
+													</div>
+													<h:message for="brd" styleClass="help-block"></h:message>
+												</div>
+											</h:panelGroup>
+										</p:outputPanel>
+
+									</p:outputPanel>
+									<!-- End of First Panel -->
+								</h:panelGroup>
+
+
+								<h:panelGroup id="FourthPanel" layout="block">
+									<p:outputPanel id="tobutton" autoUpdate="true"
+										rendered="#{userAccountController.renderForeignCountry}">
+
+										<h:panelGroup id="ButtonPanel" layout="block">
+
+											<div class="form-group row">
+
+												<label for="todate"
+													class="col-md-2 col-sm-2 col-xs-2 control-label"
+													style="color: black"></label>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<h:commandButton class="btn btn-info btn-xlg btn-block"
+														action="#{userAccountController.saveUserInfo}"
+														value="#{msg['label.subimit.message.submit']}"
+														style="font-family: Open Sans sans-serif !important; font-size: 15px !important;">
+														<f:ajax render="@form" execute="@form"
+															onevent="showProgress" />
+													</h:commandButton>
+												</div>
+												<span class="text-danger" id="err"></span>
+											</div>
+										</h:panelGroup>
+									</p:outputPanel>
+								</h:panelGroup>
+							</fieldset>
+
+						</h:form>
+
+					</div>
+				</div>
+
+
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

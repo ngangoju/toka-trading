@@ -1,0 +1,31 @@
+
+use trading_db;
+
+
+insert into usercategory (userCatid,usercategoryName) values(1,'CEO');
+
+insert into usercategory (userCatid,usercategoryName) values(2,'Branch Manager');
+
+insert into usercategory (userCatid,usercategoryName) values(3,'Staff');
+
+insert into usercategory (userCatid,usercategoryName) values(4,'Customer');
+
+insert into users(viewId,viewName,userCategory,address,fname,lname,image,loginStatus,genericStatus,crtdDtTime,status) values('ceo',md5('admin'),1,'Kigali','Fred','Ribakare','us.png','offline','active',now(),'active');
+
+insert into users(viewId,viewName,userCategory,address,fname,lname,image,loginStatus,genericStatus,crtdDtTime,status) values('manager',md5('admin'),2,'Kigali','Cedrick','Barafinda','us.png','offline','active',now(),'active');
+
+insert into users(viewId,viewName,userCategory,address,fname,lname,image,loginStatus,genericStatus,crtdDtTime,status) values('staff',md5('admin'),3,'Kigali','Junior','Ngango','us.png','offline','active',now(),'active');
+
+insert into users(viewId,viewName,userCategory,address,fname,lname,image,loginStatus,genericStatus,crtdDtTime,status) values('super',md5('admin'),4,'Kigali','Emmi','Sibo','us.png','offline','active',now(),'active');
+
+insert into menugroup(menuGroupId,createdBy,crtdDtTime,genericStatus,defaulGrouptMenu,groupMenuCode,menuGroupName,userCategory) values(1,'Fred',now(),'active','My Tasks','M001','My Task',1);
+insert into menugroup(menuGroupId,createdBy,crtdDtTime,genericStatus,defaulGrouptMenu,groupMenuCode,menuGroupName,userCategory) values(2,'Fred',now(),'active','Reports','M002','Reports',1);
+
+
+insert into listofmenu(menuId,crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(1,now(),'active','Users management','Url01','/menu/ViewUsersDetails.xhtml',null,1);
+
+insert into listofmenu(menuId,crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(2,now(),'active','Profile management','Url02','/menu/ViewProfile.xhtml',null,1);
+
+
+insert  menuassignment(menuAssgnId,crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(1,now(),'active',null,1,1);
+insert  menuassignment(menuAssgnId,crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(2,now(),'active',null,2,1);
