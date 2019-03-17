@@ -37,7 +37,8 @@ public class AuthorizationFilter implements Filter, DbConstant {
 			if ((reqURI.indexOf("FormExampleV1.xhtml") >= 0 || reqURI.indexOf("503.xhtml") >= 0
 					|| reqURI.indexOf("500.xhtml") >= 0 || reqURI.indexOf("404.xhtml") >= 0
 					|| reqURI.indexOf("register.xhtml") >= 0 || reqURI.indexOf("home.xhtml") >= 0
-					|| reqURI.indexOf("dashboard.xhtml") >= 0 || reqURI.indexOf("page1.xhtml") >= 0
+					|| reqURI.indexOf("dashboard.xhtml") >= 0
+//					|| reqURI.indexOf("page1.xhtml") >= 0
 					|| reqURI.indexOf(HOMEURL) >= 0) 
 					|| (ses != null && ses.getAttribute(USERSESSION) != null)
 					|| reqURI.indexOf(PUBLICPATH) >= 0 || reqURI.contains(JAVAFACERESOURCE))
