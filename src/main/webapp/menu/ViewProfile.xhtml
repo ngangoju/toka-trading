@@ -181,27 +181,6 @@
 									</tr>
 									
 									<tr>
-									<td style="font: italic bold 14px/18px Georgia, serif"><br/> Board name:</td>
-									<td>
-									<h:selectOneMenu id="brd" styleClass="form-control"
-											rendered="#{user.renderBoard}"
-											style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
-											>
-											<f:selectItem
-												itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
-												itemValue="#{null}" escapeItem="true" itemDisabled="false" />
-											<f:selectItems value="#{userAccountController.boardList}"
-												var="option" itemValue="#{option.boardId}"
-												itemLabel="#{option.boardName}" itemLabelEscaped="true" />
-
-										</h:selectOneMenu>
-										 <br /><h:message errorClass="errorMsg1" for="brd"
-												style="font-size:12px;font-family:Time New Roman;"></h:message>
-										<h:outputText value="#{user.board.boardName}"
-											rendered="#{not user.renderBoard}" />
-									</td>
-									</tr>
-									<tr>
 										<td style="font: italic bold 14px/18px Georgia, serif"><br />Date of birth:</td>
 										<td><br />
 											<h:outputText value="#{userAccountController.getMyFormattedDate()}"/></td>

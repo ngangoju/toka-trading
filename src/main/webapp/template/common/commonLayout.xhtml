@@ -62,6 +62,10 @@ html, body, h1, h2, h3, h4, h5 {
 	border: 0;
 }
 
+#page-wrappe {
+	padding-left: 12px;
+}
+
 .modal-header, h3, .close {
 	background-color: #5cb85c;
 	color: white !important;
@@ -103,16 +107,19 @@ h3 {
 </h:head>
 
 <h:body class="w3-theme-l5">
-	<div class="container-scroller">
 		<nav
 			class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-		<ui:insert name="sideBar">
+		<ui:insert name="header">
 			<ui:include src="/template/common/commonHeader.xhtml" />
 		</ui:insert> </nav>
-		<div class="container-fluid page-body-wrapper">
+<!--  main container-->
+<div class="w3-container w3-content" style="max-width:95%;margin-top:33px"> 
+	<div class="w3-row">
+		<div class="w3-col m2">
 			<ui:insert name="sideBar">
 				<ui:include src="/template/common/commonSideBar.xhtml" />
 			</ui:insert>
+			</div>
 			<div class="main-panel">
 
 			<div class="row">
@@ -139,7 +146,7 @@ h3 {
 
 
 									<!--End loading  -->
-									<ui:insert name="content">
+									<ui:insert name="content" id="cont">
 										<ui:include src="/template/common/commonContent.xhtml" />
 									</ui:insert>
 								</div>
@@ -147,26 +154,21 @@ h3 {
 						</div>
 					</div>
 				</div>
+			</div></div>
 			</div>
-
+		</div>
 			<footer class="footer">
 			<div class="container-fluid clearfix">
 				<span
 					class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
 					© 2019 <a href="http://www.hoovers.com/company-information/cs/company-profile.toka_trading_coltd.53b765c966389ac5.html" >#{msg['label.text.com.message.copy.right']}</a>.
 					All rights reserved.
-				</span>  <span
-					class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted
-					made with <i class="mdi mdi-heart text-danger"></i>
-				</span>
+				</span> 
 			</div>
 			</footer>
 
 			<!-- partial -->
-		</div>
-		</div>
 		
-	</div>
 
 	<script>
 		(function($) {

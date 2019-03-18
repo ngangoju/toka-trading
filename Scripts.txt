@@ -16,7 +16,7 @@ insert into users(viewId,viewName,userCategory,address,fname,lname,image,loginSt
 
 insert into users(viewId,viewName,userCategory,address,fname,lname,image,loginStatus,genericStatus,crtdDtTime,status) values('staff',md5('admin'),3,'Kigali','Junior','Ngango','us.png','offline','active',now(),'active');
 
-insert into users(viewId,viewName,userCategory,address,fname,lname,image,loginStatus,genericStatus,crtdDtTime,status) values('super',md5('admin'),4,'Kigali','Emmi','Sibo','us.png','offline','active',now(),'active');
+insert into users(viewId,viewName,userCategory,address,fname,lname,image,loginStatus,genericStatus,crtdDtTime,status) values('customer',md5('admin'),4,'Kigali','Emmi','Sibo','us.png','offline','active',now(),'active');
 
 insert into menugroup(menuGroupId,createdBy,crtdDtTime,genericStatus,defaulGrouptMenu,groupMenuCode,menuGroupName,userCategory) values(1,'Fred',now(),'active','My Tasks','M001','My Task',1);
 insert into menugroup(menuGroupId,createdBy,crtdDtTime,genericStatus,defaulGrouptMenu,groupMenuCode,menuGroupName,userCategory) values(2,'Fred',now(),'active','Reports','M002','Reports',1);

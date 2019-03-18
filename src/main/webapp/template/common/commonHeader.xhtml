@@ -12,10 +12,10 @@
     <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
         <a class="navbar-brand brand-logo" href="dashboard.xhtml">
-          <h4 style="color:#57c7d4">TOKA TRADING</h4>
+          <h4>TOKA TRADING</h4>
         </a>
         <a class="navbar-brand brand-logo-mini" href="dashboard.xhtml">
-          <h4 style="color:#57c7d4">TOKA TRADING</h4>
+          <h4>TOKA TRADING</h4>
         </a>
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-center">
@@ -147,24 +147,18 @@
           </li>
           <li class="nav-item dropdown d-none d-xl-inline-block">
             <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
-              <span class="profile-text">Hello, Fred Ribakare!</span>
-              <img class="img-xs rounded-circle" src="./resources/image/us.png" alt="Profile image"/>
+              <span class="profile-text">Hello, #{loadUserInformationsController.users.fname} #{loadUserInformationsController.users.lname}!</span>
+<!--               <img class="img-xs rounded-circle" src="./resources/image/us.png" alt="Profile image"/> -->
+              <h:graphicImage class="img-xs rounded-circle" alt="userImage" value="/images/dynamic/?file=#{loadUserInformationsController.users.image}" /> 
             </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-              
-              <h:commandButton class="btn btn-block label dropdown-item" value="Manage Accounts">
-                	
-              </h:commandButton>
-              <h:commandButton class="btn btn-block label dropdown-item" value="Change Password">
-                	
-              </h:commandButton>
-              <h:commandButton class="btn btn-block label dropdown-item" value="Check Inbox">
-                	
-              </h:commandButton>
-              <h:commandButton class="btn btn-block label dropdown-item"
-                  action="#{login.logout}" value="Sign Out">
-                	
-                </h:commandButton>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown primary" aria-labelledby="UserDropdown">
+              <h:form>
+              <h:commandButton class="btn btn-block btn-primary label dropdown-item" value="Manage Accounts"/>
+              <h:commandButton class="btn btn-block btn-primary label dropdown-item" value="Change Password"/>
+              <h:commandButton class="btn btn-block btn-primary label dropdown-item" value="Check Inbox"/>
+              <h:commandButton class="btn btn-block btn-primary label dropdown-item"
+                  action="#{login.logout}" value="Sign Out"/>
+                </h:form>
             </div>
           </li>
         </ul>

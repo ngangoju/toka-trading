@@ -10,25 +10,28 @@
 
 	<ui:composition >
 <!-- partial:partials/_sidebar.html -->
-      <nav class="sidebar sidebar-offcanvas" id="sidebar">
-        <ul class="nav">
-          <li class="nav-item nav-profile">
-            <div class="nav-link">
-              <div class="user-wrapper">
-                <div class="profile-image">
-                <img src="./resources/image/us.png" alt="profile image"/>
-<!--                   <h:graphicImage class="w3-circle" style="width:50%;margin: 5px" alt="userImage" value="/images/dynamic/?file=#{loadUserInformationsController.users.image}" />  -->
-                </div>
-                <div class="text-wrapper">
-                  <p class="profile-name">#{loadUserInformationsController.users.fname} #{loadUserInformationsController.users.lname}</p>
-                  <div>
-                    <small class="designation text-muted">#{loadUserInformationsController.users.userCategory.usercategoryName}</small>
-                    <span class="status-indicator online"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </li>
+<!--       <nav class="sidebar sidebar-offcanvas" id="sidebar"> -->
+<!--         <ul class="nav"> -->
+<!--           <li class="nav-item nav-profile"> -->
+<!--             <div class="nav-link"> -->
+<!--               <div class="user-wrapper"> -->
+<!--                 <div class="profile-image"> -->
+<!--                 <img src="./resources/image/us.png" alt="profile image"/> -->
+<!--                   <h:graphicImage alt="userImage" value="/images/dynamic/?file=#{loadUserInformationsController.users.image}" />  -->
+<!--                 </div> -->
+<!--                 <div class="text-wrapper"> -->
+<!--                   <p class="profile-name">#{loadUserInformationsController.users.fname} #{loadUserInformationsController.users.lname}</p> -->
+<!--                   <div> -->
+<!--                     <small class="designation text-muted">#{loadUserInformationsController.users.userCategory.usercategoryName}</small> -->
+<!--                     <span class="status-indicator online"></span> -->
+<!--                   </div> -->
+<!--                   <div> -->
+<!--                     <small class="designation text-muted">#{loadUserInformationsController.users.address}"</small> -->
+<!--                     </div> -->
+<!--                 </div> -->
+<!--               </div> -->
+<!--             </div> -->
+<!--           </li> -->
 <!--           <li class="nav-item"> -->
 <!--             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic"> -->
 <!--               <i class="menu-icon mdi mdi-content-copy"></i> -->
@@ -46,7 +49,29 @@
 <!--               </ul> -->
 <!--             </div> -->
 <!--           </li> -->
-          </ul><br/>
+<!--           </ul> -->
+<!--       </nav><br/> -->
+
+
+      <!-- Profile -->
+      <div class="w3-card w3-round w3-white" style="font: italic 14px/18px Georgia, serif">
+        <div class="w3-container">
+    
+         <span class="w3-left"><h:graphicImage class="w3-circle" style="width:50%;margin: 5px" alt="userImage" value="/images/dynamic/?file=#{loadUserInformationsController.users.image}" /> </span>
+        
+                <div class="text-wrapper">
+                  <p class="profile-name">#{loadUserInformationsController.users.fname} #{loadUserInformationsController.users.lname}</p>
+                  <div>
+                    <small class="designation text-muted">#{loadUserInformationsController.users.userCategory.usercategoryName}</small>
+                    <span class="status-indicator online"></span>
+                  </div>
+                  <div>
+                    <small class="designation text-muted">#{loadUserInformationsController.users.address}"</small>
+                    </div>
+                    </div>
+</div>
+        <br/>
+        <div class="w3-white">
 			<ui:repeat value="#{loadUserInformationsController.getListMenuGroup()}" var="menuGp">
 						
 						<button onclick='myFunction("Demo#{menuGp.menuGroupId}")'
@@ -68,7 +93,8 @@
 									
 							  </div>
 			  </ui:repeat>
-      </nav>
+			</div>
+	</div>
       <!-- partial -->
 	</ui:composition>
 
