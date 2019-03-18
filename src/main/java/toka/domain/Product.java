@@ -27,7 +27,8 @@ public class Product extends CommonDomain implements Serializable {
 	
 	@Column(name = "productName", unique = true)
 	private String productName;
-
+	@Column(name = "productImage")
+	private String productImage;
 	@ManyToOne
 	@JoinColumn(name = "productCategory")
 	private ProductCategory productCategory;
@@ -107,5 +108,10 @@ public class Product extends CommonDomain implements Serializable {
 	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
-	
+	public String getProductImage() {
+		return productImage;
+	}
+	public void setProductImage(String productImage) {
+		this.productImage = productImage;
+	}	
 }
