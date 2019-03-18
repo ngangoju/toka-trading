@@ -21,6 +21,7 @@
 	<h:outputStylesheet name="vendor.bundle.base.css" library="css" />
 	<h:outputStylesheet name="vendor.bundle.addons.css" library="css" />
 	<h:outputStylesheet name="bootstrap.min_1.css" library="css" />
+	<h:outputScript library="js" name="bootstrap.min.js" />
 	<h:outputStylesheet name="bootstrap-glyphicons.css" library="css" />
 	<h:outputStylesheet name="w3.css" library="css" />
 	<h:outputStylesheet name="cssTheme.css" library="css" />
@@ -30,6 +31,7 @@
 	<h:outputScript library="js" name="off-canvas.js" />
 	<h:outputScript library="js" name="misc.js" />
 	<h:outputScript library="js" name="dashboard.js" />
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet"/>
 	<link
 		href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700"
 		rel="stylesheet" />
@@ -102,6 +104,9 @@ h3 {
 
 .label {
 	font-family: "Poppins", sans-serif;
+}
+.main-panel{
+margin-left: 18%;
 }
 </style>
 </h:head>
@@ -188,6 +193,31 @@ h3 {
 			});
 		})(jQuery);
 	</script>
+	<script>
+
+function myFunction(id) {
+	
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+        x.previousElementSibling.className += " w3-theme-d1";
+    } else { 
+        x.className = x.className.replace("w3-show", "");
+        x.previousElementSibling.className = 
+        x.previousElementSibling.className.replace(" w3-theme-d1", "");
+    }
+}
+
+// Used to toggle the menu on smaller screens when clicking on the menu button
+function openNav() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else { 
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
 </h:body>
 
 </html>

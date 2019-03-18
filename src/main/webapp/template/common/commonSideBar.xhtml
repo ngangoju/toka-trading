@@ -9,49 +9,6 @@
 <h:body>
 
 	<ui:composition >
-<!-- partial:partials/_sidebar.html -->
-<!--       <nav class="sidebar sidebar-offcanvas" id="sidebar"> -->
-<!--         <ul class="nav"> -->
-<!--           <li class="nav-item nav-profile"> -->
-<!--             <div class="nav-link"> -->
-<!--               <div class="user-wrapper"> -->
-<!--                 <div class="profile-image"> -->
-<!--                 <img src="./resources/image/us.png" alt="profile image"/> -->
-<!--                   <h:graphicImage alt="userImage" value="/images/dynamic/?file=#{loadUserInformationsController.users.image}" />  -->
-<!--                 </div> -->
-<!--                 <div class="text-wrapper"> -->
-<!--                   <p class="profile-name">#{loadUserInformationsController.users.fname} #{loadUserInformationsController.users.lname}</p> -->
-<!--                   <div> -->
-<!--                     <small class="designation text-muted">#{loadUserInformationsController.users.userCategory.usercategoryName}</small> -->
-<!--                     <span class="status-indicator online"></span> -->
-<!--                   </div> -->
-<!--                   <div> -->
-<!--                     <small class="designation text-muted">#{loadUserInformationsController.users.address}"</small> -->
-<!--                     </div> -->
-<!--                 </div> -->
-<!--               </div> -->
-<!--             </div> -->
-<!--           </li> -->
-<!--           <li class="nav-item"> -->
-<!--             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic"> -->
-<!--               <i class="menu-icon mdi mdi-content-copy"></i> -->
-<!--               <span class="menu-title">Basic UI Elements</span> -->
-<!--               <i class="menu-arrow"></i> -->
-<!--             </a> -->
-<!--             <div class="collapse" id="ui-basic"> -->
-<!--               <ul class="nav flex-column sub-menu"> -->
-<!--                 <li class="nav-item"> -->
-<!--                   <a class="nav-link" href="pages/ui-features/buttons.html">Buttons</a> -->
-<!--                 </li> -->
-<!--                 <li class="nav-item"> -->
-<!--                   <a class="nav-link" href="pages/ui-features/typography.html">Typography</a> -->
-<!--                 </li> -->
-<!--               </ul> -->
-<!--             </div> -->
-<!--           </li> -->
-<!--           </ul> -->
-<!--       </nav><br/> -->
-
 
       <!-- Profile -->
       <div class="w3-card w3-round w3-white" style="font: italic 14px/18px Georgia, serif">
@@ -59,23 +16,21 @@
     
          <span class="w3-left"><h:graphicImage class="w3-circle" style="width:50%;margin: 5px" alt="userImage" value="/images/dynamic/?file=#{loadUserInformationsController.users.image}" /> </span>
         
-                <div class="text-wrapper">
-                  <p class="profile-name">#{loadUserInformationsController.users.fname} #{loadUserInformationsController.users.lname}</p>
-                  <div>
-                    <small class="designation text-muted">#{loadUserInformationsController.users.userCategory.usercategoryName}</small>
-                    <span class="status-indicator online"></span>
-                  </div>
-                  <div>
-                    <small class="designation text-muted">#{loadUserInformationsController.users.address}"</small>
-                    </div>
-                    </div>
-</div>
-        <br/>
-        <div class="w3-white">
+         <p style="font: italic bold 14px/18px Georgia, serif"><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk"><h:outputText style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.fname}"></h:outputText></span></p> 
+         <p><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk"><h:outputText  style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.lname}"></h:outputText></span></p> 
+         <p><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk"><h:outputText  style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.address}"></h:outputText></span></p> 
+       <p><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk" style="font-weight: bold;color:blue;"><h:outputText style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.userCategory.usercategoryName}"></h:outputText></span></p> 
+        </div>
+      </div>
+      <br/>
+
+      <!-- Accordion -->
+  <div class="w3-card w3-round" style="font: italic 14px/18px Georgia, serif">
+		<div class="w3-white">
 			<ui:repeat value="#{loadUserInformationsController.getListMenuGroup()}" var="menuGp">
 						
 						<button onclick='myFunction("Demo#{menuGp.menuGroupId}")'
-								class="w3-bar-item w3-button w3-hide-large w3-left-align">
+								class="w3-button w3-block w3-theme-l1 w3-left-align">
 								<i class="glyphicon glyphicon-tasks fa-fw w3-margin-right"></i>
 									#{menuGp.menuGroupName}  
 						</button>
@@ -83,7 +38,7 @@
 							<div id="Demo#{menuGp.menuGroupId}" class="w3-hide w3-container">
 								<ui:repeat value="#{loadUserInformationsController.menuAssignmentDetails}" var="menuAss">
 								   <h:panelGroup rendered="#{menuAss.listOfMenu.menuGroup.menuGroupId == menuGp.menuGroupId}">
-           								<div style="margin: 4px; background-color: #ffffff; color: #6c757d; border-radius: 6px">
+           								<div style="margin: 4px; background-color: #edf8ff; color: withe; border-radius: 6px; color: white">
 										       <a style="text-decoration: none; color: black;"
 											   class="glyphicon glyphicon-asterisk"
 											   href="#{loadUserInformationsController.getContextPath()}#{menuAss.listOfMenu.urlName}"><label style="font: italic 13px/16px Georgia, serif">#{menuAss.listOfMenu.description} </label></a>
@@ -95,7 +50,7 @@
 			  </ui:repeat>
 			</div>
 	</div>
-      <!-- partial -->
+	
 	</ui:composition>
 
 </h:body>
