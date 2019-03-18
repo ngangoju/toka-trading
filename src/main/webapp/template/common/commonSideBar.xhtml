@@ -36,7 +36,7 @@
 			<ui:repeat value="#{loadUserInformationsController.getListMenuGroup()}" var="menuGp">
 						
 						<button onclick='myFunction("Demo#{menuGp.menuGroupId}")'
-								class="w3-button w3-block w3-theme-l1 w3-left-align">
+								class="w3-button w3-block w3-theme-l5 w3-left-align">
 								<i class="glyphicon glyphicon-tasks fa-fw w3-margin-right"></i>
 									#{menuGp.menuGroupName}  
 						</button>
@@ -44,9 +44,9 @@
 							<div id="Demo#{menuGp.menuGroupId}" class="w3-hide w3-container">
 								<ui:repeat value="#{loadUserInformationsController.menuAssignmentDetails}" var="menuAss">
 								   <h:panelGroup rendered="#{menuAss.listOfMenu.menuGroup.menuGroupId == menuGp.menuGroupId}">
-           								<div style="margin: 4px; background-color: #edf8ff; color: withe; border-radius: 6px; color: white">
+           								<div style="margin: 4px; background-color: #fff; border-radius: 6px;">
 										       <a style="text-decoration: none; color: black;"
-											   class="glyphicon glyphicon-asterisk"
+											   class="glyphicon glyphicon-star-empty"
 											   href="#{loadUserInformationsController.getContextPath()}#{menuAss.listOfMenu.urlName}"><label style="font: italic 13px/16px Georgia, serif">#{menuAss.listOfMenu.description} </label></a>
 									       </div>
 									         </h:panelGroup>
