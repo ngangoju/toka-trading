@@ -78,8 +78,8 @@ public class Users extends CommonDomain implements Serializable {
 	private UserCategory userCategory;
 
 	@ManyToOne
-	@JoinColumn(name = "village")
-	private Village village;
+	@JoinColumn(name = "district")
+	private District district;
 
 	@ManyToOne
 	@JoinColumn(name = "branch")
@@ -181,12 +181,12 @@ public class Users extends CommonDomain implements Serializable {
 		this.DateOfBirth = DateOfBirth;
 	}
 
-	public Village getVillage() {
-		return village;
+	public District getDistrict() {
+		return district;
 	}
 
-	public void setVillage(Village village) {
-		this.village = village;
+	public void setDistrict(District district) {
+		this.district = district;
 	}
 
 	public String getViewId() {

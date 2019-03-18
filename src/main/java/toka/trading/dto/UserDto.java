@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import toka.domain.UserCategory;
 import toka.domain.Users;
-import toka.domain.Village;
+import toka.domain.District;
 
 public class UserDto implements Serializable {
 
@@ -38,7 +38,7 @@ public class UserDto implements Serializable {
 
 	private UserCategory userCategory;
 
-	private Village village;
+	private District district;
 
 	private boolean editable;
 	private String action;
@@ -152,12 +152,12 @@ public class UserDto implements Serializable {
 		this.DateOfBirth = DateOfBirth;
 	}
 
-	public Village getVillage() {
-		return village;
+	public District getDistrict() {
+		return district;
 	}
 
-	public void setVillage(Village village) {
-		this.village = village;
+	public void setDistrict(District district) {
+		this.district = district;
 	}
 
 	public String getViewId() {

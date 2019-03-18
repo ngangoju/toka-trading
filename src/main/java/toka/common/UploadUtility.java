@@ -147,7 +147,7 @@ public class UploadUtility implements Serializable, DbConstant {
 			us.setUpDtTime(usersSession.getUpDtTime());
 			us.setLoginStatus(usersSession.getLoginStatus());
 			us.setStatus(usersSession.getStatus());
-			us.setVillage(usersSession.getVillage());
+			us.setDistrict(usersSession.getDistrict());
 			us.setImage(systemFileName);
 			usersImpl.UpdateUsers(us);
 		} catch (IOException e) {

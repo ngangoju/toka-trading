@@ -16,10 +16,16 @@
     
          <span class="w3-left"><h:graphicImage class="w3-circle" style="width:50%;margin: 5px" alt="userImage" value="/images/dynamic/?file=#{loadUserInformationsController.users.image}" /> </span>
         
-         <p style="font: italic bold 14px/18px Georgia, serif"><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk"><h:outputText style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.fname}"></h:outputText></span></p> 
-         <p><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk"><h:outputText  style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.lname}"></h:outputText></span></p> 
-         <p><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk"><h:outputText  style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.address}"></h:outputText></span></p> 
-       <p><i class="w3-right"></i><span class="glyphicon glyphicon-asterisk" style="font-weight: bold;color:blue;"><h:outputText style="font: italic bold 13px/16px Georgia, serif;" value="#{loadUserInformationsController.users.userCategory.usercategoryName}"></h:outputText></span></p> 
+                <div class="text-wrapper text-left">
+                  <p class="profile-name">#{loadUserInformationsController.users.fname} #{loadUserInformationsController.users.lname}</p>
+                  <div>
+                    <small class="designation text-muted">#{loadUserInformationsController.users.userCategory.usercategoryName}</small>
+                    <span class="status-indicator online"></span>
+                  </div>
+                  <div>
+                    <small class="designation text-muted">#{loadUserInformationsController.users.address}</small>
+                    </div><div></div>
+                </div> 
         </div>
       </div>
       <br/>

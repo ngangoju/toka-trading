@@ -38,10 +38,10 @@ public class Product extends CommonDomain implements Serializable {
 	private Branch branch;
 
 	@Column(name = "purchaseUnitPrice")
-	private String purchaseUnitPrice;
+	private double purchaseUnitPrice;
 
 	@Column(name = "sellingUnitPrice")
-	private String sellingUnitPrice;
+	private double sellingUnitPrice;
 
 	@Column(name = "ManufactDate", columnDefinition = "DATETIME")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -78,16 +78,17 @@ public class Product extends CommonDomain implements Serializable {
 	public void setBranch(Branch branch) {
 		this.branch = branch;
 	}
-	public String getPurchaseUnitPrice() {
+	
+	public double getPurchaseUnitPrice() {
 		return purchaseUnitPrice;
 	}
-	public void setPurchaseUnitPrice(String purchaseUnitPrice) {
+	public void setPurchaseUnitPrice(double purchaseUnitPrice) {
 		this.purchaseUnitPrice = purchaseUnitPrice;
 	}
-	public String getSellingUnitPrice() {
+	public double getSellingUnitPrice() {
 		return sellingUnitPrice;
 	}
-	public void setSellingUnitPrice(String sellingUnitPrice) {
+	public void setSellingUnitPrice(double sellingUnitPrice) {
 		this.sellingUnitPrice = sellingUnitPrice;
 	}
 	public Date getManufactDate() {

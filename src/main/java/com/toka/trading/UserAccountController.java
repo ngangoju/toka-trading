@@ -32,23 +32,17 @@ import toka.common.Formating;
 import toka.common.JSFBoundleProvider;
 import toka.common.JSFMessagers;
 import toka.common.SessionUtils;
-import toka.dao.impl.CellImpl;
 import toka.dao.impl.ContactImpl;
 import toka.dao.impl.DistrictImpl;
 import toka.dao.impl.LoginImpl;
 import toka.dao.impl.ProvinceImpl;
-import toka.dao.impl.SectorImpl;
 import toka.dao.impl.UserCategoryImpl;
 import toka.dao.impl.UserImpl;
-import toka.dao.impl.VillageImpl;
-import toka.domain.Cell;
 import toka.domain.Contact;
 import toka.domain.District;
 import toka.domain.Province;
-import toka.domain.Sector;
 import toka.domain.UserCategory;
 import toka.domain.Users;
-import toka.domain.Village;
 import toka.trading.dto.ContactDto;
 import toka.trading.dto.UserCategoryDto;
 import toka.trading.dto.UserDto;
@@ -68,9 +62,6 @@ public class UserAccountController implements Serializable, DbConstant {
 	private Users users;
 	private Province province;
 	private District district;
-	private Sector sector;
-	private Cell cell;
-	private Village village;
 	private UserCategory usercat;
 	private Users usersSession;
 	private int userIdNumber;
@@ -90,14 +81,7 @@ public class UserAccountController implements Serializable, DbConstant {
 	private List<UserCategory> catDetails = new ArrayList<UserCategory>();
 	private List<Province> provinceList = new ArrayList<Province>();
 	private List<District> districtList = new ArrayList<District>();
-	private List<Sector> sectorList = new ArrayList<Sector>();
-	private List<Cell> celList = new ArrayList<Cell>();
-	private List<Village> villageList = new ArrayList<Village>();
-
 	private List<District> districtByProv = new ArrayList<District>();
-	private List<Sector> sectorByDistrict = new ArrayList<Sector>();
-	private List<Cell> cellBySector = new ArrayList<Cell>();
-	private List<Village> villageByCell = new ArrayList<Village>();
 	private List<UserDto> userDtoDetails = new ArrayList<UserDto>();
 	private List<UserDto> userDtosDetails = new ArrayList<UserDto>();
 	List<ContactDto> contactDtoDetails = new ArrayList<ContactDto>();
@@ -110,9 +94,6 @@ public class UserAccountController implements Serializable, DbConstant {
 	UserImpl usersImpl = new UserImpl();
 	ProvinceImpl provImpl = new ProvinceImpl();
 	DistrictImpl districtImpl = new DistrictImpl();
-	SectorImpl sectorImpl = new SectorImpl();
-	CellImpl cellImpl = new CellImpl();
-	VillageImpl villageImpl = new VillageImpl();
 	UserCategoryImpl catImpl = new UserCategoryImpl();
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
 	LoginImpl loginImpl = new LoginImpl();
@@ -167,20 +148,9 @@ public class UserAccountController implements Serializable, DbConstant {
 
 			province = new Province();
 		}
-		if (cell == null) {
-			cell = new Cell();
-		}
 
 		if (district == null) {
 			district = new District();
-		}
-		if (village == null) {
-
-			village = new Village();
-		}
-		if (sector == null) {
-
-			sector = new Sector();
 		}
 		if (usercat == null) {
 			usercat = new UserCategory();
@@ -367,63 +337,8 @@ public class UserAccountController implements Serializable, DbConstant {
 		}
 	}
 
-	// Method to display all sector by District
-	@SuppressWarnings("unchecked")
-	public void changeSector() {
-
-		try {
-
-			district = districtImpl.getDistrictById(districtId, "districtId");
-			sectorByDistrict = sectorImpl.getGenericListWithHQLParameter(new String[] { "distric" },
-					new Object[] { district }, "Sector", "sectorId asc");
-		} catch (Exception e) {
-			setValid(false);
-			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
-			LOGGER.info(e.getMessage());
-			e.printStackTrace();
-		}
-
-	}
-
-	// Method to display all cell by sector
-
-	@SuppressWarnings("unchecked")
-	public void changeCell() {
-
-		try {
-
-			sector = sectorImpl.getSectorById(sectorId, "sectorId");
-			cellBySector = cellImpl.getGenericListWithHQLParameter(new String[] { "sector" }, new Object[] { sector },
-					"Cell", "cellId asc");
-		} catch (Exception e) {
-			setValid(false);
-			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
-			LOGGER.info(e.getMessage());
-			e.printStackTrace();
-		}
-
-	}
-	// Method to display all village by Cell
-
-	@SuppressWarnings("unchecked")
-	public void changeVillage() {
-
-		try {
-
-			cell = cellImpl.getCellById(cellId, "cellId");
-			villageByCell = villageImpl.getGenericListWithHQLParameter(new String[] { "cell" }, new Object[] { cell },
-					"Village", "villageId asc");
-		} catch (Exception e) {
-			setValid(false);
-			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
-			LOGGER.info(e.getMessage());
-			e.printStackTrace();
-		}
-
-	}
 
 	public void clearUserFuileds() {
-
 		users = new Users();
 		usersDetails = null;
 	}
@@ -467,7 +382,6 @@ public class UserAccountController implements Serializable, DbConstant {
 	}
 
 	public String nextPage() {
-
 		return "/menu/EditProfile.xhtml?faces-redirect=true";
 	}
 
@@ -1279,30 +1193,6 @@ public class UserAccountController implements Serializable, DbConstant {
 		this.district = district;
 	}
 
-	public Sector getSector() {
-		return sector;
-	}
-
-	public void setSector(Sector sector) {
-		this.sector = sector;
-	}
-
-	public Cell getCell() {
-		return cell;
-	}
-
-	public void setCell(Cell cell) {
-		this.cell = cell;
-	}
-
-	public Village getVillage() {
-		return village;
-	}
-
-	public void setVillage(Village village) {
-		this.village = village;
-	}
-
 	public List<District> getDistrictList() {
 		return districtList;
 	}
@@ -1311,60 +1201,12 @@ public class UserAccountController implements Serializable, DbConstant {
 		this.districtList = districtList;
 	}
 
-	public List<Sector> getSectorList() {
-		return sectorList;
-	}
-
-	public void setSectorList(List<Sector> sectorList) {
-		this.sectorList = sectorList;
-	}
-
-	public List<Cell> getCelList() {
-		return celList;
-	}
-
-	public void setCelList(List<Cell> celList) {
-		this.celList = celList;
-	}
-
-	public List<Village> getVillageList() {
-		return villageList;
-	}
-
-	public void setVillageList(List<Village> villageList) {
-		this.villageList = villageList;
-	}
-
 	public DistrictImpl getDistrictImpl() {
 		return districtImpl;
 	}
 
 	public void setDistrictImpl(DistrictImpl districtImpl) {
 		this.districtImpl = districtImpl;
-	}
-
-	public SectorImpl getSectorImpl() {
-		return sectorImpl;
-	}
-
-	public void setSectorImpl(SectorImpl sectorImpl) {
-		this.sectorImpl = sectorImpl;
-	}
-
-	public CellImpl getCellImpl() {
-		return cellImpl;
-	}
-
-	public void setCellImpl(CellImpl cellImpl) {
-		this.cellImpl = cellImpl;
-	}
-
-	public VillageImpl getVillageImpl() {
-		return villageImpl;
-	}
-
-	public void setVillageImpl(VillageImpl villageImpl) {
-		this.villageImpl = villageImpl;
 	}
 
 	public int getDistrictId() {
@@ -1405,30 +1247,6 @@ public class UserAccountController implements Serializable, DbConstant {
 
 	public void setDistrictByProv(List<District> districtByProv) {
 		this.districtByProv = districtByProv;
-	}
-
-	public List<Sector> getSectorByDistrict() {
-		return sectorByDistrict;
-	}
-
-	public void setSectorByDistrict(List<Sector> sectorByDistrict) {
-		this.sectorByDistrict = sectorByDistrict;
-	}
-
-	public List<Cell> getCellBySector() {
-		return cellBySector;
-	}
-
-	public void setCellBySector(List<Cell> cellBySector) {
-		this.cellBySector = cellBySector;
-	}
-
-	public List<Village> getVillageByCell() {
-		return villageByCell;
-	}
-
-	public void setVillageByCell(List<Village> villageByCell) {
-		this.villageByCell = villageByCell;
 	}
 
 	public UserCategory getUsercat() {
