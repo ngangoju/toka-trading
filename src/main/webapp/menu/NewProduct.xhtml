@@ -16,13 +16,12 @@
 				<!-- Default panel contents -->
 				<div class="panel-heading">
 					<ui:repeat var="time" value="#">
-
+						
 						<p:outputPanel rendered="#{productController.rendered}"
 							autoUpdate="true">
 							<span style="color: white; font-size: 10pt"> <label
 								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
 							</span>
-							<p:autoUpdate />
 						</p:outputPanel>
 						<p:outputPanel rendered="#{productController.renderProductForm}">
 
@@ -72,47 +71,149 @@
 								</ui:repeat>
 							</ul>
 						</h:panelGroup>
-						<p:outputPanel rendered="#{productController.rendered}"
+						<p:outputPanel rendered="#{productController.renderProductForm}"
 							autoUpdate="true">
-		
-								<div class="col-md-6 grid-margin stretch-card" style="font-family: Poppins, sans-serif">
-									<div class="card">
-										<div class="card-body">
-											<h4 class="card-title">Product form</h4>
-											<h:form class="forms-sample">
-												<div class="form-group">
-													<label for="exampleInputName1">Name</label> <h:inputText style="font-family:Poppins, sans-serif;font-size: 14px !important;"
-														a:type="text" class="form-control" id="exampleInputName1"
-														a:placeholder="Name"/>
+
+							<div class="col-md-6 grid-margin stretch-card"
+								style="font-family: Poppins, sans-serif">
+								<div class="card">
+									<div class="card-body">
+										<h4 class="card-title"
+											style="font-family: Poppins, sans-serif; font-weight: bold; font-size: 16px !important;">Product
+											form</h4>
+										<h:form class="forms-sample">
+											<div class="form-group">
+												<label for="exampleInputName1">#{msg['productname.Productform']}<span
+													style="color: red; font-size: 15px">*</span></label>
+												<h:inputText
+													style="font-family:Poppins, sans-serif;font-size: 14px !important;"
+													a:type="text" class="form-control" id="exampleInputName1"
+													a:placeholder="Product name" />
+											</div>
+											<div class="form-group">
+												<label for="exampleInputEmail3">#{msg['productquantity.Productform']}<span
+													style="color: red; font-size: 15px">*</span></label>
+												<h:inputText
+													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
+													a:type="text" class="form-control" id="exampleInputEmail3"
+													a:placeholder="Quantity" />
+											</div>
+											<div class="form-group">
+												<label for="exampleInputPassword4">#{msg['productunityprice.Productform']}<span
+													style="color: red; font-size: 15px">*</span></label>
+												<h:inputText
+													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
+													a:type="text" class="form-control"
+													id="exampleInputPassword4" a:placeholder="Unit price" />
+											</div>
+											<div class="form-group">
+												<label for="exampleInputCity1"
+													class="cols-sm-2 control-label">#{msg['productManufDate.Productform']}<span
+													style="color: red; font-size: 15px">*</span></label>
+												<div class="cols-md-12">
+													<div class="input-group">
+														<span class="input-group-addon"><i
+															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
+														<h:inputText locale="#{facesContext.viewRoot.locale}"
+															autocomplete="off" id="from_dob_date_id"
+															binding="#{from_dob_date_id}" class="form-control"
+															escape="true" maxlength="35" required="true"
+															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
+															requiredMessage="#{msg['dob.message']}">
+															<f:convertDateTime type="date" dateType="short"
+																pattern="dd/MM/yyyy" />
+															<f:validateLength maximum="35" />
+														</h:inputText>
+														<script>
+															$(function() {
+																$(
+																		'input[id*="from_dob_date_id"]')
+																		.datepicker(
+																				{
+																					changeMonth : true,
+																					changeYear : true,
+																					maxDate : 0,
+																					//minDate: 0,
+																					dateFormat : "dd/mm/yy",
+																					yearRange : "-100:+0",
+																					buttonImage : "./resources/image/calendar1.png"
+																				});
+															});
+														</script>
+													</div>
 												</div>
-												<div class="form-group">
-													<label for="exampleInputEmail3">Email address</label> <h:inputText style="font-family: Poppins, sans-serif;font-size: 14px !important;"
-														a:type="email" class="form-control" id="exampleInputEmail3"
-														a:placeholder="Email"/>
+											</div>
+
+											<div class="form-group">
+												<label for="exampleInputCity1"
+													class="cols-sm-2 control-label">#{msg['productExpDate.Productform']}<span
+													style="color: red; font-size: 15px">*</span></label>
+												<div class="cols-md-12">
+													<div class="input-group">
+														<span class="input-group-addon"><i
+															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
+														<h:inputText locale="#{facesContext.viewRoot.locale}"
+															autocomplete="off" id="from_exp_date_id"
+															binding="#{from_exp_date_id}" class="form-control"
+															escape="true" maxlength="35" required="true"
+															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
+															requiredMessage="#{msg['dob.message']}">
+															<f:convertDateTime type="date" dateType="short"
+																pattern="dd/MM/yyyy" />
+															<f:validateLength maximum="35" />
+														</h:inputText>
+														<script>
+															$(function() {
+																$(
+																		'input[id*="from_exp_date_id"]')
+																		.datepicker(
+																				{
+																					changeMonth : true,
+																					changeYear : true,
+																					maxDate : 0,
+																					//minDate: 0,
+																					dateFormat : "dd/mm/yy",
+																					yearRange : "-100:+0",
+																					buttonImage : "./resources/image/calendar1.png"
+																				});
+															});
+														</script>
+													</div>
 												</div>
-												<div class="form-group">
-													<label for="exampleInputPassword4">Password</label> <h:inputText style="font-family: Poppins, sans-serif;font-size: 14px !important;"
-														a:type="password" class="form-control"
-														id="exampleInputPassword4" a:placeholder="Password"/>
+											</div>
+											<div class="form-group">
+												<label for="name" class="cols-sm-2 control-label">
+													Product Category:<span style="color: red; font-size: 15px">*</span>
+												</label>
+												<div class="cols-md-12">
+													<div class="input-group">
+														<h:selectOneMenu id="gender" styleClass="form-control"
+															style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
+															required="true" value="#{teamController.ground}"
+															requiredMessage="#{msg['requiered.gender.message']}">
+															<f:selectItem
+																itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+																itemValue="#{null}" escapeItem="true"
+																itemDisabled="false" />
+															<f:selectItems value="#{teamController.stadeDetail}"
+																var="stade" itemLabel="#{stade.stadeName}"
+																itemValue="#{stade.stadeName}" itemLabelEscaped="true" />
+															<f:ajax render="@form" execute="@form"
+																onevent="showProgress"
+																listener="#{teamController.showTeamForm()}" />
+														</h:selectOneMenu>
+													</div>
+													<h:message for="gender" styleClass="help-block"></h:message>
 												</div>
-												
-												<div class="form-group">
-													<label for="exampleInputCity1">City</label> <h:inputText style="font-family: Poppins, sans-serif;font-size: 14px !important;"
-														a:type="text" class="form-control" id="exampleInputCity1"
-														a:placeholder="Location"/>
-												</div>
-												<div class="form-group">
-													<label for="exampleTextarea1">Textarea</label>
-													<textarea class="form-control" id="exampleTextarea1"
-														rows="2"></textarea>
-												</div>
-												<h:commandButton a:type="submit" class="btn btn-success mr-2" value="Submit"></h:commandButton>
-											</h:form>
-										</div>
+											</div>
+											<h:commandButton a:type="submit" class="btn btn-success mr-2"
+												value="Submit"></h:commandButton>
+										</h:form>
 									</div>
 								</div>
+							</div>
 						</p:outputPanel>
-						
+
 					</h:form>
 
 

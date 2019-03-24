@@ -44,7 +44,6 @@ import toka.domain.Province;
 import toka.domain.UserCategory;
 import toka.domain.Users;
 import toka.trading.dto.ContactDto;
-import toka.trading.dto.UserCategoryDto;
 import toka.trading.dto.UserDto;
 
 @SuppressWarnings("unused")

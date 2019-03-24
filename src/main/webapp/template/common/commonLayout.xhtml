@@ -31,12 +31,27 @@
 	<h:outputScript library="js" name="off-canvas.js" />
 	<h:outputScript library="js" name="misc.js" />
 	<h:outputScript library="js" name="dashboard.js" />
-	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet"/>
+	<!-- For date Picker -->
+	<script type="text/javascript"
+		src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" />
+	<h:outputStylesheet name="jquery-ui.css" library="css" />
+	<link rel="stylesheet"
+		href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+	<h:outputScript library="js" name="formatDatePicker.js" />
+
+	<!--End  For date Picker -->
+	<link
+		href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"
+		rel="stylesheet" />
 	<link
 		href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700"
 		rel="stylesheet" />
 	<script type="text/javascript"
 		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" />
+
+	<h:outputStylesheet name="bootstrap-fileupload.min.css" library="css" />
+	<h:outputStylesheet name="loading.css" library="css" />
+	<h:outputScript library="js" name="loading.js" />
 	<style>
 html, body, h1, h2, h3, h4, h5 {
 	font-family: "Open Sans", sans-serif
@@ -105,74 +120,78 @@ h3 {
 .label {
 	font-family: "Poppins", sans-serif;
 }
-.main-panel{
-margin-left: 18%;
+
+.main-panel {
+	margin-left: 18%;
 }
 </style>
 </h:head>
 
 <h:body class="w3-theme-l5">
-		<nav
-			class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-		<ui:insert name="header">
-			<ui:include src="/template/common/commonHeader.xhtml" />
-		</ui:insert> </nav>
-<!--  main container-->
-<div class="w3-container w3-content" style="max-width:95%;margin-top:33px"> 
-	<div class="w3-row">
-		<div class="w3-col m2">
-			<ui:insert name="sideBar">
-				<ui:include src="/template/common/commonSideBar.xhtml" />
-			</ui:insert>
+	<nav
+		class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+	<ui:insert name="header">
+		<ui:include src="/template/common/commonHeader.xhtml" />
+	</ui:insert> </nav>
+	<!--  main container-->
+	<div class="w3-container w3-content"
+		style="max-width: 95%; margin-top: 33px">
+		<div class="w3-row">
+			<div class="w3-col m2">
+				<ui:insert name="sideBar">
+					<ui:include src="/template/common/commonSideBar.xhtml" />
+				</ui:insert>
 			</div>
 			<div class="main-panel">
 
-			<div class="row">
-				<div class="col-lg-12 grid-margin">
-					<div class="card">
-						<div class="card-body">
-							<div class="table-responsive">
-								<div id="page-wrappe">
-									<!-- Loding functionality -->
+				<div class="row">
+					<div class="col-lg-12 grid-margin">
+						<div class="card">
+							<div class="card-body">
+								<div class="table-responsive">
+									<div id="page-wrappe">
+										<!-- Loding functionality -->
 
-									<!-- The Modal -->
-									<div id="myModal" class="modal" style="z-index: 100;">
+										<!-- The Modal -->
+										<div id="myModal" class="modal" style="z-index: 100;">
 
-										<!-- Modal content -->
-										<div class="modal-content">
+											<!-- Modal content -->
+											<div class="modal-content">
 
-											<p:graphicImage id="loadingImage"
-												name="/image/preload_waiting.gif" style="width:99%" />
+												<p:graphicImage id="loadingImage"
+													name="/image/preload_waiting.gif" style="width:99%" />
+
+											</div>
 
 										</div>
 
+
+										<!--End loading  -->
+										<ui:insert name="content" id="cont">
+											<ui:include src="/template/common/commonContent.xhtml" />
+										</ui:insert>
 									</div>
-
-
-									<!--End loading  -->
-									<ui:insert name="content" id="cont">
-										<ui:include src="/template/common/commonContent.xhtml" />
-									</ui:insert>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div></div>
 			</div>
 		</div>
-			<footer class="footer">
-			<div class="container-fluid clearfix">
-				<span
-					class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
-					© 2019 <a href="http://www.hoovers.com/company-information/cs/company-profile.toka_trading_coltd.53b765c966389ac5.html" >#{msg['label.text.com.message.copy.right']}</a>.
-					All rights reserved.
-				</span> 
-			</div>
-			</footer>
+	</div>
+	<footer class="footer">
+	<div class="container-fluid clearfix">
+		<span
+			class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+			© 2019 <a
+			href="http://www.hoovers.com/company-information/cs/company-profile.toka_trading_coltd.53b765c966389ac5.html">#{msg['label.text.com.message.copy.right']}</a>.
+			All rights reserved.
+		</span>
+	</div>
+	</footer>
 
-			<!-- partial -->
-		
+	<!-- partial -->
+
 
 	<script>
 		(function($) {
@@ -193,30 +212,29 @@ margin-left: 18%;
 		})(jQuery);
 	</script>
 	<script>
+		function myFunction(id) {
 
-function myFunction(id) {
-	
-    var x = document.getElementById(id);
-    if (x.className.indexOf("w3-show") == -1) {
-        x.className += " w3-show";
-        x.previousElementSibling.className += " w3-theme-d1";
-    } else { 
-        x.className = x.className.replace("w3-show", "");
-        x.previousElementSibling.className = 
-        x.previousElementSibling.className.replace(" w3-theme-d1", "");
-    }
-}
+			var x = document.getElementById(id);
+			if (x.className.indexOf("w3-show") == -1) {
+				x.className += " w3-show";
+				x.previousElementSibling.className += " w3-theme-d1";
+			} else {
+				x.className = x.className.replace("w3-show", "");
+				x.previousElementSibling.className = x.previousElementSibling.className
+						.replace(" w3-theme-d1", "");
+			}
+		}
 
-// Used to toggle the menu on smaller screens when clicking on the menu button
-function openNav() {
-    var x = document.getElementById("navDemo");
-    if (x.className.indexOf("w3-show") == -1) {
-        x.className += " w3-show";
-    } else { 
-        x.className = x.className.replace(" w3-show", "");
-    }
-}
-</script>
+		// Used to toggle the menu on smaller screens when clicking on the menu button
+		function openNav() {
+			var x = document.getElementById("navDemo");
+			if (x.className.indexOf("w3-show") == -1) {
+				x.className += " w3-show";
+			} else {
+				x.className = x.className.replace(" w3-show", "");
+			}
+		}
+	</script>
 </h:body>
 
 </html>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+<h:body>
+	<ui:composition template="/template/common/commonLayout.xhtml">
+
+		<ui:define name="content">
+			<div class="panel panel-info">
+				<!-- Default panel contents -->
+				<div class="panel-heading">
+					<ui:repeat var="time" value="#">
+
+						<p:outputPanel rendered="#{productController.rendered}"
+							autoUpdate="true">
+							<span style="color: white; font-size: 10pt"> <label
+								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.SoldProductpanel']}</label>
+							</span>
+						</p:outputPanel>
+						<p:outputPanel rendered="#{productController.renderProductForm}">
+
+							<a
+								href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml"
+								class="btn btn-primary glyphicon glyphicon-chevron-left"
+								style="font-size: 14px !important;"> #{msg['BackButtom']} </a>
+							<span
+								style="color: white; font: italic bold 14px/18px Georgia, serif;">#{msg['header.title.fieldmarked']}
+								<span style="color: red">#{msg['header.title.asteriks']}</span>
+								#{msg['header.title.mandatory']}
+							</span>
+							
+						</p:outputPanel>
+					</ui:repeat>
+				</div>
+				<div class="panel-body"
+					style="border: 0px solid blue; margin-top: 4px; height: auto; font-family: Poppins, sans-serif; font-size: 15px !important;">
+
+
+
+					<h:form>
+						<h:panelGroup layout="block"
+							rendered="#{not productController.valid and not facesContext.validationFailed}">
+							<ul>
+								<ui:repeat value="#{facesContext.messageList}"
+									var="facesMessage">
+									<li class="alert alert-danger"
+										style="list-style: none; background-color: #FF2400; color: white">
+										<center>
+											<h:outputText value="#{facesMessage.summary}" escape="false" />
+										</center>
+									</li>
+								</ui:repeat>
+							</ul>
+						</h:panelGroup>
+
+						<h:panelGroup layout="block"
+							rendered="#{productController.valid and  not facesContext.validationFailed}">
+							<ul>
+								<ui:repeat value="#{facesContext.messageList}"
+									var="facesMessage">
+									<li
+										style="list-style: none; background-color: #32CD32; color: white; margin-left: -4.9%"
+										class="alert alert-success"><h:outputText
+											value="#{facesMessage.summary}" escape="false" /></li>
+								</ui:repeat>
+							</ul>
+						</h:panelGroup>
+						<p:outputPanel rendered="#{productController.rendered}"
+							autoUpdate="true">
+
+							<div class="col-md-6 grid-margin stretch-card"
+								style="font-family: Poppins, sans-serif">
+								<div class="card">
+									<div class="card-body">
+										<h4 class="card-title"
+											style="font-family: Poppins, sans-serif; font-weight: bold; font-size: 16px !important;"> Selling Product
+											Form</h4>
+										<h:form class="forms-sample">
+											
+											<div class="form-group">
+												<label for="exampleInputEmail3">#{msg['productquantity.Productform']}<span
+													style="color: red; font-size: 15px">*</span></label>
+												<h:inputText
+													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
+													a:type="text" class="form-control" id="exampleInputEmail3"
+													a:placeholder="Quantity" />
+											</div>
+											<h:commandButton a:type="submit" class="btn btn-success mr-2"
+												value="Submit"></h:commandButton>
+										</h:form>
+									</div>
+								</div>
+							</div>
+						</p:outputPanel>
+
+					</h:form>
+
+
+				</div>
+			</div>
+		</ui:define>
+	</ui:composition>
+</h:body>
+
+</html>

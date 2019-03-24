@@ -26,7 +26,7 @@ import toka.domain.Contact;
 import toka.domain.UserCategory;
 import toka.domain.Users;
 import toka.trading.dto.ContactDto;
-import toka.trading.dto.UserCategoryDto;
+import toka.trading.dto.ProductCategoryDtos;
 import toka.trading.dto.UserDto;
 
 @ManagedBean
@@ -43,7 +43,7 @@ public class UserCategoryController implements Serializable, DbConstant {
 	private List<UserCategory> categoryDetails = new ArrayList<UserCategory>();
 	private List<Contact> contactDetails = new ArrayList<Contact>();
 	private List<ContactDto> contactDtoDetails = new ArrayList<ContactDto>();
-	private List<UserCategoryDto> categoryDtoDetails = new ArrayList<UserCategoryDto>();
+	private List<ProductCategoryDtos> categoryDtoDetails = new ArrayList<ProductCategoryDtos>();
 	/* class injection */
 	JSFBoundleProvider provider = new JSFBoundleProvider();
 	UserImpl usersImpl = new UserImpl();
@@ -99,13 +99,13 @@ public class UserCategoryController implements Serializable, DbConstant {
 
 	@SuppressWarnings("rawtypes")
 	public List listCategory(List<UserCategory> userCatDetails) {
-		List<UserCategoryDto> categoryDtoDetails = new ArrayList<UserCategoryDto>();
+		List<ProductCategoryDtos> categoryDtoDetails = new ArrayList<ProductCategoryDtos>();
 		for (UserCategory userCat : userCatDetails) {
-			UserCategoryDto catDto = new UserCategoryDto();
+			ProductCategoryDtos catDto = new ProductCategoryDtos();
 			catDto.setEditable(false);
 			catDto.setNotify(false);
-			catDto.setUserCatid(userCat.getUserCatid());
-			catDto.setUsercategoryName(userCat.getUsercategoryName());
+			//catDto.setUserCatid(userCat.getUserCatid());
+			//catDto.setUsercategoryName(userCat.getUsercategoryName());
 			catDto.setStatus(userCat.getStatus());
 			if (userCat.getStatus().equals(ACTIVE)) {
 				catDto.setAction(DESACTIVE);
@@ -118,13 +118,13 @@ public class UserCategoryController implements Serializable, DbConstant {
 	}
 
 	@SuppressWarnings("unchecked")
-	public String updateStatus(UserCategoryDto categ) throws Exception {
+	public String updateStatus(ProductCategoryDtos categ) throws Exception {
 		LOGGER.info("update  saveAction method");
 		// get all existing value but set "editable" to false
 		UserCategory cat = new UserCategory();
 
 		if (categ != null)
-			cat = userCatImpl.getUserCategoryById(categ.getUserCatid(), "userCatid");
+			cat = userCatImpl.getUserCategoryById(categ.getCatid(), "userCatid");
 		if (cat != null)
 			LOGGER.info("here update sart for " + cat + " useriD " + cat.getStatus());
 		if (categ.getStatus().equals(ACTIVE)) {
@@ -279,22 +279,22 @@ public class UserCategoryController implements Serializable, DbConstant {
 		categoryDetails = null;
 	}
 
-	public String saveAction(UserCategoryDto cat) {
+	public String saveAction(ProductCategoryDtos cat) {
 		LOGGER.info("update  saveAction method");
 		// get all existing value but set "editable" to false
 		try {
 			if (null != cat) {
-				LOGGER.info("UserCat:++++++++++++++++++++++++++" + cat.getUserCatid());
+				LOGGER.info("UserCat:++++++++++++++++++++++++++" + cat.getCatid());
 				UserCategory usercat = new UserCategory();
 				usercat = new UserCategory();
-				usercat = userCatImpl.getUserCategoryById(cat.getUserCatid(), "userCatid");
+				usercat = userCatImpl.getUserCategoryById(cat.getCatid(), "userCatid");
 
 				LOGGER.info("here update sart for " + usercat + " useriD " + usercat.getUserCatid());
 
 				cat.setEditable(false);
 				usercat.setUpdatedBy(usersSession.getViewId());
 				usercat.setUpDtTime(timestamp);
-				usercat.setUsercategoryName(cat.getUsercategoryName());
+				//usercat.setUsercategoryName(cat.getUsercategoryName());
 				userCatImpl.UpdateUsercategory(usercat);
 				JSFMessagers.resetMessages();
 				setValid(true);
@@ -321,12 +321,12 @@ public class UserCategoryController implements Serializable, DbConstant {
 		return "/menu/UserCategory.xhtml?faces-redirect=true";
 	}
 
-	public String cancel(UserCategoryDto cat) {
+	public String cancel(ProductCategoryDtos cat) {
 		cat.setEditable(false);
 		return null;
 	}
 
-	public String cancelChange(UserCategoryDto cat) {
+	public String cancelChange(ProductCategoryDtos cat) {
 		cat.setNotify(false);
 		this.repEmail = null;
 		return null;
@@ -337,14 +337,14 @@ public class UserCategoryController implements Serializable, DbConstant {
 
 	}
 
-	public String editAction(UserCategoryDto cat) {
+	public String editAction(ProductCategoryDtos cat) {
 
 		cat.setEditable(true);
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	public String renderAction(UserCategoryDto cat) throws Exception {
+	public String renderAction(ProductCategoryDtos cat) throws Exception {
 		cat.setNotify(true);
 		/*List<Contact>contactList= new ArrayList<Contact>();
 		contactList=contactImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
@@ -426,11 +426,11 @@ public class UserCategoryController implements Serializable, DbConstant {
 		this.categoryDetails = categoryDetails;
 	}
 
-	public List<UserCategoryDto> getCategoryDtoDetails() {
+	public List<ProductCategoryDtos> getCategoryDtoDetails() {
 		return categoryDtoDetails;
 	}
 
-	public void setCategoryDtoDetails(List<UserCategoryDto> categoryDtoDetails) {
+	public void setCategoryDtoDetails(List<ProductCategoryDtos> categoryDtoDetails) {
 		this.categoryDtoDetails = categoryDtoDetails;
 	}
 

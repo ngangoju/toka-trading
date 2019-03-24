@@ -6,9 +6,9 @@
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/trading_db</property>
 		<property name="hibernate.connection.username">root</property>
-		<property name="hibernate.connection.password">ngango</property>
-		<property name="hbm2ddl.auto">update</property>
-		<property name="hibernate.show_sql">true</property>
+		<property name="hibernate.connection.password">root</property>
+		<!-- <property name="hbm2ddl.auto">update</property>
+		<property name="hibernate.show_sql">true</property> -->
 		<property name="hibernate.current_session_context_class">thread</property>
 		<mapping class="toka.domain.Province" />
 		<mapping class="toka.domain.District" />
