@@ -29,3 +29,15 @@ insert into listofmenu(menuId,crtdDtTime,genericStatus,description,urlCode,urlNa
 
 insert  menuassignment(menuAssgnId,crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(1,now(),'active',null,1,1);
 insert  menuassignment(menuAssgnId,crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(2,now(),'active',null,2,1);
+
+
+INSERT INTO `listofmenu` (`menuId`, `createdBy`, `crtdDtTime`, `genericStatus`, `optLock`, `upDtTime`, `updatedBy`, `creationDate`, `description`, `iconImage`, `menuColor`, `urlCode`, `urlName`, `listOfMenu`, `menuGroup`) VALUES
+(5, 'admin', '2018-10-10 21:32:29', 'active', '2018-10-10 21:32:29', '2018-10-10 21:32:29', 'admin', '2018-10-10 21:32:29', 'Manage MenuGroup', 'glyphicon glyphicon-asterisk', 'green2', NULL, '/menu/ViewMenuGroup.xhtml', NULL, 1),
+(6, 'admin', '2018-10-10 21:49:39', 'active', '2018-10-10 21:49:39', '2018-10-10 21:49:39', 'admin', '2018-10-10 21:49:39', 'List of Menu', 'glyphicon glyphicon-minus', 'blue2', NULL, '/menu/ViewListOfMenu.xhtml', NULL, 1),
+(7, 'admin', '2018-10-10 21:51:04', 'active', '2018-10-10 21:51:04', '2018-10-10 21:51:04', 'admin', '2018-10-10 21:51:04', 'Menu Assignment', 'glyphicon glyphicon-asterisk', 'green2', NULL, '/menu/menuAssignmentForm.xhtml', NULL, 1);
+
+
+INSERT INTO `menuassignment` (`menuAssgnId`, `createdBy`, `crtdDtTime`, `genericStatus`, `optLock`, `upDtTime`, `updatedBy`, `defaultMenuUrl`, `listOfMenu`, `userCategory`) VALUES
+(0, 'admin', '2018-10-10 21:32:47', 'active', '2018-10-10 21:32:47', '2018-10-10 21:32:47', 'admin', NULL, 5, 1),
+(0, 'admin', '2018-10-10 21:52:16', 'active', '2018-10-10 21:52:16', '2018-10-10 21:52:16', 'admin', NULL, 6, 1),
+(0, 'admin', '2018-10-10 21:52:55', 'active', '2018-10-10 21:52:55', '2018-10-10 21:52:55', 'admin', NULL, 7, 1);
