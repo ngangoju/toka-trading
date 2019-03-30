@@ -1,4 +1,4 @@
-use trading_db;
+guse trading_db;
 
 
 insert into usercategory (userCatid,usercategoryName) values(1,'CEO');
@@ -43,19 +43,37 @@ INSERT INTO `menuassignment` (`menuAssgnId`, `createdBy`, `crtdDtTime`, `generic
 
 
 ==============MENU MANAGEMENT BY EMMA===================
-1.insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Category management','Url05','/menu/ProductCategory.xhtml',null,3);
-2.insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,4,3);
-3.insert into menugroup(createdBy,crtdDtTime,genericStatus,defaulGrouptMenu,groupMenuCode,menuGroupName,userCategory) values('Fred',now(),'active','My Tasks','M003','My Tasks',4);
-4.insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Order management','Url06','/menu/OrderProduct.xhtml',null,5);
-5.insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(2,now(),'active',null,5,4);
+1.insert into listofmenu (crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup)
+values(now(),'active','Category management','Url05','/menu/ProductCategory.xhtml',null,11);
+2.insert  menuassignment(crtdDtTime,genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,8,3);
+3.insert into menugroup(createdBy,crtdDtTime,genericStatus,defaulGrouptMenu,groupMenuCode,menuGroupName,userCategory) 
+values('Fred',now(),'active','My Tasks','M003','My Tasks',4);
+4.insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Order management','Url07','/menu/OrderProduct.xhtml',null,7);
+5.insert  menuassignment(crtdDtTime,genericStatus,defaultMenuUrl,listOfMenu,userCategory) 
+values(now(),'active',null,9,4);
 
-6.insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Sales management','Url07','/menu/SoldProduct.xhtml',null,3);
+6.insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Sales management','Url11','/menu/SoldProduct.xhtml',null,11);
 
-7. update listofmenu set iconimage='glyphicon glyphicon-floppy-save',menucolor='purple2 ' where menuid=6;(---------QUERY to add menucolor or iconimage--------)
+7. update listofmenu set iconimage='glyphicon glyphicon-floppy-save',menucolor='purple2 ' where menuid=6;(-----QUERY to add menucolor or iconimage------)
 
-8.insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,6,3);
+8.insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,10,3);
+
 
 9.insert into menugroup(createdBy,crtdDtTime,genericStatus,defaulGrouptMenu,groupMenuCode,menuGroupName,userCategory) values('Fred',now(),'active','My Tasks','M007','My Task',2);
 
-10.insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Product management','Url08','/menu/ProductPricing.xhtml',null,6);
-11.insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,9,2);
+10.insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Product management','Url08','/menu/ProductPricing.xhtml',null,13);
+11.insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,11,2);
+
+12.insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Branch management','Url12','/menu/Branch.xhtml',null,1);
+
+13.insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,12,1);
+
+
+insert into listofmenu (crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) 
+values(now(),'active','Profile management','Url14','/menu/ViewProfile.xhtml',null,13);
+
+insert into listofmenu (crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) 
+values(now(),'active','Profile management','Url15','/menu/ViewProfile.xhtml',null,11);
+
+insert into listofmenu (crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) 
+values(now(),'active','Profile management','Url16','/menu/ViewProfile.xhtml',null,7);

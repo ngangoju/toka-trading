@@ -11,18 +11,18 @@
 <!-- partial:partials/_navbar.html -->
     <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
-        <a class="navbar-brand brand-logo" href="dashboard.xhtml">
+        <a class="navbar-brand brand-logo" href="page1.xhtml">
           <h4>TOKA TRADING</h4>
         </a>
-        <a class="navbar-brand brand-logo-mini" href="dashboard.xhtml">
+        <a class="navbar-brand brand-logo-mini" href="page1.xhtml">
           <h4>TOKA TRADING</h4>
         </a>
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-center">
         <ul class="navbar-nav navbar-nav-left header-links d-none d-md-flex">
           <li class="nav-item">
-            <a href="#" class="nav-link">Schedule
-              <span class="badge badge-primary ml-1">New</span>
+            <a href="#{loadUserInformationsController.getContextPath()}/page1.xhtml" class="nav-link">
+            <i class="mdi mdi-bookmark-plus-outline glyphicon glyphicon-dashboard"></i>Dashboard
             </a>
           </li>
           <li class="nav-item active">
@@ -145,26 +145,22 @@
               </a>
             </div>
           </li>
-          <li class="nav-item dropdown d-none d-xl-inline-block">
-            <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
               <span class="profile-text">Hello, #{loadUserInformationsController.users.fname} #{loadUserInformationsController.users.lname}!</span>
-<!--               <img class="img-xs rounded-circle" src="./resources/image/us.png" alt="Profile image"/> -->
               <h:graphicImage class="img-xs rounded-circle" alt="userImage" value="/images/dynamic/?file=#{loadUserInformationsController.users.image}" /> 
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown primary" aria-labelledby="UserDropdown">
               <h:form>
-              <h:commandButton class="btn btn-block btn-primary label dropdown-item" value="Manage Accounts"/>
-              <h:commandButton class="btn btn-block btn-primary label dropdown-item" value="Change Password"/>
-              <h:commandButton class="btn btn-block btn-primary label dropdown-item" value="Check Inbox"/>
-              <h:commandButton class="btn btn-block btn-primary label dropdown-item"
+              <h:commandButton class="dropdown-item" value="Manage Accounts"/>
+              <h:commandButton class="dropdown-item" value="Change Password"/>
+              <h:commandButton class="dropdown-item" value="Check Inbox"/>
+              <h:commandButton class="dropdown-item"
                   action="#{login.logout}" value="Sign Out"/>
                 </h:form>
             </div>
           </li>
         </ul>
-        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-          <span class="mdi mdi-menu"></span>
-        </button>
       </div>
     </nav>
     <!-- partial -->

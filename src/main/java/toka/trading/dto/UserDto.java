@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import toka.domain.UserCategory;
 import toka.domain.Users;
+import toka.domain.Branch;
 import toka.domain.District;
 
 public class UserDto implements Serializable {
@@ -37,6 +38,8 @@ public class UserDto implements Serializable {
 	private Date createdDate;
 
 	private UserCategory userCategory;
+	
+	private Branch branch;
 
 	private District district;
 
@@ -246,6 +249,14 @@ public class UserDto implements Serializable {
 
 	public void setRenderBoard(boolean renderBoard) {
 		this.renderBoard = renderBoard;
+	}
+
+	public Branch getBranch() {
+		return branch;
+	}
+
+	public void setBranch(Branch branch) {
+		this.branch = branch;
 	}
 
 }

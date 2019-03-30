@@ -55,16 +55,10 @@
 								</ui:repeat>
 							</ul>
 						</h:panelGroup>
-						<fieldset>
-							<legend
-								style="font: italic bold 18px/25px Georgia, serif;">
-								#{msg['message.com.Staff.dashaboard']}</legend>
-
 							<a href="UsersAccount.xhtml" style="color: white; float: left;font: italic bold 13px/16px Georgia, serif"
 								class="btn btn-primary  glyphicon glyphicon-pencil  ">#{msg['UserRegForm.addButton']}<b><span
 									style="background-color: red; color: white" class="badge"></span></b>
 							</a> <br />
-							<hr />
 
 							<!-- USERS VIEW BY PAGE RECORDS-->
 
@@ -141,24 +135,24 @@
 										</h:column>
 										<h:column>
 											<f:facet name="header">
-												<label>Board</label>
+												<label>Branch</label>
 											</f:facet>
 
 											<h:selectOneMenu id="brd" styleClass="form-control"
 												rendered="#{user.editable}"
 												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
-												required="true" value="#{user.board.boardId}"
+												required="true" value="#{user.branch.branchId}"
 												requiredMessage="#{msg[required.boardName.message]}">
 												<f:selectItem
 													itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
 													itemValue="#{null}" escapeItem="true" itemDisabled="false" />
-												<f:selectItems value="#{userAccountController.boardList}"
-													var="option" itemValue="#{option.boardId}"
-													itemLabel="#{option.boardName}" itemLabelEscaped="true" />
+												<f:selectItems value="#{userAccountController.branchList}"
+													var="option" itemValue="#{option.branchId}"
+													itemLabel="#{option.branchName}" itemLabelEscaped="true" />
 
 											</h:selectOneMenu>
 
-											<h:outputText value="#{user.board.boardName}"
+											<h:outputText value="#{user.branch.branchName}"
 												rendered="#{not user.editable}" />
 											<h:message errorClass="errorMsg1" for="brd"
 												style="font-size:12px;font-family:Time New Roman;"></h:message>
@@ -346,7 +340,6 @@
 								</div>
 							</p:outputPanel>
 							<!-- ENDS USERS VIEW BY PAGE RECORDS -->
-						</fieldset>
 
 					</h:form>
 

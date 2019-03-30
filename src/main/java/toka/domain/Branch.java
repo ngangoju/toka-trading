@@ -1,7 +1,6 @@
 package toka.domain;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,9 +23,11 @@ public class Branch extends CommonDomain implements Serializable {
 
 	@Column(name = "branchName")
 	private String branchName;
+	
 	@ManyToOne
 	@JoinColumn(name = "districtLocation")
 	private District  location;
+	
 	public int getBranchId() {
 		return branchId;
 	}

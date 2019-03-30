@@ -109,7 +109,6 @@ public class UserAccountController implements Serializable, DbConstant {
 	private int age;
 	private int days;
 	private int count;
-	private int listrepSize;
 	private int contactSize;
 	private int repavail;
 	private int userCatid;
@@ -172,7 +171,6 @@ public class UserAccountController implements Serializable, DbConstant {
 			// Staff Position
 			staffPosition = staffPosition();
 			this.renderRepContactDash = true;
-			listrepSize = showAvailRep();
 			for (Object[] data : usersImpl.reportList(
 					"select us.fname,us.lname, us.viewId,us.address, us.userId from Contact co right  join  co.user us join us.userCategory cat where co.user is null and cat.usercategoryName='"
 							+ INSTITUTE_REP + "'")) {
@@ -202,6 +200,7 @@ public class UserAccountController implements Serializable, DbConstant {
 			catDetails = catImpl.getGenericListWithHQLParameter(new String[] { "status", "usercategoryName" },
 					new Object[] { ACTIVE, INSTITUTE_REP }, "UserCategory", " userCatid desc");
 			useravail = usersImpl.getListWithHQL("from Users", 0, endrecord);
+			userDtosDetails = showUsersByPageRecords(useravail);
 			this.renderBoard = true;
 			this.renderDatePanel = true;
 			staffList = usersImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
@@ -219,7 +218,7 @@ public class UserAccountController implements Serializable, DbConstant {
 	public List<UserCategory> staffPosition() {
 		for (Object[] data : catImpl.reportList(
 				"select cat.userCatid,cat.status,cat.usercategoryName from UserCategory cat where cat.usercategoryName<>'"
-						+ SUPER_ADMIN + "'")) {
+						+ INSTITUTE_REP + "'")) {
 			UserCategory cat = new UserCategory();
 			cat.setUserCatid(Integer.parseInt(data[0] + ""));
 			cat.setStatus(data[1] + "");
@@ -275,6 +274,89 @@ public class UserAccountController implements Serializable, DbConstant {
 			LOGGER.info("RANGE VALUE:" + range + "::::::::::BOARD LIST RENDERED:::::::::::::::::");
 		}
 	}
+	public void searchStaff() {
+		LOGGER.info("Search Key value::::::"+searchKey);
+		if (null!=searchKey) {
+			userDtosDetails = new ArrayList<UserDto>();
+			for (Users users : staffList) {
+				LOGGER.info("users::::::::::::::::::::::::::::::::::::::::::::::::>>" + users.getUserId() + ":: "
+						+ users.getFname() + "");
+				if (users.getUserCategory().getUserCatid() != 1) {
+					UserDto userDtos = new UserDto();
+					userDtos.setEditable(false);
+					userDtos.setNotify(false);
+					if (users.getBranch() != null) {
+						if (users.getFname().contains(searchKey) || users.getLname().contains(searchKey)
+								|| users.getStatus().contains(searchKey)||users.getLoginStatus().contains(searchKey)
+								|| users.getBranch().getBranchName().contains(searchKey)
+								|| users.getUserCategory().getUsercategoryName().contains(searchKey)) {
+							userDtos.setUserId(users.getUserId());
+							userDtos.setFname(users.getFname());
+							userDtos.setLname(users.getLname());
+							userDtos.setViewId(users.getViewId());
+							userDtos.setLoginStatus(users.getLoginStatus());
+							userDtos.setUserCategory(users.getUserCategory());
+							userDtos.setStatus(users.getStatus());
+							userDtos.setBranch(users.getBranch());
+							if (users.getStatus().equals(ACTIVE)) {
+								userDtos.setAction(DESACTIVE);
+							} else {
+								userDtos.setAction(ACTIVE);
+							}
+							userDtosDetails.add(userDtos);
+						}
+					}
+				}
+			}
+		} else {
+			userDtosDetails = showUsersByPageRecords(useravail);
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.searcherror"));
+		}
+	}
+
+
+	public List<UserDto> showUsersByPageRecords(List<Users> userslist) {
+		try {
+
+			userDtosDetails = new ArrayList<UserDto>();
+			for (Users users : userslist) {
+				LOGGER.info("users::::::::::::::::::::::::::::::::::::::::::::::::>>" + users.getUserId() + ":: "
+						+ users.getFname() + "");
+				if (users.getUserCategory().getUserCatid() != 1) {
+					UserDto userDtos = new UserDto();
+					userDtos.setEditable(false);
+					userDtos.setNotify(false);
+					if (users.getBranch() != null) {
+						userDtos.setUserId(users.getUserId());
+						userDtos.setFname(users.getFname());
+						userDtos.setLname(users.getLname());
+						userDtos.setViewId(users.getViewId());
+						userDtos.setLoginStatus(users.getLoginStatus());
+						userDtos.setUserCategory(users.getUserCategory());
+						userDtos.setStatus(users.getStatus());
+						userDtos.setBranch(users.getBranch());
+						if (users.getStatus().equals(ACTIVE)) {
+							userDtos.setAction(DESACTIVE);
+						} else {
+							userDtos.setAction(ACTIVE);
+						}
+						userDtosDetails.add(userDtos);
+					}
+				}
+			}
+			return (userDtosDetails);
+
+		} catch (Exception e) {
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
+			LOGGER.info(e.getMessage());
+			e.printStackTrace();
+		}
+		return (userDtosDetails);
+
+	}
 
 	public List<ContactDto> displayRepresentContact() {
 
@@ -299,21 +381,7 @@ public class UserAccountController implements Serializable, DbConstant {
 		this.renderRepContactDash = false;
 	}
 
-	public int showAvailRep() {
-		List<Users> repDetails = new ArrayList<Users>();
-		if (usersSession.getUserCategory().getUsercategoryName().equals(SUPER_ADMIN)) {
-			for (Object[] data : usersImpl.reportList(
-					"select u.userCategory,cat.usercategoryName from Users u join u.userCategory cat where u.userCategory=cat.userCatid and cat.usercategoryName='"
-							+ INSTITUTE_REP + "'")) {
-				Users user = new Users();
-				user.setUserCategory((UserCategory) data[0]);
-				repDetails.add(user);
-			}
-
-		}
-		return (repDetails.size());
-	}
-
+	
 	public void showRepresent() {
 
 		this.renderRepTable = true;
@@ -361,6 +429,7 @@ public class UserAccountController implements Serializable, DbConstant {
 		HttpSession session = SessionUtils.getSession();
 		Users usersSes = new Users();
 		usersSes = (Users) session.getAttribute("userSession");
+		LOGGER.info("USERNAME::::"+usersSes.getDateOfBirth());
 		return new SimpleDateFormat("dd-MM-yyyy").format(usersSes.getDateOfBirth());
 	}
 
@@ -1534,14 +1603,6 @@ public class UserAccountController implements Serializable, DbConstant {
 
 	public void setRenderRepContactDash(boolean renderRepContactDash) {
 		this.renderRepContactDash = renderRepContactDash;
-	}
-
-	public int getListrepSize() {
-		return listrepSize;
-	}
-
-	public void setListrepSize(int listrepSize) {
-		this.listrepSize = listrepSize;
 	}
 
 	public int getCount() {
