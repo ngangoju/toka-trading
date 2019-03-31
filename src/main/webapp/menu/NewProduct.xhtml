@@ -16,8 +16,14 @@
 				<!-- Default panel contents -->
 				<div class="panel-heading">
 					<ui:repeat var="time" value="#">
-						
+
 						<p:outputPanel rendered="#{productController.rendered}"
+							autoUpdate="true">
+							<span style="color: white; font-size: 10pt"> <label
+								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
+							</span>
+						</p:outputPanel>
+						<p:outputPanel rendered="#{productController.renderDetails}"
 							autoUpdate="true">
 							<span style="color: white; font-size: 10pt"> <label
 								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
@@ -65,7 +71,7 @@
 								<ui:repeat value="#{facesContext.messageList}"
 									var="facesMessage">
 									<li
-										style="list-style: none; background-color: #32CD32; color: white; margin-left: -4.9%"
+										style="list-style: none; background-color: #32CD32; color: white;"
 										class="alert alert-success"><h:outputText
 											value="#{facesMessage.summary}" escape="false" /></li>
 								</ui:repeat>
@@ -88,7 +94,16 @@
 												<h:inputText
 													style="font-family:Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control" id="exampleInputName1"
-													a:placeholder="Product name" />
+													value="#{productController.product.productName}"
+													a:placeholder="Product name" required="true"
+													requiredMessage="#{msg['required.productname.message']}"
+													converterMessage="#{msg['error.enter.invalid.productname']}"
+													validatorMessage="#{msg['error.enter.invalid.productname']}">
+													<f:validateRegex
+														pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
+													<f:validateLength maximum="100"></f:validateLength>
+												</h:inputText>
+												<h:message errorClass="errorMsg1" for="exampleInputName1"></h:message>
 											</div>
 											<div class="form-group">
 												<label for="exampleInputEmail3">#{msg['productquantity.Productform']}<span
@@ -96,7 +111,16 @@
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control" id="exampleInputEmail3"
-													a:placeholder="Quantity" />
+													a:placeholder="Quantity" required="tue"
+													value="#{productController.quantity}"
+													requiredMessage="#{msg['requiered.productqty.message']}"
+													converterMessage="#{msg['error.enter.invalid.productqty']}"
+													validatorMessage="#{msg['error.enter.invalid.productqty']}">
+													<f:validateRegex
+														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
+													<f:validateLength maximum="100"></f:validateLength>
+												</h:inputText>
+												<h:message errorClass="errorMsg1" for="exampleInputEmail3"></h:message>
 											</div>
 											<div class="form-group">
 												<label for="exampleInputPassword4">#{msg['productunityprice.Productform']}<span
@@ -104,7 +128,18 @@
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control"
-													id="exampleInputPassword4" a:placeholder="Unit price" />
+													value="#{productController.unitprice}"
+													id="exampleInputPassword4" a:placeholder="Unit price"
+													required="true"
+													requiredMessage="#{msg['requiered.productunitprice.message']}"
+													converterMessage="#{msg['error.enter.invalid.productunitprice']}"
+													validatorMessage="#{msg['error.enter.invalid.productunitprice']}">
+													<f:validateRegex
+														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
+													<f:validateLength maximum="100"></f:validateLength>
+												</h:inputText>
+												<h:message errorClass="errorMsg1"
+													for="exampleInputPassword4"></h:message>
 											</div>
 											<div class="form-group">
 												<label for="exampleInputCity1"
@@ -116,6 +151,7 @@
 															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
 														<h:inputText locale="#{facesContext.viewRoot.locale}"
 															autocomplete="off" id="from_dob_date_id"
+															value="#{productController.manufDate}"
 															binding="#{from_dob_date_id}" class="form-control"
 															escape="true" maxlength="35" required="true"
 															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
@@ -132,16 +168,18 @@
 																				{
 																					changeMonth : true,
 																					changeYear : true,
-																					maxDate : 0,
+																					//maxDate : 0, 
 																					//minDate: 0,
 																					dateFormat : "dd/mm/yy",
-																					yearRange : "-100:+0",
+																					// yearRange : "-100:+0"
 																					buttonImage : "./resources/image/calendar1.png"
 																				});
 															});
 														</script>
 													</div>
+
 												</div>
+												<h:message errorClass="errorMsg1" for="from_dob_date_id"></h:message>
 											</div>
 
 											<div class="form-group">
@@ -154,6 +192,7 @@
 															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
 														<h:inputText locale="#{facesContext.viewRoot.locale}"
 															autocomplete="off" id="from_exp_date_id"
+															value="#{productController.expDate}"
 															binding="#{from_exp_date_id}" class="form-control"
 															escape="true" maxlength="35" required="true"
 															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
@@ -170,16 +209,17 @@
 																				{
 																					changeMonth : true,
 																					changeYear : true,
-																					maxDate : 0,
+																					//maxDate : 1, 
 																					//minDate: 0,
 																					dateFormat : "dd/mm/yy",
-																					yearRange : "-100:+0",
+																					/*yearRange : "-100:+0", */
 																					buttonImage : "./resources/image/calendar1.png"
 																				});
 															});
 														</script>
 													</div>
 												</div>
+												<h:message errorClass="errorMsg1" for="from_exp_date_id"></h:message>
 											</div>
 											<div class="form-group">
 												<label for="name" class="cols-sm-2 control-label">
@@ -189,31 +229,336 @@
 													<div class="input-group">
 														<h:selectOneMenu id="gender" styleClass="form-control"
 															style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
-															required="true" value="#{teamController.ground}"
-															requiredMessage="#{msg['requiered.gender.message']}">
+															required="true" value="#{productController.productCatid}"
+															requiredMessage="#{msg['requiered.categoryname.message']}">
 															<f:selectItem
 																itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
 																itemValue="#{null}" escapeItem="true"
 																itemDisabled="false" />
-															<f:selectItems value="#{teamController.stadeDetail}"
-																var="stade" itemLabel="#{stade.stadeName}"
-																itemValue="#{stade.stadeName}" itemLabelEscaped="true" />
-															<f:ajax render="@form" execute="@form"
-																onevent="showProgress"
-																listener="#{teamController.showTeamForm()}" />
+															<f:selectItems value="#{productController.categoryList}"
+																var="option" itemValue="#{option.productCatid}"
+																itemLabel="#{option.productCatName}"
+																itemLabelEscaped="true" />
+
 														</h:selectOneMenu>
 													</div>
 													<h:message for="gender" styleClass="help-block"></h:message>
 												</div>
 											</div>
 											<h:commandButton a:type="submit" class="btn btn-success mr-2"
-												value="Submit"></h:commandButton>
+												style=" font: italic bold 13px/20px Georgia, serif;"
+												action="#{productController.saveNewProduct}"
+												value="#{msg['label.subimit.message.submit']}">
+												<f:ajax render="@form" execute="@form"
+													onevent="showProgress" />
+											</h:commandButton>
 										</h:form>
 									</div>
 								</div>
 							</div>
 						</p:outputPanel>
+						<!-- LIST OF Product -->
+						<p:outputPanel rendered="#{productController.rendered}">
 
+							<div class=" col-md-12"
+								style="height: 330px; overflow-y: scroll;">
+								<h:dataTable id="activityTable" binding="#{tabl}"
+									style="font: italic 14px/18px Georgia, serif;box-sizing: border-box; width:100% !important;
+       						 -webkit-box-shadow: none;
+       							 box-shadow: none !important;
+       								 margin: 17px 2px 0 !important;"
+									value="#{productController.prodDto}" var="prod"
+									class="table table-striped table-hover table-bordered tableUpdated ">
+									<f:facet name="header">
+										<h:commandLink data-toggle="tooltip" data-placement="left"
+											value="#{msg['createProduct.editButton']}"
+											style=" font: italic bold 13px/20px Georgia, serif;"
+											class="btn btn-sm btn-info"
+											action="#{productController.showProductForm()}">
+											<f:ajax render="@all" execute="@all" onevent="showProgress" />
+										</h:commandLink>
+										<label
+											style="margin-left: 35%; font: italic bold 13px/16px Georgia, serif;">#{msg['form.listproduct.table.title']}</label>
+									</f:facet>
+
+									<h:column>
+										<f:facet name="header">
+											<label>No</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{tabl.rowIndex + 1}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Product name</label>
+										</f:facet>
+										<br />
+										<h:inputText id="prodId1" value="#{prod.productName}"
+											styleClass="form-control" size="10"
+											rendered="#{prod.editable}" maxlength="250" required="true"
+											requiredMessage="#{msg['required.productname.message']}"
+											converterMessage="#{msg['error.enter.invalid.productname']}"
+											validatorMessage="#{msg['error.enter.invalid.productname']}">
+											<f:validateRegex
+												pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
+											<f:validateLength maximum="100"></f:validateLength>
+										</h:inputText>
+										<h:message for="prodId1" styleClass="help-block"></h:message>
+
+										<h:outputText value="#{prod.productName}"
+											rendered="#{not prod.editable}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Quantity</label>
+										</f:facet>
+										<br />
+										<h:inputText id="qty" value="#{prod.quantity}"
+											styleClass="form-control" size="10"
+											rendered="#{prod.editable}" maxlength="250"
+											requiredMessage="#{msg['requiered.productqty.message']}"
+											converterMessage="#{msg['error.enter.invalid.productqty']}"
+											validatorMessage="#{msg['error.enter.invalid.productqty']}">
+											<f:validateRegex
+												pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
+											<f:validateLength maximum="100"></f:validateLength>
+										</h:inputText>
+										<h:message for="qty" styleClass="help-block"></h:message>
+
+										<h:outputText value="#{prod.quantity}"
+											rendered="#{not prod.editable}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Unity price</label>
+										</f:facet>
+										<br />
+										<h:inputText id="price" value="#{prod.purchaseUnitPrice}"
+											styleClass="form-control" size="10"
+											rendered="#{prod.editable}" maxlength="250" required="true"
+											requiredMessage="#{msg['requiered.productunitprice.message']}"
+											converterMessage="#{msg['error.enter.invalid.productunitprice']}"
+											validatorMessage="#{msg['error.enter.invalid.productunitprice']}">
+											<f:validateRegex
+												pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
+											<f:validateLength maximum="100"></f:validateLength>
+										</h:inputText>
+										<h:message for="price" styleClass="help-block"></h:message>
+
+										<h:outputText value="#{prod.purchaseUnitPrice}"
+											rendered="#{not prod.editable}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Category</label>
+										</f:facet>
+										<br />
+										<h:selectOneMenu id="category" styleClass="form-control"
+											rendered="#{prod.editable}"
+											value="#{prod.productCategory.productCatid}"
+											requiredMessage="#{msg['requiered.categoryname.message']}">
+											<f:selectItem
+												itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+												itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+											<f:selectItems value="#{productController.categoryList}"
+												var="option" itemValue="#{option.productCatid}"
+												itemLabel="#{option.productCatName}" itemLabelEscaped="true" />
+
+										</h:selectOneMenu>
+										<h:message for="category" styleClass="help-block"></h:message>
+										<h:outputText value="#{prod.productCategory.productCatName}"
+											rendered="#{not prod.editable}" />
+
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Manufact date</label>
+										</f:facet>
+
+										<p:outputPanel rendered="#{prod.editable}">
+											<br />
+											<div class="cols-md-12">
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
+													<h:inputText locale="#{facesContext.viewRoot.locale}"
+														rendered="#{prod.editable}" autocomplete="off"
+														id="from_dob_date_idtable"
+														binding="#{from_dob_date_idtable}" class="form-control"
+														escape="true" value="#{prod.manufactDate}" maxlength="35"
+														required="true"
+														converterMessage="#{msg['validation.message.DATE_FORMAT']}"
+														requiredMessage="#{msg['endDate.message']}">
+														<f:convertDateTime type="date" dateType="short"
+															pattern="dd/MM/yyyy" />
+														<f:validateLength maximum="35" />
+													</h:inputText>
+													<script>
+														$(function() {
+															$(
+																	'input[id*="from_dob_date_idtable"]')
+																	.datepicker(
+																			{
+																				changeMonth : true,
+																				changeYear : true,
+																				//maxDate : 0,
+																				//minDate: 0,
+																				dateFormat : "dd/mm/yy",
+																				//yearRange : "-100:+0",
+																				buttonImage : "./resources/image/calendar1.png"
+																			});
+														});
+													</script>
+												</div>
+											</div>
+										</p:outputPanel>
+										<br />
+										<h:message errorClass="errorMsg1" for="from_dob_date_idtable"
+											style="font-size:12px;font-family:Time New Roman;"></h:message>
+										<h:outputText value="#{prod.manufactDate}"
+											rendered="#{not prod.editable}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Expired date</label>
+										</f:facet>
+										<p:outputPanel rendered="#{prod.editable}">
+											<br />
+											<div class="cols-md-12">
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
+													<h:inputText locale="#{facesContext.viewRoot.locale}"
+														rendered="#{prod.editable}" autocomplete="off"
+														id="from_dob_date_idtable2"
+														binding="#{from_dob_date_idtable2}" class="form-control"
+														escape="true" value="#{prod.expireDate}" maxlength="35"
+														required="true"
+														converterMessage="#{msg['validation.message.DATE_FORMAT']}"
+														requiredMessage="#{msg['endDate.message']}">
+														<f:convertDateTime type="date" dateType="short"
+															pattern="dd/MM/yyyy" />
+														<f:validateLength maximum="35" />
+													</h:inputText>
+													<script>
+														$(function() {
+															$(
+																	'input[id*="from_dob_date_idtable2"]')
+																	.datepicker(
+																			{
+																				changeMonth : true,
+																				changeYear : true,
+																				//maxDate : 0,
+																				//minDate: 0,
+																				dateFormat : "dd/mm/yy",
+																				//yearRange : "-100:+0",
+																				buttonImage : "./resources/image/calendar1.png"
+																			});
+														});
+													</script>
+												</div>
+											</div>
+										</p:outputPanel>
+										<br />
+										<h:message errorClass="errorMsg1" for="from_dob_date_idtable2"
+											style="font-size:12px;font-family:Time New Roman;"></h:message>
+										<h:outputText value="#{prod.expireDate}"
+											rendered="#{not prod.editable}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</h:column>
+
+									<h:column>
+										<f:facet name="header">
+											<label>Action</label>
+										</f:facet>
+										<div class="btn-group btn btn-sm" role="group"
+											aria-label="Basic example" style="margin-top: 5%;">
+											<h:commandLink style="color:white" data-toggle="tooltip"
+												data-placement="left"
+												title="#{msg['CategoryView.editButton']}"
+												class="btn btn-sm btn-success 	glyphicon glyphicon-edit"
+												action="#{productController.editAction(prod)}"
+												rendered="#{not prod.editable}" />
+
+											<h:commandLink style="color:white" data-toggle="tooltip"
+												data-placement="left"
+												title="#{msg['CategoryView.cancelButton']}"
+												class="btn btn-sm btn-danger glyphicon glyphicon-remove"
+												action="#{productController.cancel(prod)}"
+												rendered="#{prod.editable}">
+												<!-- <f:ajax rendered="@form" execute="@form"
+													onevent="showProgress" /> -->
+											</h:commandLink>
+
+											<h:commandLink
+												class="btn btn-sm btn-primary glyphicon glyphicon-floppy-disk"
+												style="color:white;" data-toggle="tooltip"
+												data-placement="right"
+												title="#{msg['CategoryView.savechangeButton']}"
+												action="#{productController.saveAction(prod)}"
+												rendered="#{prod.editable}">
+												<f:ajax render="@form" execute="@form"
+													onevent="showProgress" />
+
+											</h:commandLink>
+
+											<h:commandLink style="color:white" data-toggle="tooltip"
+												data-placement="left"
+												title="#{msg['productView.viewButton']}"
+												class="btn btn-sm btn-info glyphicon glyphicon-list"
+												action="#{productController.viewDetails(prod)}"
+												rendered="#{not prod.editable}">
+
+											</h:commandLink>
+											<h:commandLink
+												class="btn btn-sm btn-primary glyphicon glyphicon glyphicon-upload"
+												style="color:white;" data-toggle="tooltip"
+												data-placement="right"
+												title="#{msg['CategoryView.savechangeButton']}"
+												action="#{productController.uploadAction(prod)}">
+												<f:ajax render="@form" execute="@form"
+													onevent="showProgress" />
+
+											</h:commandLink>
+
+										</div>
+									</h:column>
+									<f:facet name="footer">
+
+									</f:facet>
+								</h:dataTable>
+
+
+							</div>
+						</p:outputPanel>
+						<!-- END OF ACTIVITIES VIEW -->
+						<p:outputPanel rendered="#{productController.renderDetails}"
+							autoUpdate="true">
+						<div class="card border-secondary mb-3 text-center" style="width: 25rem;margin-left:25%">
+							<div class="card-header">#{productController.uploadingFiles.product.productName}</div>
+							<div class="card-body">
+								<h5 class="card-title"><h:graphicImage style="width:30%;height:30%;margin:5px" class="img-xs rounded-circle" alt="productImage" 
+											value="/images/dynamic/?file=#{productController.uploadingFiles.documents.sysFilename}" /></h5>
+								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Product category:<label class=" text text-black" >#{productController.uploadingFiles.product.productCategory.productCatName}</label></p>			
+								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Purchase price:<label class=" text text-black">#{productController.totalprice}</label></p>
+								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Selling price:<label class=" text text-black">#{productController.salesprice}</label></p>
+								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Product Address:<label class=" text text-black">#{productController.uploadingFiles.product.branch.branchName}</label></p>
+								<a href="#" class="btn btn-primary">Go back</a>
+							</div>
+							<div class="card-footer text-muted"><p class="footer-text text-black pb-25" style="font: italic 13px/16px Georgia, serif;">
+							Copyright &copy;
+							<script>
+								document.write(new Date().getFullYear());
+							</script>
+							All rights reserved | This product with <i
+								class="glyphicon glyphicon-heart" aria-hidden="true"></i> by <a
+								href="https://colorlib.com" target="_blank">toka trading</a>
+						</p></div>
+						</div>
+						</p:outputPanel>
 					</h:form>
 
 

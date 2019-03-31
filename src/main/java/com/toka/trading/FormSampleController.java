@@ -32,13 +32,16 @@ import toka.common.UploadUtility;
 import toka.dao.impl.DocumentsImpl;
 import toka.dao.impl.MenuAssignmentImpl;
 import toka.dao.impl.MenuGroupImpl;
+import toka.dao.impl.ProductImpl;
 import toka.dao.impl.UploadingFilesImpl;
 import toka.dao.impl.UserImpl;
 import toka.domain.Documents;
 import toka.domain.MenuAssignment;
 import toka.domain.MenuGroup;
+import toka.domain.Product;
 import toka.domain.UploadingFiles;
 import toka.domain.Users;
+import toka.trading.dto.ProductDto;
 
 @ManagedBean
 @ViewScoped
@@ -55,7 +58,7 @@ public class FormSampleController implements Serializable, DbConstant {
 	private List<MenuGroup> menuGroupDetails = new ArrayList<MenuGroup>();
 
 	/* class injection */
-	GenerateNotificationTemplete gen = new GenerateNotificationTemplete();
+//	GenerateNotificationTemplete gen = new GenerateNotificationTemplete();
 	JSFBoundleProvider provider = new JSFBoundleProvider();
 	UserImpl usersImpl = new UserImpl();
 	MenuAssignmentImpl menuAssignmentImpl = new MenuAssignmentImpl();
@@ -66,7 +69,11 @@ public class FormSampleController implements Serializable, DbConstant {
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
 	private Documents documents;
 	private UploadingFiles uploadingFiles;
+	ProductDto prdto= new ProductDto();
 	private Users usersSession;
+	Product prdt= new Product();
+	ProductImpl prodImpl=new ProductImpl();
+	
 	private List<UploadingFiles>filesUploaded= new ArrayList<UploadingFiles>();
 	private DocumentsImpl docsImpl = new DocumentsImpl();
 	@SuppressWarnings("unchecked")
@@ -194,7 +201,69 @@ public class FormSampleController implements Serializable, DbConstant {
 		return "/menu/EditProfile.xhtml?faces-redirect=true";
 	}
 
-		
+	public String productFilesUpload(FileUploadEvent event) {
+
+		try {
+			LOGGER.info("user info::"+usersSession.getViewId());
+			if (null != usersSession) {
+				deleteExistImage();
+				ProductController prdtControl= new ProductController();
+				prdto=prdtControl.saveProductFiles();
+				LOGGER.info("ACTIVITY INFO :::::::::::::::"+prdto.getProductId());
+				prdt=prodImpl.getModelWithMyHQL(new String[] { " productId" },
+						new Object[] { prdto.getProductId()}, "from Product");
+				if(null!=prdt) {
+					UploadUtility ut = new UploadUtility();
+					String validationCode = "ProductImage";
+					documents = ut.fileUploadUtil(event, validationCode);
+						uploadingFiles.setProduct(prdt);
+						uploadingFiles.setUser(usersSession);
+						uploadingFiles.setDocuments(documents);
+						uploadingFiles.setCreatedBy(usersSession.getViewId());
+						uploadingFiles.setGenericStatus(ACTIVE);
+						uploadingFiles.setCrtdDtTime(timestamp);
+						uploadingFilesImpl.saveIntable(uploadingFiles);
+						LOGGER.info(CLASSNAME + event.getFile().getFileName() + "uploaded successfully ... ");
+						JSFMessagers.resetMessages();
+						setValid(true);
+						JSFMessagers.addInfoMessage(getProvider().getValue("com.server.side.productfile.success"));
+						/*addErrorMessage(getProvider().getValue("upload.message.success"));*/
+				}
+					return null;
+				}else {
+					JSFMessagers.resetMessages();
+					setValid(false);
+					JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.errorsession"));
+				}		
+		} catch (Exception e) {
+			LOGGER.info(CLASSNAME + "testing profile upload methode ");
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.activityfile.error"));
+			e.printStackTrace();
+		}
+		return "";
+	}
+	@SuppressWarnings("unchecked")
+	public List<UploadingFiles> productImageDetails(){
+
+		try {
+
+			ProductController prdtControl= new ProductController();
+			prdto=prdtControl.saveProductFiles();
+			Product product= new Product();
+			product=prodImpl.getProductById(prdto.getProductId(), "productId");
+			LOGGER.info("ACTIVITY INFO :::::::::::::::"+prdto.getProductId());
+			return uploadingFilesImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","product" },
+					new Object[] { ACTIVE,product}, "UploadingFiles","crtdDtTime desc");
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public void downloadFile() {
 		UploadUtility ut = new UploadUtility();
 		try {
@@ -217,39 +286,39 @@ public class FormSampleController implements Serializable, DbConstant {
 		return null;
 	}
 
-	public void sendMailTest() throws AddressException, MessagingException {
-		/* sending content in a table example */
-		String name = "Mukamana";
-		String fname = "Eric";
-
-		String msg = "<p>Kindly refer to the  below status.</p>" + "<table width=\"50%\" border=\"5px\">\n"
-				+ "  <tbody>\n" + "	<tr>\n" + "      <td class=\"labelbold\">Fname</td>\n" + "      <td>\n" + "		  "
-				+ name + "\n" + "	  </td>\n" + "    </tr>\n" + "	<tr>\n"
-				+ "      <td class=\"labelbold\">Lname</td>\n" + "      <td>\n" + "		  " + fname + "\n"
-				+ "	  </td>\n"
-
-				+ "  </tbody>\n" + "</table>\n";
-		/* End send content in table sample */
-		gen.sendEmailNotification("sibo2540@gmail.com", "Sibo Emma", "Test Email", msg);
-		LOGGER.info("::: notidficatio sent   ");
-	}
-
-	public void sendUserMailTest(String useremail, String userfname, String userlname) throws AddressException, MessagingException {
-		/* sending content in a table example */
-		String name = "Mukamana";
-		String fname = "Eric";
-
-		String msg = "<p>Kindly refer to the  below status.</p>" + "<table width=\"50%\" border=\"5px\">\n"
-				+ "  <tbody>\n" + "	<tr>\n" + "      <td class=\"labelbold\">Fname</td>\n" + "      <td>\n" + "		  "
-				+ name + "\n" + "	  </td>\n" + "    </tr>\n" + "	<tr>\n"
-				+ "      <td class=\"labelbold\">Lname</td>\n" + "      <td>\n" + "		  " + fname + "\n"
-				+ "	  </td>\n"
-
-				+ "  </tbody>\n" + "</table>\n";
-		/* End send content in table sample */
-		gen.sendEmailNotification(useremail, userfname + " " + userlname, "Test Email", msg);
-		LOGGER.info("::: notidficatio sent   ");
-	}
+//	public void sendMailTest() throws AddressException, MessagingException {
+//		/* sending content in a table example */
+//		String name = "Mukamana";
+//		String fname = "Eric";
+//
+//		String msg = "<p>Kindly refer to the  below status.</p>" + "<table width=\"50%\" border=\"5px\">\n"
+//				+ "  <tbody>\n" + "	<tr>\n" + "      <td class=\"labelbold\">Fname</td>\n" + "      <td>\n" + "		  "
+//				+ name + "\n" + "	  </td>\n" + "    </tr>\n" + "	<tr>\n"
+//				+ "      <td class=\"labelbold\">Lname</td>\n" + "      <td>\n" + "		  " + fname + "\n"
+//				+ "	  </td>\n"
+//
+//				+ "  </tbody>\n" + "</table>\n";
+//		/* End send content in table sample */
+//		gen.sendEmailNotification("sibo2540@gmail.com", "Sibo Emma", "Test Email", msg);
+//		LOGGER.info("::: notidficatio sent   ");
+//	}
+//
+//	public void sendUserMailTest(String useremail, String userfname, String userlname) throws AddressException, MessagingException {
+//		/* sending content in a table example */
+//		String name = "Mukamana";
+//		String fname = "Eric";
+//
+//		String msg = "<p>Kindly refer to the  below status.</p>" + "<table width=\"50%\" border=\"5px\">\n"
+//				+ "  <tbody>\n" + "	<tr>\n" + "      <td class=\"labelbold\">Fname</td>\n" + "      <td>\n" + "		  "
+//				+ name + "\n" + "	  </td>\n" + "    </tr>\n" + "	<tr>\n"
+//				+ "      <td class=\"labelbold\">Lname</td>\n" + "      <td>\n" + "		  " + fname + "\n"
+//				+ "	  </td>\n"
+//
+//				+ "  </tbody>\n" + "</table>\n";
+//		/* End send content in table sample */
+//		gen.sendEmailNotification(useremail, userfname + " " + userlname, "Test Email", msg);
+//		LOGGER.info("::: notidficatio sent   ");
+//	}
 
 	public void saveData() {
 		LOGGER.info(CLASSNAME + "testing save methode ");
@@ -406,6 +475,30 @@ public class FormSampleController implements Serializable, DbConstant {
 
 	public void setDocsImpl(DocumentsImpl docsImpl) {
 		this.docsImpl = docsImpl;
+	}
+
+	public ProductDto getPrdto() {
+		return prdto;
+	}
+
+	public void setPrdto(ProductDto prdto) {
+		this.prdto = prdto;
+	}
+
+	public Product getPrdt() {
+		return prdt;
+	}
+
+	public void setPrdt(Product prdt) {
+		this.prdt = prdt;
+	}
+
+	public ProductImpl getProdImpl() {
+		return prodImpl;
+	}
+
+	public void setProdImpl(ProductImpl prodImpl) {
+		this.prodImpl = prodImpl;
 	}
 
 }

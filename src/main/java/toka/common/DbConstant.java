@@ -150,4 +150,5 @@ public interface DbConstant {
 	public static final String FILELOCATIONUNIX = "Vfp_Document//";
 	public static final int defaultCount=0;
 	public static final int incrementCount=1;
+	public static final double decimalpoint=0.0;
 }

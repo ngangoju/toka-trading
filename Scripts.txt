@@ -77,3 +77,6 @@ values(now(),'active','Profile management','Url15','/menu/ViewProfile.xhtml',nul
 
 insert into listofmenu (crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) 
 values(now(),'active','Profile management','Url16','/menu/ViewProfile.xhtml',null,7);
+
+insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Product management','Url08','/menu/NewProduct.xhtml',null,11);
+insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,17,3);

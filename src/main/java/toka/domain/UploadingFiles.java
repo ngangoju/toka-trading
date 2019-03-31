@@ -27,6 +27,17 @@ public class UploadingFiles extends CommonDomain implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "user")
 	private Users user;
+	@ManyToOne
+	@JoinColumn(name = "product")
+	private Product product;
+	
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
 
 	public long getUpLoadId() {
 		return upLoadId;
