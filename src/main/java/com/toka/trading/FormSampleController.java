@@ -32,6 +32,7 @@ import toka.common.UploadUtility;
 import toka.dao.impl.DocumentsImpl;
 import toka.dao.impl.MenuAssignmentImpl;
 import toka.dao.impl.MenuGroupImpl;
+import toka.dao.impl.ProductCategoryImpl;
 import toka.dao.impl.ProductImpl;
 import toka.dao.impl.UploadingFilesImpl;
 import toka.dao.impl.UserImpl;
@@ -39,6 +40,7 @@ import toka.domain.Documents;
 import toka.domain.MenuAssignment;
 import toka.domain.MenuGroup;
 import toka.domain.Product;
+import toka.domain.ProductCategory;
 import toka.domain.UploadingFiles;
 import toka.domain.Users;
 import toka.trading.dto.ProductDto;
@@ -73,7 +75,8 @@ public class FormSampleController implements Serializable, DbConstant {
 	private Users usersSession;
 	Product prdt= new Product();
 	ProductImpl prodImpl=new ProductImpl();
-	
+	ProductCategory prodCat= new ProductCategory();
+	ProductCategoryImpl prodCatImpl= new ProductCategoryImpl();
 	private List<UploadingFiles>filesUploaded= new ArrayList<UploadingFiles>();
 	private DocumentsImpl docsImpl = new DocumentsImpl();
 	@SuppressWarnings("unchecked")
@@ -224,6 +227,9 @@ public class FormSampleController implements Serializable, DbConstant {
 						uploadingFiles.setCrtdDtTime(timestamp);
 						uploadingFilesImpl.saveIntable(uploadingFiles);
 						LOGGER.info(CLASSNAME + event.getFile().getFileName() + "uploaded successfully ... ");
+						prdt.setProductImage(event.getFile().getFileName());
+						prodImpl.UpdateProduct(prdt);
+						LOGGER.info(":::::PRODUCT IMAGE NAME UPDATED!!::::::");
 						JSFMessagers.resetMessages();
 						setValid(true);
 						JSFMessagers.addInfoMessage(getProvider().getValue("com.server.side.productfile.success"));
@@ -244,6 +250,71 @@ public class FormSampleController implements Serializable, DbConstant {
 		}
 		return "";
 	}
+	public String productCategoryFilesUpload(FileUploadEvent event) {
+
+		try {
+			LOGGER.info("user info::"+usersSession.getViewId());
+			if (null != usersSession) {
+				deleteExistImage();
+				ProductCategoryController prdtCatControl= new ProductCategoryController();
+				prodCat=prdtCatControl.saveProductCategoryFiles();
+				LOGGER.info("CAT INFO :::::::::::::::"+prodCat.getProductCatid());
+				
+				if(null!=prodCat) {
+					UploadUtility ut = new UploadUtility();
+					String validationCode = "ProductCategoryImage";
+					documents = ut.fileUploadUtil(event, validationCode);
+						uploadingFiles.setProductCategory(prodCat);;
+						uploadingFiles.setUser(usersSession);
+						uploadingFiles.setDocuments(documents);
+						uploadingFiles.setCreatedBy(usersSession.getViewId());
+						uploadingFiles.setGenericStatus(ACTIVE);
+						uploadingFiles.setCrtdDtTime(timestamp);
+						uploadingFilesImpl.saveIntable(uploadingFiles);
+						LOGGER.info(CLASSNAME + event.getFile().getFileName() + "uploaded successfully ... ");
+						prodCat.setCategoryImage(event.getFile().getFileName());
+						prodCatImpl.UpdateProductCategory(prodCat);
+						LOGGER.info(":::::PRODUCT CATEGGORY IMAGE NAME UPDATED!!::::::");
+						JSFMessagers.resetMessages();
+						setValid(true);
+						JSFMessagers.addInfoMessage(getProvider().getValue("com.server.side.productfile.success"));
+						/*addErrorMessage(getProvider().getValue("upload.message.success"));*/
+				}
+					return null;
+				}else {
+					JSFMessagers.resetMessages();
+					setValid(false);
+					JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.errorsession"));
+				}		
+		} catch (Exception e) {
+			LOGGER.info(CLASSNAME + "testing profile upload methode ");
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.activityfile.error"));
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<UploadingFiles> productCategoryImageDetails(){
+
+		try {
+
+			ProductCategoryController prdtCatControl= new ProductCategoryController();
+			prodCat=prdtCatControl.saveProductCategoryFiles();
+			LOGGER.info("CATEGRY INFO :::::::::::::::"+prodCat.getProductCatid());
+			return uploadingFilesImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","productCategory" },
+					new Object[] { ACTIVE,prodCat}, "UploadingFiles","crtdDtTime desc");
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<UploadingFiles> productImageDetails(){
 

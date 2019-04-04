@@ -511,13 +511,14 @@
 												class="btn btn-sm btn-info glyphicon glyphicon-list"
 												action="#{productController.viewDetails(prod)}"
 												rendered="#{not prod.editable}">
-
+												<f:ajax render="@form" execute="@form"
+												onevent="showProgress" />
 											</h:commandLink>
 											<h:commandLink
 												class="btn btn-sm btn-primary glyphicon glyphicon glyphicon-upload"
 												style="color:white;" data-toggle="tooltip"
 												data-placement="right"
-												title="#{msg['CategoryView.savechangeButton']}"
+												title="#{msg['productView.uploadButton']}"
 												action="#{productController.uploadAction(prod)}">
 												<f:ajax render="@form" execute="@form"
 													onevent="showProgress" />
@@ -546,7 +547,7 @@
 								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Purchase price:<label class=" text text-black">#{productController.totalprice}</label></p>
 								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Selling price:<label class=" text text-black">#{productController.salesprice}</label></p>
 								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Product Address:<label class=" text text-black">#{productController.uploadingFiles.product.branch.branchName}</label></p>
-								<a href="#" class="btn btn-primary">Go back</a>
+								<a href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml" class="btn btn-primary">Go back</a>
 							</div>
 							<div class="card-footer text-muted"><p class="footer-text text-black pb-25" style="font: italic 13px/16px Georgia, serif;">
 							Copyright &copy;

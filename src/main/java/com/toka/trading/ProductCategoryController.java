@@ -23,13 +23,18 @@ import org.hibernate.HibernateException;
 import toka.common.DbConstant;
 import toka.common.JSFMessagers;
 import toka.common.SessionUtils;
+import toka.dao.impl.DocumentsImpl;
 import toka.dao.impl.ProductCategoryImpl;
 import toka.dao.impl.ProductImpl;
+import toka.dao.impl.UploadingFilesImpl;
 import toka.domain.Contact;
+import toka.domain.Documents;
 import toka.domain.Product;
 import toka.domain.ProductCategory;
+import toka.domain.UploadingFiles;
 import toka.domain.Users;
 import toka.trading.dto.ProductCategoryDtos;
+import toka.trading.dto.ProductDto;
 import toka.common.JSFBoundleProvider;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
@@ -51,6 +56,10 @@ public class ProductCategoryController implements Serializable, DbConstant {
 	ProductCategoryImpl categoryImpl = new ProductCategoryImpl();
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
 	JSFBoundleProvider provider = new JSFBoundleProvider();
+	private Documents document;
+	private DocumentsImpl docsImpl = new DocumentsImpl();
+	private UploadingFiles uploadingFiles;
+	private UploadingFilesImpl uplActImpl = new UploadingFilesImpl();
 
 	@SuppressWarnings("unchecked")
 	@PostConstruct
@@ -113,6 +122,7 @@ public class ProductCategoryController implements Serializable, DbConstant {
 	}
 	public String saveNewProductCategory() {
 		try {
+			HttpSession sessionuser = SessionUtils.getSession();
 
 			try {
 				if (null != category.getProductCatName()) {	
@@ -145,8 +155,15 @@ public class ProductCategoryController implements Serializable, DbConstant {
 				setValid(true); 
 				JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.productcategory"));
 				
-			clearContactFuileds();
-			return null;
+			if (null != category) {
+				// Session creation to get user info from dataTable row
+				sessionuser.setAttribute("CatImage", category);
+				LOGGER.info("Info Founded are product:>>>>>>>>>>>>>>>>>>>>>>>:" + category.getProductCatName() + "ID:"
+						+ category.getProductCatid());
+			}
+			//clearContactFuileds();
+			return "/menu/CategoryImageUpload.xhtml?faces-redirect=true";
+			
 
 		}catch(HibernateException e)
 		{
@@ -158,6 +175,49 @@ public class ProductCategoryController implements Serializable, DbConstant {
 		e.printStackTrace();
 		return "";
 	}
+	}
+	public String deleteFile(UploadingFiles info) {
+		try {
+			ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+			String realPath = ctx.getRealPath("/");
+			LOGGER.info("Filse Reals Path::::" + realPath);
+			Documents documents = new Documents();
+			documents = docsImpl.getModelWithMyHQL(new String[] { "DocId" },
+					new Object[] { info.getDocuments().getDocId() }, " from Documents");
+
+			if (null != documents) {
+				final Path destination = Paths.get(realPath + FILELOCATION + documents.getSysFilename());
+				LOGGER.info("Path::" + destination);
+				File file = new File(destination.toString());
+				uplActImpl.deleteIntable(info);
+				docsImpl.deleteIntable(documents);
+				LOGGER.info("Delete in db operation done!!!:");
+				if (file.delete()) {
+					System.out.println(file.getName() + " is deleted!");
+					JSFMessagers.resetMessages();
+					setValid(true);
+					JSFMessagers.addErrorMessage(getProvider().getValue("com.server.success.files.delete"));
+				} else {
+					System.out.println("Delete operation is failed.");
+					JSFMessagers.resetMessages();
+					setValid(false);
+					JSFMessagers.addErrorMessage(getProvider().getValue("com.server.error.files.delete"));
+				}
+
+			}
+
+		} catch (Exception e) {
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
+		}
+		return null;
+	}
+	public ProductCategory saveProductCategoryFiles() {
+		HttpSession session = SessionUtils.getSession();
+		// Get the values from the session
+		category = (ProductCategory) session.getAttribute("CatImage");
+		return (category);
 	}
 
 	public String editAction(ProductCategoryDtos cat) {
@@ -298,4 +358,37 @@ public class ProductCategoryController implements Serializable, DbConstant {
 	public void setCategoryListDto(List<ProductCategoryDtos> categoryListDto) {
 		this.categoryListDto = categoryListDto;
 	}
+
+	public Documents getDocument() {
+		return document;
+	}
+
+	public void setDocument(Documents document) {
+		this.document = document;
+	}
+
+	public DocumentsImpl getDocsImpl() {
+		return docsImpl;
+	}
+
+	public void setDocsImpl(DocumentsImpl docsImpl) {
+		this.docsImpl = docsImpl;
+	}
+
+	public UploadingFiles getUploadingFiles() {
+		return uploadingFiles;
+	}
+
+	public void setUploadingFiles(UploadingFiles uploadingFiles) {
+		this.uploadingFiles = uploadingFiles;
+	}
+
+	public UploadingFilesImpl getUplActImpl() {
+		return uplActImpl;
+	}
+
+	public void setUplActImpl(UploadingFilesImpl uplActImpl) {
+		this.uplActImpl = uplActImpl;
+	}
+	
 }

@@ -22,6 +22,8 @@ public class ProductCategory extends CommonDomain implements Serializable {
 	private int productCatid;
 	@Column(name = "productCatName", unique = true)
 	private String productCatName;
+	@Column(name = "categoryImage")
+	private String categoryImage;
 	@Transient
 	private String action;
 	public int getProductCatid() {
@@ -41,6 +43,12 @@ public class ProductCategory extends CommonDomain implements Serializable {
 	}
 	public void setAction(String action) {
 		this.action = action;
+	}
+	public String getCategoryImage() {
+		return categoryImage;
+	}
+	public void setCategoryImage(String categoryImage) {
+		this.categoryImage = categoryImage;
 	}
 	
 }

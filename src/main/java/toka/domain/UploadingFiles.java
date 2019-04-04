@@ -30,6 +30,9 @@ public class UploadingFiles extends CommonDomain implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "product")
 	private Product product;
+	@ManyToOne
+	@JoinColumn(name = "productCategory")
+	private ProductCategory productCategory;
 	
 	public Product getProduct() {
 		return product;
@@ -63,4 +66,11 @@ public class UploadingFiles extends CommonDomain implements Serializable {
 		this.user = user;
 	}
 
+	public ProductCategory getProductCategory() {
+		return productCategory;
+	}
+
+	public void setProductCategory(ProductCategory productCategory) {
+		this.productCategory = productCategory;
+	}
 }

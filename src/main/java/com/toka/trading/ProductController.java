@@ -236,16 +236,23 @@ public class ProductController implements Serializable, DbConstant {
 
 	public String viewDetails(ProductDto prod) throws Exception {
 		LOGGER.info(":::Product Info::" + prod.getProductId());
-		this.rendered = false;
-		this.renderDetails = true;
 		Product product = new Product();
 		product = productImpl.getProductById(prod.getProductId(), "productId");
 		uploadingFiles = uplActImpl.getModelWithMyHQL(new String[] { "product" }, new Object[] { product },
 				"from UploadingFiles");
-		LOGGER.info(
-				"::::Product Details:" + uploadingFiles.getProduct() + ":Documents::" + uploadingFiles.getDocuments());
+//		LOGGER.info(
+//				"::::Product Details:" + uploadingFiles.getProduct() + ":Documents::" + uploadingFiles.getDocuments());
+		if(null!=uploadingFiles) {
 		totalprice = totalPrice(prod);
 		salesprice = sellingPrice(prod);
+		this.rendered = false;
+		this.renderDetails = true;
+		}
+		else {
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.error.failtoload.productdetails"));
+		}
 		return null;
 	}
 
@@ -254,8 +261,16 @@ public class ProductController implements Serializable, DbConstant {
 	}
 
 	public double sellingPrice(ProductDto prod) {
-		return (Double.parseDouble(prod.getQuantity()) * Double.parseDouble(prod.getSellingUnitPrice()));
+		if(defaultCount!=Double.parseDouble(prod.getSellingUnitPrice())){
+			return (Double.parseDouble(prod.getQuantity()) * Double.parseDouble(prod.getSellingUnitPrice()));
+		}else {
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.error.failtoload.productdetails"));
+		}
+		return defaultCount;
 	}
+		
 
 	public String saveSalesPriceAction(ProductDto prod) {
 		try {

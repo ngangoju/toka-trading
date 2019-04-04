@@ -12,7 +12,7 @@ public class ProductCategoryDtos   implements Serializable {
 	private String action;
 	private String status;
 	private String createdBy;
-	
+	private String categoryImage;
 	public String getCreatedBy() {
 		return createdBy;
 	}
@@ -67,5 +67,13 @@ public class ProductCategoryDtos   implements Serializable {
 
 	public void setNotify(boolean notify) {
 		this.notify = notify;
+	}
+
+	public String getCategoryImage() {
+		return categoryImage;
+	}
+
+	public void setCategoryImage(String categoryImage) {
+		this.categoryImage = categoryImage;
 	}
 }
