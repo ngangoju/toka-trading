@@ -80,3 +80,10 @@ values(now(),'active','Profile management','Url16','/menu/ViewProfile.xhtml',nul
 
 insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Product management','Url08','/menu/NewProduct.xhtml',null,11);
 insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,17,3);
+
+insert into listofmenu (crtdDtTime,genericStatus,description,iconImage,menucolor,urlCode,urlName,listOfMenu,menuGroup) values
+(now(),'active','Available Branch','glyphicon glyphicon-list-alt','blue2','Url18','/menu/BranchList.xhtml',null,7);
+insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) 
+values(now(),'active',null,18,4);
+
+BranchList.xhtml

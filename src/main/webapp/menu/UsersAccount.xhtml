@@ -83,7 +83,7 @@
 											<h:selectOneMenu id="countryId" styleClass="form-control"
 												value="#{userAccountController.choice}">
 												<p:ajax listener="#{userAccountController.updateTable()}"
-													update="ProvincePanel,DistrictPanel,SectorPanel,toUpdate,CellPanel,VillagePanel
+													update="ProvincePanel,DistrictPanel,toUpdate
 										,secondPanel,tochange,firstPanel,FnamePanel,LnamePanel,genderPanel,addressPanel,fromDatePanel,surnamePanl,PasswordPanl,ConfpasswordPanl,CategoryPanel,BoardPanel,FourthPanel,tobutton,ButtonPanel" />
 												<f:ajax onevent="showProgress" />
 												<!-- <f:selectItem itemLabel="Select the country"
@@ -94,7 +94,7 @@
 												<f:selectItem
 													itemLabel="#{msg['institutionForm.select.PLACEHOLDER']}"
 													itemValue="#{null}" escapeItem="true" itemDisabled="false" />
-												<f:selectItems value="#{institutionController.countries}"
+												<f:selectItems value="#{branchController.countries}"
 													var="option" itemValue="#{option.countryName_en}"
 													itemLabel="#{option.countryName_en}"
 													itemLabelEscaped="true" />
@@ -172,68 +172,7 @@
 												<h:message for="Dist" styleClass="help-block"></h:message>
 											</div>
 										</h:panelGroup>
-										<h:panelGroup id="SectorPanel" layout="block">
-											<div class="form-group row"
-												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
-												<label for="todate"
-													class="col-md-2 col-sm-2 col-xs-2 control-label"
-													style="color: black">#{msg['label.message.sector']}<span
-													style="color: red">*</span></label>
-												<div class="col-md-6 col-sm-6 col-xs-6">
-													<h:selectOneMenu id="sect" styleClass="form-control"
-														style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
-														required="true" value="#{userAccountController.sectorId}"
-														requiredMessage="#{msg['requiered.sector.message']}">
-														<f:selectItem
-															itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
-															itemValue="#{null}" escapeItem="true"
-															itemDisabled="false" />
-														<f:selectItems
-															value="#{userAccountController.sectorByDistrict}"
-															var="option" itemValue="#{option.sectorId}"
-															itemLabel="#{option.sectorName_en}"
-															itemLabelEscaped="true" />
-														<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
-														<f:ajax listener="#{userAccountController.changeCell()}"
-															render="cel" onevent="showProgress" />
-
-													</h:selectOneMenu>
-												</div>
-												<h:message for="sect" styleClass="help-block"></h:message>
-											</div>
-										</h:panelGroup>
-										<h:panelGroup id="CellPanel" layout="block">
-											<div class="form-group row"
-												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
-												<label for="todate"
-													class="col-md-2 col-sm-2 col-xs-2 control-label"
-													style="color: black">#{msg['label.message.cell']}<span
-													style="color: red">*</span></label>
-												<div class="col-md-6 col-sm-6 col-xs-6">
-
-													<h:selectOneMenu id="cell" styleClass="form-control"
-														style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
-														required="true" value="#{userAccountController.cellId}"
-														requiredMessage="#{msg['requiered.cel.message']}">
-														<f:selectItem
-															itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
-															itemValue="#{null}" escapeItem="true"
-															itemDisabled="false" />
-														<f:selectItems
-															value="#{userAccountController.cellBySector}"
-															var="option" itemValue="#{option.cellId}"
-															itemLabel="#{option.cellName_en}" itemLabelEscaped="true" />
-														<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
-														<f:ajax
-															listener="#{userAccountController.changeVillage()}"
-															render="vil" onevent="showProgress" />
-
-													</h:selectOneMenu>
-												</div>
-												<h:message for="cell" styleClass="help-block"></h:message>
-											</div>
-										</h:panelGroup>
-										<h:panelGroup id="VillagePanel" layout="block">
+										<h:panelGroup>
 											<div class="form-group row"
 												style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
 												<label for="todate"
