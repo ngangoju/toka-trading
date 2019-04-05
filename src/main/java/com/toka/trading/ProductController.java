@@ -24,11 +24,13 @@ import toka.common.DbConstant;
 import toka.common.JSFMessagers;
 import toka.common.SessionUtils;
 import toka.dao.impl.DocumentsImpl;
+import toka.dao.impl.PerishedProductImpl;
 import toka.dao.impl.ProductCategoryImpl;
 import toka.dao.impl.ProductImpl;
 import toka.dao.impl.UploadingFilesImpl;
 import toka.domain.Contact;
 import toka.domain.Documents;
+import toka.domain.PerishedProduct;
 import toka.domain.Product;
 import toka.domain.ProductCategory;
 import toka.domain.UploadingFiles;
@@ -49,6 +51,8 @@ public class ProductController implements Serializable, DbConstant {
 	private boolean isValid;
 	private Users usersSession;
 	private Product product;
+	private PerishedProduct perished;
+	private String perishedQuantity;
 	private ProductCategory category;
 	private boolean rendered, renderProductForm, renderDetails;
 	private List<Product> productList = new ArrayList<Product>();
@@ -56,8 +60,10 @@ public class ProductController implements Serializable, DbConstant {
 	private List<ProductCategory> categoryList = new ArrayList<ProductCategory>();
 	private List<ProductDto> prodDto = new ArrayList<ProductDto>();
 	private List<UploadingFiles> filesUploaded = new ArrayList<UploadingFiles>();
+	private List<PerishedProduct>perishedList=new ArrayList<PerishedProduct>();
 	ProductDto pdto = new ProductDto();
 	ProductImpl productImpl = new ProductImpl();
+	PerishedProductImpl perishImpl= new PerishedProductImpl();
 	ProductCategoryImpl categoryImpl = new ProductCategoryImpl();
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
 	JSFBoundleProvider provider = new JSFBoundleProvider();
@@ -66,7 +72,7 @@ public class ProductController implements Serializable, DbConstant {
 	private UploadingFiles uploadingFiles;
 	private UploadingFilesImpl uplActImpl = new UploadingFilesImpl();
 
-	private Date manufDate, expDate;
+	private Date manufDate, expDate,perishedDate;
 	private int productCatid;
 	private String unitprice;
 	private String quantity;
@@ -80,6 +86,9 @@ public class ProductController implements Serializable, DbConstant {
 		usersSession = (Users) session.getAttribute("userSession");
 		if (product == null) {
 			product = new Product();
+		}
+		if(perished==null) {
+			perished= new PerishedProduct();
 		}
 		try {
 
@@ -240,15 +249,15 @@ public class ProductController implements Serializable, DbConstant {
 		product = productImpl.getProductById(prod.getProductId(), "productId");
 		uploadingFiles = uplActImpl.getModelWithMyHQL(new String[] { "product" }, new Object[] { product },
 				"from UploadingFiles");
-//		LOGGER.info(
-//				"::::Product Details:" + uploadingFiles.getProduct() + ":Documents::" + uploadingFiles.getDocuments());
-		if(null!=uploadingFiles) {
-		totalprice = totalPrice(prod);
-		salesprice = sellingPrice(prod);
-		this.rendered = false;
-		this.renderDetails = true;
-		}
-		else {
+		// LOGGER.info(
+		// "::::Product Details:" + uploadingFiles.getProduct() + ":Documents::" +
+		// uploadingFiles.getDocuments());
+		if (null != uploadingFiles) {
+			totalprice = totalPrice(prod);
+			salesprice = sellingPrice(prod);
+			this.rendered = false;
+			this.renderDetails = true;
+		} else {
 			JSFMessagers.resetMessages();
 			setValid(false);
 			JSFMessagers.addErrorMessage(getProvider().getValue("com.error.failtoload.productdetails"));
@@ -261,16 +270,15 @@ public class ProductController implements Serializable, DbConstant {
 	}
 
 	public double sellingPrice(ProductDto prod) {
-		if(defaultCount!=Double.parseDouble(prod.getSellingUnitPrice())){
+		if (defaultCount != Double.parseDouble(prod.getSellingUnitPrice())) {
 			return (Double.parseDouble(prod.getQuantity()) * Double.parseDouble(prod.getSellingUnitPrice()));
-		}else {
+		} else {
 			JSFMessagers.resetMessages();
 			setValid(false);
 			JSFMessagers.addErrorMessage(getProvider().getValue("com.error.failtoload.productdetails"));
 		}
 		return defaultCount;
 	}
-		
 
 	public String saveSalesPriceAction(ProductDto prod) {
 		try {
@@ -373,6 +381,57 @@ public class ProductController implements Serializable, DbConstant {
 					+ dtos.getProductId());
 		}
 		return "/menu/ProductImageUpload.xhtml?faces-redirect=true";
+	}
+	public String perishableProductAction(ProductDto dtos) {
+		HttpSession sessionuser = SessionUtils.getSession();
+
+		if (null != dtos) {
+			// Session creation to get user info from dataTable row
+			product=productImpl.getProductById(dtos.getProductId(), "productId");
+			sessionuser.setAttribute("perished", product);
+			LOGGER.info("Info Founded are product:>>>>>>>>>>>>>>>>>>>>>>>:" + dtos.getProductName() + "ID:"
+					+ dtos.getProductId());
+		}
+		return "/menu/PerishableProduct.xhtml?faces-redirect=true";
+	}
+
+	public void managePerishableProduct() {
+		try {
+		
+		HttpSession session = SessionUtils.getSession();
+		// Get the values from the session
+		product = (Product) session.getAttribute("perished");
+		LOGGER.info("Perished Quantity:::"+perishedQuantity);
+		if(product!=null) {
+			product.setQuantity(product.getQuantity()-Integer.parseInt(perishedQuantity));
+			productImpl.UpdateProduct(product);
+			perished.setCrtdDtTime(timestamp);
+			perished.setGenericStatus(ACTIVE);
+			perished.setUpDtTime(timestamp);
+			perished.setCreatedBy(usersSession.getViewId());
+			perished.setProduct(product);
+			perished.setQuantity(Integer.parseInt(perishedQuantity));
+			perished.setPerichedDate(new java.sql.Date(perishedDate.getTime()));
+			perishImpl.savePerishedProduct(perished);
+			LOGGER.info("INFO SAVED!!!");
+			JSFMessagers.resetMessages();
+			setValid(true);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.productPerished"));
+		}else {
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.productfailPerished"));
+		}
+		
+		} catch (HibernateException e) {
+			LOGGER.info(CLASSNAME + ":::Product perishable Details is fail with HibernateException  error");
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.fail.form.productPerished"));
+			LOGGER.info(CLASSNAME + "" + e.getMessage());
+			e.printStackTrace();
+		}
+		
 	}
 
 	public ProductDto saveProductFiles() {
@@ -652,4 +711,36 @@ public class ProductController implements Serializable, DbConstant {
 		this.salesprice = salesprice;
 	}
 
+	public PerishedProduct getPerished() {
+		return perished;
+	}
+
+	public void setPerished(PerishedProduct perished) {
+		this.perished = perished;
+	}
+
+	public List<PerishedProduct> getPerishedList() {
+		return perishedList;
+	}
+
+	public void setPerishedList(List<PerishedProduct> perishedList) {
+		this.perishedList = perishedList;
+	}
+
+	public String getPerishedQuantity() {
+		return perishedQuantity;
+	}
+
+	public void setPerishedQuantity(String perishedQuantity) {
+		this.perishedQuantity = perishedQuantity;
+	}
+
+	public Date getPerishedDate() {
+		return perishedDate;
+	}
+
+	public void setPerishedDate(Date perishedDate) {
+		this.perishedDate = perishedDate;
+	}
+	
 }

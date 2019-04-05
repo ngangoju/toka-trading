@@ -219,7 +219,6 @@ public class ProductCategoryController implements Serializable, DbConstant {
 		category = (ProductCategory) session.getAttribute("CatImage");
 		return (category);
 	}
-
 	public String editAction(ProductCategoryDtos cat) {
 		cat.setEditable(true);
 		return null;

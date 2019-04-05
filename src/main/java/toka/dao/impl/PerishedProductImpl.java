@@ -10,8 +10,8 @@ import toka.domain.PerishedProduct;
 public class PerishedProductImpl extends AbstractDao<Long, PerishedProduct> implements IPerishedProduct {
 	private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
 
-	public PerishedProduct savePerishedProduct(PerishedProduct PerishedProduct) {
-		return saveIntable(PerishedProduct);
+	public PerishedProduct savePerishedProduct(PerishedProduct perishedProduct) {
+		return saveIntable(perishedProduct);
 	}
 
 	public List<PerishedProduct> getListPerishedProduct() {

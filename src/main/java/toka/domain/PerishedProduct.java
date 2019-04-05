@@ -30,7 +30,7 @@ public class PerishedProduct extends CommonDomain implements Serializable {
 	private Product product;
 
 	@Column(name = "quantity")
-	private String quantity;
+	private int quantity;
 
 	@Column(name = "perichedDate", columnDefinition = "DATETIME")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -51,12 +51,12 @@ public class PerishedProduct extends CommonDomain implements Serializable {
 	public void setProduct(Product product) {
 		this.product = product;
 	}
-
-	public String getQuantity() {
+	
+	public int getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(String quantity) {
+	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
 

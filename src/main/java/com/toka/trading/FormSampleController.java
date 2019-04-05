@@ -141,6 +141,66 @@ public class FormSampleController implements Serializable, DbConstant {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public void deleteExistCategoryImage(ProductCategory cat) throws Exception {
+		ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+		String realPath = ctx.getRealPath("/");
+		LOGGER.info("Filse Reals Path::::" + realPath);
+		if(null != cat) {
+			filesUploaded=uploadingFilesImpl.getGenericListWithHQLParameter(new String[] { "genericStatus", "productCategory"},
+					new Object[] { ACTIVE, cat},
+					"UploadingFiles", "uploadId asc");
+			
+			for(UploadingFiles files:filesUploaded) {
+				Documents doc = new Documents();
+				doc = docsImpl.getModelWithMyHQL(new String[] { "DocId" },
+						new Object[] { files.getDocuments().getDocId()}, " from Documents");
+				final Path destination = Paths.get(realPath + FILELOCATION + doc.getSysFilename());
+				LOGGER.info("Path::" + destination);
+				File file = new File(destination.toString());
+				uploadingFilesImpl.deleteIntable(files);
+				docsImpl.deleteIntable(documents);
+				LOGGER.info("Delete in db operation done!!!:");
+				if (file.delete()) {
+					System.out.println(file.getName() + " is deleted!");		
+				} else {
+					System.out.println("Delete operation is failed.");
+					
+				}
+			}
+			
+		}
+	}
+	@SuppressWarnings("unchecked")
+	public void deleteExistProductImage(Product product) throws Exception {
+		ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+		String realPath = ctx.getRealPath("/");
+		LOGGER.info("Filse Reals Path::::" + realPath);
+		if(null != product) {
+			filesUploaded=uploadingFilesImpl.getGenericListWithHQLParameter(new String[] { "genericStatus", "product"},
+					new Object[] { ACTIVE, product},
+					"UploadingFiles", "uploadId asc");
+			
+			for(UploadingFiles files:filesUploaded) {
+				Documents doc = new Documents();
+				doc = docsImpl.getModelWithMyHQL(new String[] { "DocId" },
+						new Object[] { files.getDocuments().getDocId()}, " from Documents");
+				final Path destination = Paths.get(realPath + FILELOCATION + doc.getSysFilename());
+				LOGGER.info("Path::" + destination);
+				File file = new File(destination.toString());
+				uploadingFilesImpl.deleteIntable(files);
+				docsImpl.deleteIntable(documents);
+				LOGGER.info("Delete in db operation done!!!:");
+				if (file.delete()) {
+					System.out.println(file.getName() + " is deleted!");		
+				} else {
+					System.out.println("Delete operation is failed.");
+					
+				}
+			}
+			
+		}
+	}
+	@SuppressWarnings("unchecked")
 	public void deleteExistImage() throws Exception {
 		ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
 		String realPath = ctx.getRealPath("/");
@@ -209,12 +269,13 @@ public class FormSampleController implements Serializable, DbConstant {
 		try {
 			LOGGER.info("user info::"+usersSession.getViewId());
 			if (null != usersSession) {
-				deleteExistImage();
+				
 				ProductController prdtControl= new ProductController();
 				prdto=prdtControl.saveProductFiles();
 				LOGGER.info("ACTIVITY INFO :::::::::::::::"+prdto.getProductId());
 				prdt=prodImpl.getModelWithMyHQL(new String[] { " productId" },
 						new Object[] { prdto.getProductId()}, "from Product");
+				deleteExistProductImage(prdt);
 				if(null!=prdt) {
 					UploadUtility ut = new UploadUtility();
 					String validationCode = "ProductImage";
@@ -255,11 +316,11 @@ public class FormSampleController implements Serializable, DbConstant {
 		try {
 			LOGGER.info("user info::"+usersSession.getViewId());
 			if (null != usersSession) {
-				deleteExistImage();
+				
 				ProductCategoryController prdtCatControl= new ProductCategoryController();
 				prodCat=prdtCatControl.saveProductCategoryFiles();
 				LOGGER.info("CAT INFO :::::::::::::::"+prodCat.getProductCatid());
-				
+				deleteExistCategoryImage(prodCat);
 				if(null!=prodCat) {
 					UploadUtility ut = new UploadUtility();
 					String validationCode = "ProductCategoryImage";

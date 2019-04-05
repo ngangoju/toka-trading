@@ -511,8 +511,8 @@
 												class="btn btn-sm btn-info glyphicon glyphicon-list"
 												action="#{productController.viewDetails(prod)}"
 												rendered="#{not prod.editable}">
-												<f:ajax render="@form" execute="@form"
-												onevent="showProgress" />
+												<!-- <f:ajax render="@form" execute="@form"
+												onevent="showProgress" /> -->
 											</h:commandLink>
 											<h:commandLink
 												class="btn btn-sm btn-primary glyphicon glyphicon glyphicon-upload"
@@ -520,6 +520,16 @@
 												data-placement="right"
 												title="#{msg['productView.uploadButton']}"
 												action="#{productController.uploadAction(prod)}">
+												<f:ajax render="@form" execute="@form"
+													onevent="showProgress" />
+
+											</h:commandLink>
+											<h:commandLink
+												class="btn btn-sm btn-warning glyphicon glyphicon glyphicon-trash"
+												style="color:white;" data-toggle="tooltip"
+												data-placement="right"
+												title="#{msg['productPerishedView.uploadButton']}"
+												action="#{productController.perishableProductAction(prod)}">
 												<f:ajax render="@form" execute="@form"
 													onevent="showProgress" />
 
