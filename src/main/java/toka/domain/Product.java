@@ -33,10 +33,6 @@ public class Product extends CommonDomain implements Serializable {
 	@JoinColumn(name = "productCategory")
 	private ProductCategory productCategory;
 
-	@ManyToOne
-	@JoinColumn(name = "branch")
-	private Branch branch;
-
 	@Column(name = "purchaseUnitPrice")
 	private double purchaseUnitPrice;
 
@@ -72,13 +68,6 @@ public class Product extends CommonDomain implements Serializable {
 	public void setProductCategory(ProductCategory productCategory) {
 		this.productCategory = productCategory;
 	}
-	public Branch getBranch() {
-		return branch;
-	}
-	public void setBranch(Branch branch) {
-		this.branch = branch;
-	}
-	
 	public double getPurchaseUnitPrice() {
 		return purchaseUnitPrice;
 	}
