@@ -23,6 +23,12 @@
 								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
 							</span>
 						</p:outputPanel>
+						<p:outputPanel rendered="#{productController.renderproduct}"
+							autoUpdate="true">
+							<span style="color: white; font-size: 10pt"> <label
+								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
+							</span>
+						</p:outputPanel>
 						<p:outputPanel rendered="#{productController.renderDetails}"
 							autoUpdate="true">
 							<span style="color: white; font-size: 10pt"> <label
@@ -257,8 +263,54 @@
 								</div>
 							</div>
 						</p:outputPanel>
-						<!-- LIST OF Product -->
+
+
+						<!-- LIST OF PRODUCT CATEGORY -->
 						<p:outputPanel rendered="#{productController.rendered}">
+						<h4 style="font: italic bold 13px/16px Georgia, serif;">
+							FEATURED PRODUCT CATEGORY <span
+								class="glyphicon glyphicon-dashboard"> <label
+								style="font: italic 13px/18px Georgia, serif">Toka
+									Trading</label></span>
+						</h4>
+						<div
+							style="border-bottom: 1.5px solid #91DBFA; margin-bottom: 6px;"></div>
+						<div class="row"
+							style="font: italic bold 13px/16px Georgia, serif;">
+							<ui:repeat
+								value="#{productController.branchCatDetails}"
+								var="details">
+								<div class="col-md-4 col-sm-6">
+									<div class="card-group">
+										<div class="card" style="width: 300px">
+											<!-- <img class="card-img-top" src="../resources/image/us.png"
+												alt="Card image cap" style="width: 50%; margin: 5px" /> -->
+												
+												<h:graphicImage style="width:100%;margin: 5px" class="card-img-top" alt="Card image cap"
+											value="/images/dynamic/?file=#{details.documents.sysFilename}" />
+											<div class="card-body">
+												<h5 class="card-title">#{details.prodCategory.productCatName}</h5>
+												<p class="card-text"> #{details.productCount} products available.</p>
+											</div>
+											<div class="card-footer">
+												<h:commandLink 
+												value="#{msg['productlist.viewButton']}"
+												class="btn btn-primary"
+												action="#{productController.showproducts(details)}"
+												/>
+												
+											
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</ui:repeat>
+						</div>
+						</p:outputPanel>
+						<!-- END OF PRODUCT CATEGORY -->
+						<!-- LIST OF Product -->
+						<p:outputPanel rendered="#{productController.renderDetails}">
 
 							<div class=" col-md-12"
 								style="height: 330px; overflow-y: scroll;">
@@ -546,29 +598,52 @@
 							</div>
 						</p:outputPanel>
 						<!-- END OF ACTIVITIES VIEW -->
-						<p:outputPanel rendered="#{productController.renderDetails}"
+						<p:outputPanel rendered="#{productController.renderproduct}"
 							autoUpdate="true">
-						<div class="card border-secondary mb-3 text-center" style="width: 25rem;margin-left:25%">
-							<div class="card-header">#{productController.uploadingFiles.product.productName}</div>
-							<div class="card-body">
-								<h5 class="card-title"><h:graphicImage style="width:30%;height:30%;margin:5px" class="img-xs rounded-circle" alt="productImage" 
-											value="/images/dynamic/?file=#{productController.uploadingFiles.documents.sysFilename}" /></h5>
-								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Product category:<label class=" text text-black" >#{productController.uploadingFiles.product.productCategory.productCatName}</label></p>			
-								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Purchase price:<label class=" text text-black">#{productController.totalprice}</label></p>
-								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Selling price:<label class=" text text-black">#{productController.salesprice}</label></p>
-								<p class="card-text" style="font: italic 13px/16px Georgia, serif;">Product Address:<label class=" text text-black">#{productController.uploadingFiles.product.branch.branchName}</label></p>
-								<a href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml" class="btn btn-primary">Go back</a>
+							<div class="card border-secondary mb-3 text-center"
+								style="width: 25rem; margin-left: 25%">
+								<div class="card-header">#{productController.uploadingFiles.product.productName}</div>
+								<div class="card-body">
+									<h5 class="card-title">
+										<h:graphicImage style="width:30%;height:30%;margin:5px"
+											class="img-xs rounded-circle" alt="productImage"
+											value="/images/dynamic/?file=#{productController.uploadingFiles.documents.sysFilename}" />
+									</h5>
+									<p class="card-text"
+										style="font: italic 13px/16px Georgia, serif;">
+										Product category:<label class=" text text-black">#{productController.uploadingFiles.product.productCategory.productCatName}</label>
+									</p>
+									<p class="card-text"
+										style="font: italic 13px/16px Georgia, serif;">
+										Purchase price:<label class=" text text-black">#{productController.totalprice}</label>
+									</p>
+									<p class="card-text"
+										style="font: italic 13px/16px Georgia, serif;">
+										Selling price:<label class=" text text-black">#{productController.salesprice}</label>
+									</p>
+									<p class="card-text"
+										style="font: italic 13px/16px Georgia, serif;">
+										Product Address:<label class=" text text-black">#{productController.uploadingFiles.product.branch.branchName}</label>
+									</p>
+									<a
+										href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml"
+										class="btn btn-primary">Go back</a>
+								</div>
+								<div class="card-footer text-muted">
+									<p class="footer-text text-black pb-25"
+										style="font: italic 13px/16px Georgia, serif;">
+										Copyright &copy;
+										<script>
+											document.write(new Date()
+													.getFullYear());
+										</script>
+										All rights reserved | This product with <i
+											class="glyphicon glyphicon-heart" aria-hidden="true"></i> by
+										<a href="https://colorlib.com" target="_blank">toka
+											trading</a>
+									</p>
+								</div>
 							</div>
-							<div class="card-footer text-muted"><p class="footer-text text-black pb-25" style="font: italic 13px/16px Georgia, serif;">
-							Copyright &copy;
-							<script>
-								document.write(new Date().getFullYear());
-							</script>
-							All rights reserved | This product with <i
-								class="glyphicon glyphicon-heart" aria-hidden="true"></i> by <a
-								href="https://colorlib.com" target="_blank">toka trading</a>
-						</p></div>
-						</div>
 						</p:outputPanel>
 					</h:form>
 

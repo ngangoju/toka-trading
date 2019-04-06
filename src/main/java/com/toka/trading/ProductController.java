@@ -34,7 +34,9 @@ import toka.domain.PerishedProduct;
 import toka.domain.Product;
 import toka.domain.ProductCategory;
 import toka.domain.UploadingFiles;
+import toka.domain.UserCategory;
 import toka.domain.Users;
+import toka.trading.dto.ProductCatDetailsDto;
 import toka.trading.dto.ProductCategoryDtos;
 import toka.trading.dto.ProductDto;
 import toka.common.JSFBoundleProvider;
@@ -54,13 +56,15 @@ public class ProductController implements Serializable, DbConstant {
 	private PerishedProduct perished;
 	private String perishedQuantity;
 	private ProductCategory category;
-	private boolean rendered, renderProductForm, renderDetails;
+	private List<ProductCategory>catbranch =new ArrayList<ProductCategory>();
+	private boolean rendered, renderProductForm, renderDetails,renderproduct;
 	private List<Product> productList = new ArrayList<Product>();
 	private List<Product> productBranchList = new ArrayList<Product>();
 	private List<ProductCategory> categoryList = new ArrayList<ProductCategory>();
 	private List<ProductDto> prodDto = new ArrayList<ProductDto>();
 	private List<UploadingFiles> filesUploaded = new ArrayList<UploadingFiles>();
 	private List<PerishedProduct>perishedList=new ArrayList<PerishedProduct>();
+	private List<ProductCatDetailsDto> branchCatDetails= new ArrayList<ProductCatDetailsDto>();
 	ProductDto pdto = new ProductDto();
 	ProductImpl productImpl = new ProductImpl();
 	PerishedProductImpl perishImpl= new PerishedProductImpl();
@@ -97,11 +101,24 @@ public class ProductController implements Serializable, DbConstant {
 
 			categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "ProductCategory", " upDtTime desc");
-
-			productBranchList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus", "branch" },
-					new Object[] { ACTIVE, usersSession.getBranch() }, "Product", " upDtTime desc");
-			showAvailProduct(productBranchList);
-			prodDto = listProduct(productBranchList);
+			
+//			catbranch=categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","branch"},
+//					new Object[] { ACTIVE,usersSession.getBranch() }, "ProductCategory", " upDtTime desc");
+//
+//			
+			for (Object[] data:uplActImpl.reportList(
+					"select f.productCategory,f.documents,f.user,count(prod.productCategory) from UploadingFiles f,ProductCategory cat,Users us,Documents d,Product prod  where f.documents=d.DocId and f.productCategory=cat.productCatid and f.user=us.userId and cat.branch="+usersSession.getBranch().getBranchId()+" and prod.productCategory=cat.productCatid group by f.productCategory")) {
+				ProductCatDetailsDto details = new ProductCatDetailsDto();
+				details.setProdCategory((ProductCategory)data[0]);
+				details.setDocuments((Documents)data[1]);
+				details.setUser((Users)data[2]);
+				details.setProductCount(Integer.parseInt(data[3]+""));
+//				details.setCatid(Integer.parseInt(data[3]+""));
+//				details.setProductcategoryName(data[4]+"");
+				branchCatDetails.add(details);
+			}
+			//showAvailProduct(productBranchList);
+			this.rendered=true;
 		} catch (Exception e) {
 			setValid(false);
 			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
@@ -111,6 +128,30 @@ public class ProductController implements Serializable, DbConstant {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public String showproducts(ProductCatDetailsDto prod) {
+		try {
+			
+			if(null!=prod) {
+				ProductCategory cat= new ProductCategory();
+				cat=categoryImpl.getProductCategoryById(prod.getProdCategory().getProductCatid(), "productCatid");
+				productBranchList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus", "productCategory" },
+				new Object[] { ACTIVE,cat }, "Product", " upDtTime desc");
+				prodDto = listProduct(productBranchList);
+				this.rendered=false;
+				this.renderDetails=true;
+				
+			}
+		} catch (Exception e) {
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
+			LOGGER.info(e.getMessage());
+			e.printStackTrace();
+			
+		}
+		return null;
+		
+	}
 	@SuppressWarnings("rawtypes")
 	public List listProduct(List<Product> prodDetails) {
 		List<ProductDto> productDtoDetails = new ArrayList<ProductDto>();
@@ -125,7 +166,7 @@ public class ProductController implements Serializable, DbConstant {
 			prodDto.setSellingUnitPrice(String.valueOf(prod.getSellingUnitPrice()));
 			prodDto.setManufactDate(prod.getManufactDate());
 			prodDto.setExpireDate(prod.getExpireDate());
-			prodDto.setBranch(prod.getBranch());
+			prodDto.setBranch(prod.getProductCategory().getBranch());
 			prodDto.setCreatedBy(prod.getCreatedBy());
 			prodDto.setStatus(prod.getGenericStatus());
 
@@ -197,7 +238,7 @@ public class ProductController implements Serializable, DbConstant {
 				product.setManufactDate(new java.sql.Date(manufDate.getTime()));
 				product.setExpireDate(new java.sql.Date(expDate.getTime()));
 				product.setExpireDate(expDate);
-				product.setBranch(usersSession.getBranch());
+//				product.setBranch(usersSession.getBranch());
 				product.setProductCategory(category);
 				productImpl.saveProduct(product);
 				JSFMessagers.resetMessages();
@@ -255,8 +296,8 @@ public class ProductController implements Serializable, DbConstant {
 		if (null != uploadingFiles) {
 			totalprice = totalPrice(prod);
 			salesprice = sellingPrice(prod);
-			this.rendered = false;
-			this.renderDetails = true;
+			this.renderDetails = false;
+			this.renderproduct = true;
 		} else {
 			JSFMessagers.resetMessages();
 			setValid(false);
@@ -741,6 +782,30 @@ public class ProductController implements Serializable, DbConstant {
 
 	public void setPerishedDate(Date perishedDate) {
 		this.perishedDate = perishedDate;
+	}
+
+	public List<ProductCategory> getCatbranch() {
+		return catbranch;
+	}
+
+	public void setCatbranch(List<ProductCategory> catbranch) {
+		this.catbranch = catbranch;
+	}
+
+	public List<ProductCatDetailsDto> getBranchCatDetails() {
+		return branchCatDetails;
+	}
+
+	public void setBranchCatDetails(List<ProductCatDetailsDto> branchCatDetails) {
+		this.branchCatDetails = branchCatDetails;
+	}
+
+	public boolean isRenderproduct() {
+		return renderproduct;
+	}
+
+	public void setRenderproduct(boolean renderproduct) {
+		this.renderproduct = renderproduct;
 	}
 	
 }

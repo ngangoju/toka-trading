@@ -2,7 +2,11 @@ package toka.trading.dto;
 
 import java.io.Serializable;
 
-public class ProductCategoryDtos   implements Serializable {
+import toka.domain.Documents;
+import toka.domain.ProductCategory;
+import toka.domain.Users;
+
+public class ProductCatDetailsDto   implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private int catid;
@@ -13,7 +17,35 @@ public class ProductCategoryDtos   implements Serializable {
 	private String status;
 	private String createdBy;
 	private String categoryImage;
+	private Documents documents;
+	private ProductCategory prodCategory;
+	private Users user;
 	private int productCount;
+	
+	public Documents getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(Documents documents) {
+		this.documents = documents;
+	}
+
+	public ProductCategory getProdCategory() {
+		return prodCategory;
+	}
+
+	public void setProdCategory(ProductCategory prodCategory) {
+		this.prodCategory = prodCategory;
+	}
+
+	public Users getUser() {
+		return user;
+	}
+
+	public void setUser(Users user) {
+		this.user = user;
+	}
+
 	public String getCreatedBy() {
 		return createdBy;
 	}

@@ -150,6 +150,7 @@ public class ProductCategoryController implements Serializable, DbConstant {
 				category.setCrtdDtTime(timestamp);
 				category.setGenericStatus(ACTIVE);
 				category.setUpDtTime(timestamp);
+				category.setBranch(usersSession.getBranch());
 				categoryImpl.saveProductCategory(category);
 				JSFMessagers.resetMessages();
 				setValid(true); 

@@ -325,6 +325,7 @@ public class FormSampleController implements Serializable, DbConstant {
 					UploadUtility ut = new UploadUtility();
 					String validationCode = "ProductCategoryImage";
 					documents = ut.fileUploadUtil(event, validationCode);
+					LOGGER.info("CAT INFO :::::::::::::::"+prodCat.getProductCatid());
 						uploadingFiles.setProductCategory(prodCat);;
 						uploadingFiles.setUser(usersSession);
 						uploadingFiles.setDocuments(documents);
