@@ -25,12 +25,17 @@
 						</p:outputPanel>
 						<p:outputPanel rendered="#{productController.renderproduct}"
 							autoUpdate="true">
+							
 							<span style="color: white; font-size: 10pt"> <label
 								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
 							</span>
 						</p:outputPanel>
 						<p:outputPanel rendered="#{productController.renderDetails}"
 							autoUpdate="true">
+							<a
+								href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml"
+								class="btn btn-primary glyphicon glyphicon-chevron-left"
+								style="font-size: 14px !important;"> #{msg['BackButtom']} </a>
 							<span style="color: white; font-size: 10pt"> <label
 								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
 							</span>
@@ -227,30 +232,6 @@
 												</div>
 												<h:message errorClass="errorMsg1" for="from_exp_date_id"></h:message>
 											</div>
-											<div class="form-group">
-												<label for="name" class="cols-sm-2 control-label">
-													Product Category:<span style="color: red; font-size: 15px">*</span>
-												</label>
-												<div class="cols-md-12">
-													<div class="input-group">
-														<h:selectOneMenu id="gender" styleClass="form-control"
-															style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
-															required="true" value="#{productController.productCatid}"
-															requiredMessage="#{msg['requiered.categoryname.message']}">
-															<f:selectItem
-																itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
-																itemValue="#{null}" escapeItem="true"
-																itemDisabled="false" />
-															<f:selectItems value="#{productController.categoryList}"
-																var="option" itemValue="#{option.productCatid}"
-																itemLabel="#{option.productCatName}"
-																itemLabelEscaped="true" />
-
-														</h:selectOneMenu>
-													</div>
-													<h:message for="gender" styleClass="help-block"></h:message>
-												</div>
-											</div>
 											<h:commandButton a:type="submit" class="btn btn-success mr-2"
 												style=" font: italic bold 13px/20px Georgia, serif;"
 												action="#{productController.saveNewProduct}"
@@ -422,6 +403,26 @@
 											rendered="#{not prod.editable}" />
 
 									</h:column>
+									<h:column>
+									<f:facet name="header">
+										<label>Selling unit price</label>
+									</f:facet>
+									<br />
+									<h:inputText id="saleprice" value="#{prod.sellingUnitPrice}"
+										styleClass="form-control" size="10"
+										rendered="#{prod.editable}" maxlength="250" required="true"
+										requiredMessage="#{msg['requiered.saleunitprice.message']}"
+										converterMessage="#{msg['error.enter.invalid.salesunitprice']}"
+										validatorMessage="#{msg['error.enter.invalid.salesunitprice']}">
+										<f:validateRegex
+											pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
+										<f:validateLength maximum="100"></f:validateLength>
+									</h:inputText>
+									<h:message for="saleprice" styleClass="help-block"></h:message>
+
+									<h:outputText value="#{prod.sellingUnitPrice}"
+										rendered="#{not prod.editable}" />
+								</h:column>
 									<h:column>
 										<f:facet name="header">
 											<label>Manufact date</label>
@@ -623,7 +624,7 @@
 									</p>
 									<p class="card-text"
 										style="font: italic 13px/16px Georgia, serif;">
-										Product Address:<label class=" text text-black">#{productController.uploadingFiles.product.branch.branchName}</label>
+										Product Address:<label class=" text text-black">#{productController.uploadingFiles.product.productCategory.branch.branchName}</label>
 									</p>
 									<a
 										href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml"
