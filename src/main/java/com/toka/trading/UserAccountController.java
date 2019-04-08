@@ -274,9 +274,78 @@ public class UserAccountController implements Serializable, DbConstant {
 			LOGGER.info("RANGE VALUE:" + range + "::::::::::BOARD LIST RENDERED:::::::::::::::::");
 		}
 	}
+
+	@SuppressWarnings("static-access")
+	public String saveUserInfo() throws IOException, NoSuchAlgorithmException {
+		try {
+			try {
+				Users user = new Users();
+				user = usersImpl.getModelWithMyHQL(new String[] { "viewId" }, new Object[] { users.getViewId() },
+						"from Users");
+				if (null != user) {
+					JSFMessagers.resetMessages();
+					setValid(false);
+					JSFMessagers.addErrorMessage(getProvider().getValue("error.server.side.dupicate.viewId"));
+					LOGGER.info(CLASSNAME + "sivaserside validation :: User Name already  recorded in the system! ");
+					return null;
+				}
+
+			} catch (Exception e) {
+				JSFMessagers.resetMessages();
+				setValid(false);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
+				LOGGER.info(CLASSNAME + "" + e.getMessage());
+				e.printStackTrace();
+				return null;
+			}
+
+			if (password.equalsIgnoreCase(confirmPswd)) {
+				users.setImage("us.png");
+				users.setCreatedBy("admin");
+				users.setCrtdDtTime(timestamp);
+				users.setCreatedDate(timestamp);
+				users.setGenericStatus(ACTIVE);
+				users.setUpdatedBy("admin");
+				users.setCrtdDtTime(timestamp);
+				users.setUserCategory(catImpl.getUserCategoryById(4, "userCatid"));
+				users.setViewName(loginImpl.criptPassword(password));
+				users.setStatus(ACTIVE);
+				users.setLoginStatus(OFFLINE);
+				usersImpl.saveUsers(users);
+				contact.setCreatedBy("admin");
+				contact.setCrtdDtTime(timestamp);
+				contact.setGenericStatus(ACTIVE);
+				contact.setUpdatedBy("admin");
+				contact.setCrtdDtTime(timestamp);
+				contact.setUser(users);
+				contactImpl.saveContact(contact);
+				JSFMessagers.resetMessages();
+				setValid(true);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.user"));
+				LOGGER.info(CLASSNAME + ":::User Details is saved");
+				clearUserFuileds();
+				return "";
+
+			} else {
+				JSFMessagers.resetMessages();
+				setValid(false);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.pswdMatch"));
+			}
+
+		} catch (HibernateException ex) {
+			LOGGER.info(CLASSNAME + ":::User Details is fail with HibernateException  error");
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
+			LOGGER.info(CLASSNAME + "" + ex.getMessage());
+			ex.printStackTrace();
+		}
+		return "";
+	}
+
 	public void searchStaff() {
-		LOGGER.info("Search Key value::::::"+searchKey);
-		if (null!=searchKey) {
+		LOGGER.info("Search Key value::::::" + searchKey);
+		if (null != searchKey) {
 			userDtosDetails = new ArrayList<UserDto>();
 			for (Users users : staffList) {
 				LOGGER.info("users::::::::::::::::::::::::::::::::::::::::::::::::>>" + users.getUserId() + ":: "
@@ -287,7 +356,7 @@ public class UserAccountController implements Serializable, DbConstant {
 					userDtos.setNotify(false);
 					if (users.getBranch() != null) {
 						if (users.getFname().contains(searchKey) || users.getLname().contains(searchKey)
-								|| users.getStatus().contains(searchKey)||users.getLoginStatus().contains(searchKey)
+								|| users.getStatus().contains(searchKey) || users.getLoginStatus().contains(searchKey)
 								|| users.getBranch().getBranchName().contains(searchKey)
 								|| users.getUserCategory().getUsercategoryName().contains(searchKey)) {
 							userDtos.setUserId(users.getUserId());
@@ -315,7 +384,6 @@ public class UserAccountController implements Serializable, DbConstant {
 			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.searcherror"));
 		}
 	}
-
 
 	public List<UserDto> showUsersByPageRecords(List<Users> userslist) {
 		try {
@@ -381,7 +449,6 @@ public class UserAccountController implements Serializable, DbConstant {
 		this.renderRepContactDash = false;
 	}
 
-	
 	public void showRepresent() {
 
 		this.renderRepTable = true;
@@ -403,7 +470,6 @@ public class UserAccountController implements Serializable, DbConstant {
 			e.printStackTrace();
 		}
 	}
-
 
 	public void clearUserFuileds() {
 		users = new Users();
@@ -429,7 +495,7 @@ public class UserAccountController implements Serializable, DbConstant {
 		HttpSession session = SessionUtils.getSession();
 		Users usersSes = new Users();
 		usersSes = (Users) session.getAttribute("userSession");
-		LOGGER.info("USERNAME::::"+usersSes.getDateOfBirth());
+		LOGGER.info("USERNAME::::" + usersSes.getDateOfBirth());
 		return new SimpleDateFormat("dd-MM-yyyy").format(usersSes.getDateOfBirth());
 	}
 

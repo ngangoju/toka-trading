@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+<h:body>
+
+	<ui:composition template="/template/common/commonLayout.xhtml">
+
+		<ui:define name="content">
+
+			<h4 style="font: italic bold 13px/16px Georgia, serif;">
+				#{loadUserInformationsController.users.userCategory.usercategoryName}
+				<span class="glyphicon glyphicon-dashboard"> <label
+					style="font: italic 13px/18px Georgia, serif">#{msg['message.com.user.dashaboard']}</label></span>
+			</h4>
+			<div style="border-bottom: 1.5px solid #91DBFA; margin-bottom: 6px;"></div>
+			<div class="row" style="font: italic bold 13px/16px Georgia, serif;">
+				<ui:repeat value="#{branchController.branchDetails}" var="bList">
+					<div class="col-md-4 col-sm-6">
+						<div class="card-group">
+							<div class="card" style="width: 300px">
+								<img class="card-img-top" src="../resources/image/us.png"
+									alt="Card image cap" style="width: 50%; margin: 5px" />
+								<div class="card-body">
+									<h5 class="card-title">category name</h5>
+									<p class="card-text">3 products.</p>
+								</div>
+								<div class="card-footer">
+									<a href="#" class="btn btn-primary">Products List</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</ui:repeat>
+			</div>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

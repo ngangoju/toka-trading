@@ -20,7 +20,7 @@
 								<td>
 									<div>
 										<h:commandLink action="#{userAccountController.backPage()}"
-											value="#{msg['UserCatForm.BackBoardButtom']}"
+											value="#{msg['UserCatForm.BackbranchButtom']}"
 											class="btn btn-primary btn-xlg btn-block glyphicon glyphicon-chevron-left"
 											style="font-size: 14px;">
 											<f:ajax onevent="showProgress" />
@@ -84,12 +84,12 @@
 												value="#{userAccountController.choice}">
 												<p:ajax listener="#{userAccountController.updateTable()}"
 													update="ProvincePanel,DistrictPanel,toUpdate
-										,secondPanel,tochange,firstPanel,FnamePanel,LnamePanel,genderPanel,addressPanel,fromDatePanel,surnamePanl,PasswordPanl,ConfpasswordPanl,CategoryPanel,BoardPanel,FourthPanel,tobutton,ButtonPanel" />
+										,secondPanel,tochange,firstPanel,FnamePanel,LnamePanel,genderPanel,addressPanel,fromDatePanel,surnamePanl,PasswordPanl,ConfpasswordPanl,CategoryPanel,branchPanel,FourthPanel,tobutton,ButtonPanel" />
 												<f:ajax onevent="showProgress" />
-												<!-- <f:selectItem itemLabel="Select the country"
+ 												<f:selectItem itemLabel="Select the country"
 												noSelectionOption="true" />
-											<f:selectItem itemLabel="Rwanda" itemValue="Rwanda" />
-											<f:selectItem itemLabel="Uganda" itemValue="Uganda" /> -->
+											<f:selectItem itemLabel="Rwanda" itemValue="1" /> 
+ 											<f:selectItem itemLabel="Uganda" itemValue="2" /> 
 
 												<f:selectItem
 													itemLabel="#{msg['institutionForm.select.PLACEHOLDER']}"
@@ -424,7 +424,7 @@
 												<h:message for="confpswd" styleClass="help-block"></h:message>
 											</div>
 										</h:panelGroup>
-										<p:outputPanel rendered="#{userAccountController.renderBoard}"
+										<p:outputPanel rendered="#{userAccountController.renderbranch}"
 											autoUpdate="true">
 										<h:panelGroup id="CategoryPanel" layout="block">
 											<div class="form-group row"
@@ -486,27 +486,27 @@
 										</h:panelGroup>
 										</p:outputPanel>
 										<!-- END FOREIGN STATE CAT -->
-										<p:outputPanel rendered="#{userAccountController.renderBoard}"
+										<p:outputPanel rendered="#{userAccountController.renderbranch}"
 											autoUpdate="true">
-											<h:panelGroup id="BoardPanel" layout="block">
+											<h:panelGroup id="branchPanel" layout="block">
 												<div class="form-group row"
 													style="font-family: Open Sans sans-serif !important; font-size: 14px !important;">
 													<label for="todate"
 														class="col-md-2 col-sm-2 col-xs-2 control-label"
-														style="color: black">#{msg['label.message.board']}<span
+														style="color: black">#{msg['label.message.branch']}<span
 														style="color: red">*</span></label>
 													<div class="col-md-6 col-sm-6 col-xs-6">
 														<h:selectOneMenu id="brd" styleClass="form-control"
 															style="font-family: Open Sans sans-serif !important; font-size: 14px !important;"
-															required="true" value="#{userAccountController.boardId}"
-															requiredMessage="#{msg[required.boardName.message]}">
+															required="true" value="#{userAccountController.branchId}"
+															requiredMessage="#{msg[required.branchName.message]}">
 															<f:selectItem
 																itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
 																itemValue="#{null}" escapeItem="true"
 																itemDisabled="false" />
-															<f:selectItems value="#{userAccountController.boardList}"
-																var="option" itemValue="#{option.boardId}"
-																itemLabel="#{option.boardName}" itemLabelEscaped="true" />
+															<f:selectItems value="#{userAccountController.branchList}"
+																var="option" itemValue="#{option.branchId}"
+																itemLabel="#{option.branchName}" itemLabelEscaped="true" />
 
 														</h:selectOneMenu>
 													</div>

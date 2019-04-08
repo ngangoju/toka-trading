@@ -19,6 +19,7 @@ import toka.common.Formating;
 import toka.common.JSFBoundleProvider;
 import toka.common.JSFMessagers;
 import toka.common.SessionUtils;
+import toka.dao.impl.BranchImpl;
 import toka.dao.impl.ContactImpl;
 import toka.dao.impl.UserCategoryImpl;
 import toka.dao.impl.UserImpl;
@@ -57,6 +58,8 @@ public class BranchController implements Serializable, DbConstant {
 	JSFBoundleProvider provider = new JSFBoundleProvider();
 	UserImpl usersImpl = new UserImpl();
 	ContactImpl contactImpl = new ContactImpl();
+	BranchImpl branchImpl = new BranchImpl();
+	UserCategoryImpl uCategoryImpl = new UserCategoryImpl();
 	private boolean rendered;
 	UserCategoryImpl userCatImpl = new UserCategoryImpl();
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
@@ -64,9 +67,11 @@ public class BranchController implements Serializable, DbConstant {
 	private String option;
 	private String range;
 	private Contact cont = new Contact();
+	private UserCategory userCategory;
 	private Country country;
 	private Province province;
 	private District district;
+	private List<UserCategory> uCategoryDetails = new ArrayList<UserCategory>();
 	private List<Country> countries = new ArrayList<Country>();
 	private List<Province> provinces = new ArrayList<Province>();
 	private List<District> districts = new ArrayList<District>();
@@ -88,7 +93,9 @@ public class BranchController implements Serializable, DbConstant {
 		}
 
 		try {
-			
+			branchDetails=branchImpl.getGenericListWithHQLParameter(
+					new String[] { "genericStatus" },
+					new Object[] { ACTIVE }, "Branch", "branchId asc");
 				
 		} catch (Exception e) {
 			setValid(false);
@@ -146,6 +153,12 @@ public class BranchController implements Serializable, DbConstant {
 		return "/menu/Branch.xhtml?faces-redirect=true";
 	}
 
+	public String viewpCategory(int id) {
+		HttpSession sessionuser = SessionUtils.getSession();
+		sessionuser.setAttribute("branchId", id);
+		return "/menu/ViewProdCat.xhtml?faces-redirect=true";
+	}
+	
 	public String cancel(ProductCategoryDtos cat) {
 		cat.setEditable(false);
 		return null;
@@ -587,6 +600,38 @@ public class BranchController implements Serializable, DbConstant {
 
 	public void setDistrict(District district) {
 		this.district = district;
+	}
+
+	public BranchImpl getBranchImpl() {
+		return branchImpl;
+	}
+
+	public void setBranchImpl(BranchImpl branchImpl) {
+		this.branchImpl = branchImpl;
+	}
+
+	public UserCategoryImpl getuCategoryImpl() {
+		return uCategoryImpl;
+	}
+
+	public void setuCategoryImpl(UserCategoryImpl uCategoryImpl) {
+		this.uCategoryImpl = uCategoryImpl;
+	}
+
+	public UserCategory getUserCategory() {
+		return userCategory;
+	}
+
+	public void setUserCategory(UserCategory userCategory) {
+		this.userCategory = userCategory;
+	}
+
+	public List<UserCategory> getuCategoryDetails() {
+		return uCategoryDetails;
+	}
+
+	public void setuCategoryDetails(List<UserCategory> uCategoryDetails) {
+		this.uCategoryDetails = uCategoryDetails;
 	}
 	
 }
