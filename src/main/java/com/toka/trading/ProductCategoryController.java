@@ -52,6 +52,7 @@ public class ProductCategoryController implements Serializable, DbConstant {
 	
 	private boolean rendered, renderProductForm;
 	private List<ProductCategory> categoryList = new ArrayList<ProductCategory>();
+	private List<ProductCategory> categoryDetails = new ArrayList<ProductCategory>();
 	private List<ProductCategoryDtos> categoryListDto = new ArrayList<ProductCategoryDtos>();
 	ProductCategoryImpl categoryImpl = new ProductCategoryImpl();
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
@@ -60,6 +61,7 @@ public class ProductCategoryController implements Serializable, DbConstant {
 	private DocumentsImpl docsImpl = new DocumentsImpl();
 	private UploadingFiles uploadingFiles;
 	private UploadingFilesImpl uplActImpl = new UploadingFilesImpl();
+	private int id;
 
 	@SuppressWarnings("unchecked")
 	@PostConstruct
@@ -70,9 +72,11 @@ public class ProductCategoryController implements Serializable, DbConstant {
 			category = new ProductCategory();
 		}
 		try {
-
+			 id = (int) session.getAttribute("branchId");
 			categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
-					new Object[] { ACTIVE, }, "ProductCategory", " upDtTime desc");
+					new Object[] { ACTIVE }, "ProductCategory", " upDtTime desc");
+			categoryDetails = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus", "branch" },
+					new Object[] { ACTIVE, id }, "ProductCategory", " upDtTime desc");
 
 		showAvailProduct(categoryList);
 		categoryListDto =listCategory(categoryList);
@@ -389,6 +393,22 @@ public class ProductCategoryController implements Serializable, DbConstant {
 
 	public void setUplActImpl(UploadingFilesImpl uplActImpl) {
 		this.uplActImpl = uplActImpl;
+	}
+
+	public List<ProductCategory> getCategoryDetails() {
+		return categoryDetails;
+	}
+
+	public void setCategoryDetails(List<ProductCategory> categoryDetails) {
+		this.categoryDetails = categoryDetails;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 }

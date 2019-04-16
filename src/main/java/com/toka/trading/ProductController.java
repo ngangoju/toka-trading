@@ -91,6 +91,7 @@ public class ProductController implements Serializable, DbConstant {
 	private List<UploadingFiles> filesUploaded = new ArrayList<UploadingFiles>();
 	private List<PerishedProduct> perishedList = new ArrayList<PerishedProduct>();
 	private List<ProductCatDetailsDto> branchCatDetails = new ArrayList<ProductCatDetailsDto>();
+	private List<ProductCatDetailsDto> branchCatList = new ArrayList<ProductCatDetailsDto>();
 	private List<OrderProductDto> orderDetails = new ArrayList<OrderProductDto>();
 	ProductDto pdto = new ProductDto();
 	ProductImpl productImpl = new ProductImpl();
@@ -109,6 +110,7 @@ public class ProductController implements Serializable, DbConstant {
 	private String quantity;
 	private double totalprice;
 	private double salesprice;
+	private int id;
 
 	@SuppressWarnings("unchecked")
 	@PostConstruct
@@ -125,7 +127,8 @@ public class ProductController implements Serializable, DbConstant {
 			orderDto=new OrderProductDto();
 		}
 		try {
-
+			id = (int) session.getAttribute("branchId");
+			LOGGER.info("BRANCH_ID IS:::::::"+id);
 			productList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "Product", " upDtTime desc");
 
@@ -140,7 +143,7 @@ public class ProductController implements Serializable, DbConstant {
 			//
 			for (Object[] data : uplActImpl.reportList(
 					"select f.productCategory,f.documents,f.user,count(prod.productCategory) from UploadingFiles f,ProductCategory cat,Users us,Documents d,Product prod  where f.documents=d.DocId and f.productCategory=cat.productCatid and f.user=us.userId and cat.branch="
-							+ usersSession.getBranch().getBranchId()
+							+ id
 							+ " and prod.productCategory=cat.productCatid group by f.productCategory")) {
 				ProductCatDetailsDto details = new ProductCatDetailsDto();
 				details.setProdCategory((ProductCategory) data[0]);
@@ -150,6 +153,21 @@ public class ProductController implements Serializable, DbConstant {
 				// details.setCatid(Integer.parseInt(data[3]+""));
 				// details.setProductcategoryName(data[4]+"");
 				branchCatDetails.add(details);
+			}
+			for (Object[] data : uplActImpl.reportList(
+					"select f.productCategory,f.documents,f.user,count(prod.productCategory) from UploadingFiles f,ProductCategory cat,Users us,Documents d,Product prod  where f.documents=d.DocId and f.productCategory=cat.productCatid and f.user=us.userId and cat.branch="
+							+ id
+							+ " and prod.productCategory=cat.productCatid group by f.productCategory")) {
+				LOGGER.info("BRANCH_ID2 IS:::::::"+id);
+				ProductCatDetailsDto details = new ProductCatDetailsDto();				
+				details.setProdCategory((ProductCategory) data[0]);
+				details.setDocuments((Documents) data[1]);
+				details.setUser((Users) data[2]);
+				details.setProductCount(Integer.parseInt(data[3] + ""));
+				// details.setCatid(Integer.parseInt(data[3]+""));
+				// details.setProductcategoryName(data[4]+"");
+				branchCatList.add(details);
+				LOGGER.info("BRANCH_ID3 IS:::::::"+id);
 			}
 			// showAvailProduct(productBranchList);
 			this.rendered = true;
@@ -340,6 +358,12 @@ public class ProductController implements Serializable, DbConstant {
 		}
 	}
 
+	public String viewpCategory(int id) {
+		HttpSession sessionuser = SessionUtils.getSession();
+		sessionuser.setAttribute("branchId", id);
+		return "/menu/ViewProdCat.xhtml?faces-redirect=true";
+	}
+	
 	private void clearContactFuileds() {
 
 		product = new Product();
@@ -1127,4 +1151,20 @@ public class ProductController implements Serializable, DbConstant {
 		this.orderDto = orderDto;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public List<ProductCatDetailsDto> getBranchCatList() {
+		return branchCatList;
+	}
+
+	public void setBranchCatList(List<ProductCatDetailsDto> branchCatList) {
+		this.branchCatList = branchCatList;
+	}
+	
 }

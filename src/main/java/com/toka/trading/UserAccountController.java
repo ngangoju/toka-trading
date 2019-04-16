@@ -33,12 +33,14 @@ import toka.common.JSFBoundleProvider;
 import toka.common.JSFMessagers;
 import toka.common.SessionUtils;
 import toka.dao.impl.ContactImpl;
+import toka.dao.impl.CountryImpl;
 import toka.dao.impl.DistrictImpl;
 import toka.dao.impl.LoginImpl;
 import toka.dao.impl.ProvinceImpl;
 import toka.dao.impl.UserCategoryImpl;
 import toka.dao.impl.UserImpl;
 import toka.domain.Contact;
+import toka.domain.Country;
 import toka.domain.District;
 import toka.domain.Province;
 import toka.domain.UserCategory;
@@ -59,6 +61,7 @@ public class UserAccountController implements Serializable, DbConstant {
 	private UploadedFile imageUpload;
 	private String imageName;
 	private Users users;
+	private Country country;
 	private Province province;
 	private District district;
 	private UserCategory usercat;
@@ -74,6 +77,7 @@ public class UserAccountController implements Serializable, DbConstant {
 	private String confirmPswd;
 	private String useremail;
 	private UserDto userDto;
+	private List<Country> countriesList = new ArrayList<Country>();
 	private List<Users> usersDetails = new ArrayList<Users>();
 	private List<Users> useravail = new ArrayList<Users>();
 	private List<Users> staffList = new ArrayList<Users>();
@@ -91,6 +95,7 @@ public class UserAccountController implements Serializable, DbConstant {
 	/* class injection */
 	JSFBoundleProvider provider = new JSFBoundleProvider();
 	UserImpl usersImpl = new UserImpl();
+	CountryImpl countryImpl = new CountryImpl();
 	ProvinceImpl provImpl = new ProvinceImpl();
 	DistrictImpl districtImpl = new DistrictImpl();
 	UserCategoryImpl catImpl = new UserCategoryImpl();
@@ -165,6 +170,7 @@ public class UserAccountController implements Serializable, DbConstant {
 		}
 
 		try {
+			countriesList=countryImpl.getListWithHQL(SELECT_COUNTRY);
 			provinceList = provImpl.getListWithHQL(SELECT_PROVINCE);
 			// Profile Details for user logged in
 			userDtoDetails = showProfileDetails();
@@ -277,6 +283,74 @@ public class UserAccountController implements Serializable, DbConstant {
 
 	@SuppressWarnings("static-access")
 	public String saveUserInfo() throws IOException, NoSuchAlgorithmException {
+		try {
+			try {
+				Users user = new Users();
+				user = usersImpl.getModelWithMyHQL(new String[] { "viewId" }, new Object[] { users.getViewId() },
+						"from Users");
+				if (null != user) {
+					JSFMessagers.resetMessages();
+					setValid(false);
+					JSFMessagers.addErrorMessage(getProvider().getValue("error.server.side.dupicate.viewId"));
+					LOGGER.info(CLASSNAME + "sivaserside validation :: User Name already  recorded in the system! ");
+					return null;
+				}
+
+			} catch (Exception e) {
+				JSFMessagers.resetMessages();
+				setValid(false);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
+				LOGGER.info(CLASSNAME + "" + e.getMessage());
+				e.printStackTrace();
+				return null;
+			}
+
+			if (password.equalsIgnoreCase(confirmPswd)) {
+				users.setImage("us.png");
+				users.setCreatedBy("admin");
+				users.setCrtdDtTime(timestamp);
+				users.setCreatedDate(timestamp);
+				users.setGenericStatus(ACTIVE);
+				users.setUpdatedBy("admin");
+				users.setCrtdDtTime(timestamp);
+				users.setUserCategory(catImpl.getUserCategoryById(4, "userCatid"));
+				users.setViewName(loginImpl.criptPassword(password));
+				users.setStatus(ACTIVE);
+				users.setLoginStatus(OFFLINE);
+				usersImpl.saveUsers(users);
+				contact.setCreatedBy("admin");
+				contact.setCrtdDtTime(timestamp);
+				contact.setGenericStatus(ACTIVE);
+				contact.setUpdatedBy("admin");
+				contact.setCrtdDtTime(timestamp);
+				contact.setUser(users);
+				contactImpl.saveContact(contact);
+				JSFMessagers.resetMessages();
+				setValid(true);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.user"));
+				LOGGER.info(CLASSNAME + ":::User Details is saved");
+				clearUserFuileds();
+				return "";
+
+			} else {
+				JSFMessagers.resetMessages();
+				setValid(false);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.pswdMatch"));
+			}
+
+		} catch (HibernateException ex) {
+			LOGGER.info(CLASSNAME + ":::User Details is fail with HibernateException  error");
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
+			LOGGER.info(CLASSNAME + "" + ex.getMessage());
+			ex.printStackTrace();
+		}
+		return "";
+	}
+
+	@SuppressWarnings("static-access")
+	public String saveUser() throws IOException, NoSuchAlgorithmException {
 		try {
 			try {
 				Users user = new Users();
@@ -1829,6 +1903,30 @@ public class UserAccountController implements Serializable, DbConstant {
 
 	public void setStaffList(List<Users> staffList) {
 		this.staffList = staffList;
+	}
+
+	public List<Country> getCountriesList() {
+		return countriesList;
+	}
+
+	public void setCountriesList(List<Country> countriesList) {
+		this.countriesList = countriesList;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	public CountryImpl getCountryImpl() {
+		return countryImpl;
+	}
+
+	public void setCountryImpl(CountryImpl countryImpl) {
+		this.countryImpl = countryImpl;
 	}
 
 }

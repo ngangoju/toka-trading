@@ -12,7 +12,7 @@
 	<ui:composition template="/template/common/commonLayout.xhtml">
 
 		<ui:define name="content">
-
+		<h:panelGroup>
 			<h4 style="font: italic bold 13px/16px Georgia, serif;">
 				#{loadUserInformationsController.users.userCategory.usercategoryName}
 				<span class="glyphicon glyphicon-dashboard"> <label
@@ -40,7 +40,7 @@
 									<span id="sparklineB"></span>
 								</div>
 								<h:commandButton class="btn btn-info btn-xlg btn-block"
-									action="#{branchController.viewpCategory(bList.branchId)}"
+									action="#{productController.viewpCategory(bList.branchId)}"
 									value="View product category"
 									style="font-family: Open Sans sans-serif !important; font-size: 15px !important;">
 									<f:ajax render="@form" execute="@form" onevent="showProgress" />
@@ -52,6 +52,7 @@
 
 				</ui:repeat>
 			</div>
+			</h:panelGroup>
 		</ui:define>
 	</ui:composition>
 
