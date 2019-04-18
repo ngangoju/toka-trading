@@ -44,6 +44,7 @@ import toka.common.DbConstant;
 import toka.common.JSFMessagers;
 import toka.common.SessionUtils;
 import toka.dao.impl.DocumentsImpl;
+import toka.dao.impl.OrderProductImpl;
 import toka.dao.impl.PerishedProductImpl;
 import toka.dao.impl.ProductCategoryImpl;
 import toka.dao.impl.ProductImpl;
@@ -83,7 +84,7 @@ public class ProductController implements Serializable, DbConstant {
 	private OrderProduct orderproduct;
 	private OrderProductDto orderproductDto;
 	private List<ProductCategory> catbranch = new ArrayList<ProductCategory>();
-	private boolean rendered, renderProductForm, renderDetails, renderproduct, renderbilling;
+	private boolean rendered, renderProductForm, renderDetails, renderproduct, renderbilling, renderOrder;
 	private List<Product> productList = new ArrayList<Product>();
 	private List<Product> productBranchList = new ArrayList<Product>();
 	private List<ProductCategory> categoryList = new ArrayList<ProductCategory>();
@@ -95,6 +96,7 @@ public class ProductController implements Serializable, DbConstant {
 	private List<OrderProductDto> orderDetails = new ArrayList<OrderProductDto>();
 	ProductDto pdto = new ProductDto();
 	ProductImpl productImpl = new ProductImpl();
+	OrderProductImpl orderProdImpl = new OrderProductImpl();
 	PerishedProductImpl perishImpl = new PerishedProductImpl();
 	ProductCategoryImpl categoryImpl = new ProductCategoryImpl();
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
@@ -126,67 +128,71 @@ public class ProductController implements Serializable, DbConstant {
 		if(orderDto==null) {
 			orderDto=new OrderProductDto();
 		}
+		if(orderproduct==null) {
+			orderproduct=new OrderProduct();
+		}
 		try {
-			id = (int) session.getAttribute("branchId");
-			LOGGER.info("BRANCH_ID IS:::::::"+id);
+			
 			productList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "Product", " upDtTime desc");
 
 			categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "ProductCategory", " upDtTime desc");
 
-			// catbranch=categoryImpl.getGenericListWithHQLParameter(new String[] {
-			// "genericStatus","branch"},
-			// new Object[] { ACTIVE,usersSession.getBranch() }, "ProductCategory", "
-			// upDtTime desc");
-			//
-			//
-			for (Object[] data : uplActImpl.reportList(
-					"select f.productCategory,f.documents,f.user,count(prod.productCategory) from UploadingFiles f,ProductCategory cat,Users us,Documents d,Product prod  where f.documents=d.DocId and f.productCategory=cat.productCatid and f.user=us.userId and cat.branch="
-							+ id
-							+ " and prod.productCategory=cat.productCatid group by f.productCategory")) {
-				ProductCatDetailsDto details = new ProductCatDetailsDto();
-				details.setProdCategory((ProductCategory) data[0]);
-				details.setDocuments((Documents) data[1]);
-				details.setUser((Users) data[2]);
-				details.setProductCount(Integer.parseInt(data[3] + ""));
-				// details.setCatid(Integer.parseInt(data[3]+""));
-				// details.setProductcategoryName(data[4]+"");
-				branchCatDetails.add(details);
+			
+			if(null!=usersSession.getBranch()) {
+				for (Object[] data : uplActImpl.reportList(
+						"select f.productCategory,f.documents,f.user,count(prod.productCategory) from UploadingFiles f,ProductCategory cat,Users us,Documents d,Product prod  where f.documents=d.DocId and f.productCategory=cat.productCatid and f.user=us.userId and cat.branch="
+								+ usersSession.getBranch().getBranchId()
+								+ " group by f.productCategory")) {
+					ProductCatDetailsDto details = new ProductCatDetailsDto();				
+					details.setProdCategory((ProductCategory) data[0]);
+					details.setDocuments((Documents) data[1]);
+					details.setUser((Users) data[2]);
+					details.setProductCount(Integer.parseInt(data[3] + ""));
+					// details.setCatid(Integer.parseInt(data[3]+""));
+					// details.setProductcategoryName(data[4]+"");
+					branchCatList.add(details);
+				}
+				for (Object[] data : uplActImpl.reportList(
+						"select o.orderProductId,o.orderDate,o.quantity,o.customer,cat.branch,o.product,p.sellingUnitPrice,co.email,co.phone from OrderProduct o,Product p,ProductCategory cat,Users us,Contact co,Branch b where o.product=p.productId and o.customer=us.userId and cat.branch="
+								+ usersSession.getBranch().getBranchId() + " and co.user=us.userId  and o.genericStatus='"
+								+ ACTIVE + "' group by o.orderProductId")) {
+					OrderProductDto order = new OrderProductDto();
+					order.setOrderProductId(Integer.parseInt(data[0] + ""));
+					order.setOrderDate((Date) data[1]);
+					order.setQuantity(Integer.parseInt(data[2] + ""));
+					order.setCustomer((Users) data[3]);
+					order.setProduct((Product) data[5]);
+					order.setSellingUnitPrice(data[6] + "");
+					order.setTotalSales(Double.parseDouble(data[2] + "") * Double.parseDouble(data[6] + ""));
+					order.setEmail(data[7] + "");
+					order.setPhone(data[8] + "");
+					orderDetails.add(order);
+				}
+			}else {
+				id = (int) session.getAttribute("branchId");
+				LOGGER.info("BRANCH_ID IS:::::::"+id);
+				for (Object[] data : uplActImpl.reportList(
+						"select f.productCategory,f.documents,f.user,count(prod.productCategory) from UploadingFiles f,ProductCategory cat,Users us,Documents d,Product prod  where f.documents=d.DocId and f.productCategory=cat.productCatid and f.user=us.userId and cat.branch="
+								+ id
+								+ " and prod.productCategory=cat.productCatid group by f.productCategory")) {
+					LOGGER.info("BRANCH_ID2 IS:::::::"+id);
+					ProductCatDetailsDto details = new ProductCatDetailsDto();				
+					details.setProdCategory((ProductCategory) data[0]);
+					details.setDocuments((Documents) data[1]);
+					details.setUser((Users) data[2]);
+					details.setProductCount(Integer.parseInt(data[3] + ""));
+					// details.setCatid(Integer.parseInt(data[3]+""));
+					// details.setProductcategoryName(data[4]+"");
+					branchCatDetails.add(details);
+					LOGGER.info("BRANCH_ID3 IS:::::::"+id);
+				}
 			}
-			for (Object[] data : uplActImpl.reportList(
-					"select f.productCategory,f.documents,f.user,count(prod.productCategory) from UploadingFiles f,ProductCategory cat,Users us,Documents d,Product prod  where f.documents=d.DocId and f.productCategory=cat.productCatid and f.user=us.userId and cat.branch="
-							+ id
-							+ " and prod.productCategory=cat.productCatid group by f.productCategory")) {
-				LOGGER.info("BRANCH_ID2 IS:::::::"+id);
-				ProductCatDetailsDto details = new ProductCatDetailsDto();				
-				details.setProdCategory((ProductCategory) data[0]);
-				details.setDocuments((Documents) data[1]);
-				details.setUser((Users) data[2]);
-				details.setProductCount(Integer.parseInt(data[3] + ""));
-				// details.setCatid(Integer.parseInt(data[3]+""));
-				// details.setProductcategoryName(data[4]+"");
-				branchCatList.add(details);
-				LOGGER.info("BRANCH_ID3 IS:::::::"+id);
-			}
+			
 			// showAvailProduct(productBranchList);
 			this.rendered = true;
-			for (Object[] data : uplActImpl.reportList(
-					"select o.orderProductId,o.orderDate,o.quantity,o.customer,cat.branch,o.product,p.sellingUnitPrice,co.email,co.phone from OrderProduct o,Product p,ProductCategory cat,Users us,Contact co,Branch b where o.product=p.productId and o.customer=us.userId and cat.branch="
-							+ usersSession.getBranch().getBranchId() + " and co.user=us.userId  and o.genericStatus='"
-							+ ACTIVE + "' group by o.orderProductId")) {
-				OrderProductDto order = new OrderProductDto();
-				order.setOrderProductId(Integer.parseInt(data[0] + ""));
-				order.setOrderDate((Date) data[1]);
-				order.setQuantity(Integer.parseInt(data[2] + ""));
-				order.setCustomer((Users) data[3]);
-				order.setProduct((Product) data[5]);
-				order.setSellingUnitPrice(data[6] + "");
-				order.setTotalSales(Double.parseDouble(data[2] + "") * Double.parseDouble(data[6] + ""));
-				order.setEmail(data[7] + "");
-				order.setPhone(data[8] + "");
-				orderDetails.add(order);
-			}
+			
 		} catch (Exception e) {
 			setValid(false);
 			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
@@ -282,6 +288,26 @@ public class ProductController implements Serializable, DbConstant {
 		this.renderProductForm = true;
 	}
 
+	public void back() {
+		this.rendered = false;
+		this.renderDetails = true;
+		this.renderProductForm = false;
+	}
+	
+	public void orderProd(Product prod) {
+		try {
+			HttpSession sessionuser = SessionUtils.getSession();
+				product = prod;
+				sessionuser.setAttribute("productOrder", product);
+				this.renderOrder = true;
+				this.rendered = false;
+				this.renderDetails = false;
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
 	public String saveNewProduct() {
 		try {
 
@@ -357,10 +383,11 @@ public class ProductController implements Serializable, DbConstant {
 			return "";
 		}
 	}
-
-	public String viewpCategory(int id) {
+	
+	public String viewpCategory(int pid) {
+		LOGGER.info("NEW_ID:::"+pid);
 		HttpSession sessionuser = SessionUtils.getSession();
-		sessionuser.setAttribute("branchId", id);
+		sessionuser.setAttribute("branchId", pid);
 		return "/menu/ViewProdCat.xhtml?faces-redirect=true";
 	}
 	
@@ -490,6 +517,54 @@ public class ProductController implements Serializable, DbConstant {
 
 		// return to current page
 		return null;
+	}
+	
+	public void finalOrder() {
+		try {
+//			try {
+//
+//				if (decimalpoint != Double.parseDouble(quantity)) {
+//				} else {
+//					JSFMessagers.resetMessages();
+//					setValid(false);
+//					JSFMessagers.addErrorMessage(getProvider().getValue("error.server.side.nullvalue"));
+//					LOGGER.info(CLASSNAME + "");
+//				}
+//
+//			} catch (Exception e) {
+//				JSFMessagers.resetMessages();
+//				setValid(false);
+//				JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
+//				LOGGER.info(CLASSNAME + "" + e.getMessage());
+//				e.printStackTrace();
+//			}
+
+				orderproduct.setCreatedBy(usersSession.getViewId());
+				orderproduct.setCrtdDtTime(timestamp);
+				orderproduct.setGenericStatus(ACTIVE);
+				orderproduct.setUpDtTime(timestamp);
+				orderproduct.setCreatedBy(usersSession.getViewId());
+				orderproduct.setCrtdDtTime(timestamp);
+				orderproduct.setOrderDate(timestamp);
+				orderproduct.setQuantity(quantity);
+				orderproduct.setProduct(product);
+				orderproduct.setCustomer(usersSession);
+				orderProdImpl.saveIntable(orderproduct);
+				JSFMessagers.resetMessages();
+				setValid(true);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.orderProduct"));
+//				QrGenerator qr = new QrGenerator();
+//				qr.generator(product);
+			clearContactFuileds();
+
+		} catch (HibernateException e) {
+			LOGGER.info(CLASSNAME + ":::Product Details is fail with HibernateException  error");
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.product"));
+			LOGGER.info(CLASSNAME + "" + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	public boolean compareDate(ProductDto prod) {
@@ -741,7 +816,7 @@ public class ProductController implements Serializable, DbConstant {
 		PdfPCell pc7 = new PdfPCell(new Paragraph("CUSTOMER PHONE", font0));
 		pc5.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pc7);
-		PdfPCell pc8 = new PdfPCell(new Paragraph("CUSTOMER ADDRESS", font0));
+		PdfPCell pc8 = new PdfPCell(new Paragraph("BRANCH ADDRESS", font0));
 		pc5.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pc8);
 		table.setHeaderRows(1);
@@ -777,20 +852,26 @@ public class ProductController implements Serializable, DbConstant {
 			PdfPCell pcel6 = new PdfPCell(new Paragraph(orderDto.getPhone(), font8));
 			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel6);
-			PdfPCell pcel7 = new PdfPCell(new Paragraph(orderDto.getCustomer().getAddress(), font8));
+			PdfPCell pcel7 = new PdfPCell(new Paragraph(orderDto.getProduct().getProductCategory().getBranch().getLocation().getDistrictName_en(), font8));
 			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel7);
 			document.add(table);
 			document.add(new Paragraph("\n"));
 			document.add(new Paragraph("\n"));
 			document.add(new Paragraph(new Chunk("Printed By:  " + usersSession.getViewId() + "",
-					FontFactory.getFont(FontFactory.TIMES_BOLD, 14, Font.BOLD, BaseColor.ORANGE))));
+					FontFactory.getFont(FontFactory.TIMES_BOLD, 14, Font.BOLD, BaseColor.BLUE))));
+			document.add(new Paragraph("\n"));
+			Image img2 = Image.getInstance("C:\\Users\\dff\\Documents\\"+orderDto.getOrderProductId()+".png");
+			img.scaleAbsolute(150f, 150f);
+			document.add(img2);
 			document.close();
 
 			writePDFToResponse(context.getExternalContext(), baos, "staff_report");
 
 			context.responseComplete();
-
+			product.setQuantity(product.getQuantity() - orderDto.getQuantity());
+			productImpl.saveIntable(product);
+			
 		} catch (Exception e) {
 
 			LOGGER.info(e.getMessage() + "kamana arahari");
@@ -1165,6 +1246,22 @@ public class ProductController implements Serializable, DbConstant {
 
 	public void setBranchCatList(List<ProductCatDetailsDto> branchCatList) {
 		this.branchCatList = branchCatList;
+	}
+
+	public boolean isRenderOrder() {
+		return renderOrder;
+	}
+
+	public void setRenderOrder(boolean renderOrder) {
+		this.renderOrder = renderOrder;
+	}
+
+	public OrderProductImpl getOrderProdImpl() {
+		return orderProdImpl;
+	}
+
+	public void setOrderProdImpl(OrderProductImpl orderProdImpl) {
+		this.orderProdImpl = orderProdImpl;
 	}
 	
 }

@@ -27,12 +27,14 @@ import toka.dao.impl.DocumentsImpl;
 import toka.dao.impl.ProductCategoryImpl;
 import toka.dao.impl.ProductImpl;
 import toka.dao.impl.UploadingFilesImpl;
+import toka.domain.Branch;
 import toka.domain.Contact;
 import toka.domain.Documents;
 import toka.domain.Product;
 import toka.domain.ProductCategory;
 import toka.domain.UploadingFiles;
 import toka.domain.Users;
+import toka.trading.dto.ProductCatDetailsDto;
 import toka.trading.dto.ProductCategoryDtos;
 import toka.trading.dto.ProductDto;
 import toka.common.JSFBoundleProvider;
@@ -53,6 +55,7 @@ public class ProductCategoryController implements Serializable, DbConstant {
 	private boolean rendered, renderProductForm;
 	private List<ProductCategory> categoryList = new ArrayList<ProductCategory>();
 	private List<ProductCategory> categoryDetails = new ArrayList<ProductCategory>();
+	private List<ProductCatDetailsDto> branchCatDetails = new ArrayList<ProductCatDetailsDto>();
 	private List<ProductCategoryDtos> categoryListDto = new ArrayList<ProductCategoryDtos>();
 	ProductCategoryImpl categoryImpl = new ProductCategoryImpl();
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
@@ -61,8 +64,8 @@ public class ProductCategoryController implements Serializable, DbConstant {
 	private DocumentsImpl docsImpl = new DocumentsImpl();
 	private UploadingFiles uploadingFiles;
 	private UploadingFilesImpl uplActImpl = new UploadingFilesImpl();
-	private int id;
-
+	private int id=0;
+private  Branch branch;
 	@SuppressWarnings("unchecked")
 	@PostConstruct
 	public void init() {
@@ -71,13 +74,19 @@ public class ProductCategoryController implements Serializable, DbConstant {
 		if (category == null) {
 			category = new ProductCategory();
 		}
+		if (branch == null) {
+			branch = new Branch();
+		}
+		
+		
 		try {
-			 id = (int) session.getAttribute("branchId");
+			
 			categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE }, "ProductCategory", " upDtTime desc");
-			categoryDetails = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus", "branch" },
-					new Object[] { ACTIVE, id }, "ProductCategory", " upDtTime desc");
-
+//			categoryDetails = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus", "branch" },
+//					new Object[] { ACTIVE, id }, "ProductCategory", " upDtTime desc");
+			
+			
 		showAvailProduct(categoryList);
 		categoryListDto =listCategory(categoryList);
 		} catch (Exception e) {
@@ -89,6 +98,24 @@ public class ProductCategoryController implements Serializable, DbConstant {
 
 	}
 
+	public List<ProductCatDetailsDto> showBranchProduct(Branch branch) {
+		if(null!=branch) {
+		LOGGER.info("BRANCH_ID IS:::::::"+branch.getBranchId());
+		for (Object[] data : uplActImpl.reportList(
+				"select f.productCategory,f.documents,f.user,count(prod.productCategory) from UploadingFiles f,ProductCategory cat,Users us,Documents d,Product prod  where f.documents=d.DocId and f.productCategory=cat.productCatid and f.user=us.userId and cat.branch="
+						+ branch.getBranchId()
+						+ " and prod.productCategory=cat.productCatid group by f.productCategory")) {
+			ProductCatDetailsDto details = new ProductCatDetailsDto();
+			details.setProdCategory((ProductCategory) data[0]);
+			details.setDocuments((Documents) data[1]);
+			details.setUser((Users) data[2]);
+			details.setProductCount(Integer.parseInt(data[3] + ""));
+			branchCatDetails.add(details);
+		}
+		
+		}
+		return (branchCatDetails);
+	}
 	public void showAvailProduct(List<ProductCategory> list) {
 		if (list.size() > 0) {
 			this.rendered = true;
@@ -102,6 +129,12 @@ public class ProductCategoryController implements Serializable, DbConstant {
 	public void showCategoryForm() {
 		this.rendered=false;
 		this.renderProductForm=true;
+	}
+
+	public String viewpCategory() {
+		
+		
+		return "/menu/ViewProdCat.xhtml?faces-redirect=true";
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -409,6 +442,22 @@ public class ProductCategoryController implements Serializable, DbConstant {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public List<ProductCatDetailsDto> getBranchCatDetails() {
+		return branchCatDetails;
+	}
+
+	public void setBranchCatDetails(List<ProductCatDetailsDto> branchCatDetails) {
+		this.branchCatDetails = branchCatDetails;
+	}
+
+	public Branch getBranch() {
+		return branch;
+	}
+
+	public void setBranch(Branch branch) {
+		this.branch = branch;
 	}
 	
 }

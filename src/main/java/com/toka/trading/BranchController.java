@@ -153,12 +153,6 @@ public class BranchController implements Serializable, DbConstant {
 		return "/menu/Branch.xhtml?faces-redirect=true";
 	}
 
-	public String viewpCategory(int id) {
-		HttpSession sessionuser = SessionUtils.getSession();
-		sessionuser.setAttribute("branchId", id);
-		return "/menu/ViewProdCat.xhtml?faces-redirect=true";
-	}
-	
 	public String cancel(ProductCategoryDtos cat) {
 		cat.setEditable(false);
 		return null;

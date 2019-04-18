@@ -9,7 +9,7 @@ import javax.faces.context.FacesContext;
 /**
  * This class contains JSF utility methods.
  * 
- * @author Ngabo
+ * @author Ngango
  */
 public class JSFMessagers implements Serializable {
 	private static final long serialVersionUID = 1L;

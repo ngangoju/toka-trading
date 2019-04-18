@@ -19,6 +19,7 @@
 
 						<p:outputPanel rendered="#{productController.rendered}"
 							autoUpdate="true">
+							
 							<span style="color: white; font-size: 10pt"> <label
 								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
 							</span>
@@ -79,8 +80,7 @@
 						<h:panelGroup layout="block"
 							rendered="#{productController.valid and  not facesContext.validationFailed}">
 							<ul>
-								<ui:repeat value="#{facesContext.messageList}"
-									var="facesMessage">
+								<ui:repeat value="#{facesContext.messageList}" var="facesMessage">
 									<li
 										style="list-style: none; background-color: #32CD32; color: white;"
 										class="alert alert-success"><h:outputText
@@ -259,7 +259,7 @@
 						<div class="row"
 							style="font: italic bold 13px/16px Georgia, serif;">
 							<ui:repeat
-								value="#{productController.branchCatDetails}"
+								value="#{productController.branchCatList}"
 								var="details">
 								<div class="col-md-4 col-sm-6">
 									<div class="card-group">
