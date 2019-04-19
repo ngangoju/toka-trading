@@ -26,8 +26,8 @@ public class PerishedProduct extends CommonDomain implements Serializable {
 	private int perishedId;
 
 	@ManyToOne
-	@JoinColumn(name = "product")
-	private Product product;
+	@JoinColumn(name = "productAssign")
+	private ProductAssignment productAssign;
 
 	@Column(name = "quantity")
 	private int quantity;
@@ -42,14 +42,6 @@ public class PerishedProduct extends CommonDomain implements Serializable {
 
 	public void setPerishedId(int perishedId) {
 		this.perishedId = perishedId;
-	}
-
-	public Product getProduct() {
-		return product;
-	}
-
-	public void setProduct(Product product) {
-		this.product = product;
 	}
 	
 	public int getQuantity() {

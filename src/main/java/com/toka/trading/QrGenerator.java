@@ -1,5 +1,5 @@
 package com.toka.trading;
-
+/*
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -18,14 +18,14 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
-import toka.domain.Product;
+import toka.domain.Product;*/
 
 public class QrGenerator {
 
-	private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+	/*private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
 	private String CLASSNAME = "QrGenerator :: ";
 	private static final long serialVersionUID = 1L;
-	/* to manage validation messages */
+	 to manage validation messages 
 	
 	public void generator(Product product) {
 		
@@ -40,7 +40,7 @@ public class QrGenerator {
 				hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 				
 				// Now with zxing version 3.2.1 you could change border size (white border size to just 1)
-				hintMap.put(EncodeHintType.MARGIN, 1); /* default = 4 */
+				hintMap.put(EncodeHintType.MARGIN, 1);  default = 4 
 				hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 
 				QRCodeWriter qrCodeWriter = new QRCodeWriter();
@@ -72,5 +72,5 @@ public class QrGenerator {
 			}
 //		System.out.println("\n\nYou have successfully created QR Code.");
 		LOGGER.info("\n\nYou have successfully created QR Code.: "+myCodeText);
-	}
+	}*/
 }

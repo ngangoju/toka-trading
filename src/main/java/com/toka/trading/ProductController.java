@@ -626,7 +626,7 @@ public class ProductController implements Serializable, DbConstant {
 				perished.setGenericStatus(ACTIVE);
 				perished.setUpDtTime(timestamp);
 				perished.setCreatedBy(usersSession.getViewId());
-				perished.setProduct(product);
+				//perished.setProduct(product);
 				perished.setQuantity(Integer.parseInt(perishedQuantity));
 				perished.setPerichedDate(new java.sql.Date(perishedDate.getTime()));
 				perishImpl.savePerishedProduct(perished);
