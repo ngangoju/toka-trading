@@ -43,6 +43,14 @@ public class ProductAssignment extends CommonDomain implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "product")
 	private Product product;
+	@Transient
+	private double totalprice;
+	@Transient
+	private double totalsales;
+	@Transient
+	private double unitprice;
+	@Transient
+	private double salesunit;
 	public int getProdAssId() {
 		return prodAssId;
 	}
@@ -79,7 +87,29 @@ public class ProductAssignment extends CommonDomain implements Serializable {
 	public void setProduct(Product product) {
 		this.product = product;
 	}
-
+	public double getTotalprice() {
+		return totalprice;
+	}
+	public void setTotalprice(double totalprice) {
+		this.totalprice = totalprice;
+	}
+	public double getTotalsales() {
+		return totalsales;
+	}
+	public void setTotalsales(double totalsales) {
+		this.totalsales = totalsales;
+	}
+	public double getUnitprice() {
+		return unitprice;
+	}
+	public void setUnitprice(double unitprice) {
+		this.unitprice = unitprice;
+	}
+	public double getSalesunit() {
+		return salesunit;
+	}
+	public void setSalesunit(double salesunit) {
+		this.salesunit = salesunit;
+	}
 	
-
 }

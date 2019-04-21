@@ -187,7 +187,7 @@ private  Branch branch;
 				category.setCrtdDtTime(timestamp);
 				category.setGenericStatus(ACTIVE);
 				category.setUpDtTime(timestamp);
-				category.setBranch(usersSession.getBranch());
+				//category.setBranch(usersSession.getBranch());
 				categoryImpl.saveProductCategory(category);
 				JSFMessagers.resetMessages();
 				setValid(true); 

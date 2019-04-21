@@ -2,8 +2,11 @@ package com.toka.trading;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -32,20 +35,25 @@ import toka.trading.dto.ProductCategoryDtos;
 import toka.trading.dto.UserDto;
 import toka.dao.impl.CountryImpl;
 import toka.dao.impl.DistrictImpl;
+import toka.dao.impl.ProductAssignmentImpl;
+import toka.dao.impl.ProductImpl;
 import toka.dao.impl.ProvinceImpl;
 import toka.domain.Country;
 import toka.domain.District;
+import toka.domain.Product;
+import toka.domain.ProductAssignment;
+import toka.domain.ProductCategory;
 import toka.domain.Province;
 
 @ManagedBean
 @ViewScoped
 public class BranchController implements Serializable, DbConstant {
 	private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
-	private String CLASSNAME = "UserCategoryController :: ";
+	private String CLASSNAME = "BranchController :: ";
 	private static final long serialVersionUID = 1L;
 	/* to manage validation messages */
-	private boolean isValid, chngDiv, skip, nextpage, frstDiv, cmpltDiv, bnchDiv, div1, div4, div2, div3, div3_1=true,
-	hasContact, profileEditable;
+	private boolean isValid, chngDiv, skip, nextpage, frstDiv, cmpltDiv, bnchDiv, div1, div4, div2, div3, div3_1 = true,
+			hasContact, profileEditable;
 	private int cntryId, vid, pid, cid, did, sid;
 	/* end manage validation messages */
 	private Branch branch;
@@ -60,7 +68,7 @@ public class BranchController implements Serializable, DbConstant {
 	ContactImpl contactImpl = new ContactImpl();
 	BranchImpl branchImpl = new BranchImpl();
 	UserCategoryImpl uCategoryImpl = new UserCategoryImpl();
-	private boolean rendered;
+	private boolean rendered, renderProductForm, renderproduct, renderassform,renderheader;
 	UserCategoryImpl userCatImpl = new UserCategoryImpl();
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
 	private String repEmail;
@@ -78,6 +86,11 @@ public class BranchController implements Serializable, DbConstant {
 	CountryImpl countryImpl = new CountryImpl();
 	ProvinceImpl provImpl = new ProvinceImpl();
 	DistrictImpl districtImpl = new DistrictImpl();
+	private List<Product> productfulldetails = new ArrayList<Product>();
+	private Product product;
+	ProductImpl productImpl = new ProductImpl();
+	private ProductAssignment prodAssign = new ProductAssignment();
+	ProductAssignmentImpl prodAssignImpl = new ProductAssignmentImpl();
 
 	@SuppressWarnings("unchecked")
 	@PostConstruct
@@ -91,12 +104,25 @@ public class BranchController implements Serializable, DbConstant {
 		if (cont == null) {
 			cont = new Contact();
 		}
-
+		if (null == district) {
+			district = new District();
+		}
+		if (null == product) {
+			product = new Product();
+		}
+		if (null == prodAssign) {
+			prodAssign = new ProductAssignment();
+		}
 		try {
-			branchDetails=branchImpl.getGenericListWithHQLParameter(
-					new String[] { "genericStatus" },
+			branchDetails = branchImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE }, "Branch", "branchId asc");
-				
+			if (branchDetails.size() > 0) {
+				this.rendered = true;
+				renderheader=true;
+			} else {
+				renderProductForm = true;
+			}
+			productfulldetails = productFullDetails();
 		} catch (Exception e) {
 			setValid(false);
 			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
@@ -105,10 +131,47 @@ public class BranchController implements Serializable, DbConstant {
 		}
 
 	}
-	
-	private void clearCategoryFuileds() {
-//		userCategory = new UserCategory();
-//		categoryDetails = null;
+
+	@SuppressWarnings("unchecked")
+	public List<Product> productFullDetails() throws Exception {
+		List<Product> details = new ArrayList<Product>();
+		details = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" }, new Object[] { ACTIVE, },
+				"Product", " upDtTime desc");
+
+		for (Product p : details) {
+			Product pro = new Product();
+			if (p.getSellingUnitPrice() > 0) {
+				pro.setProductId(p.getProductId());
+				pro.setProductName(p.getProductName());
+				pro.setQuantity(p.getQuantity());
+				pro.setManufactDate(p.getManufactDate());
+				pro.setExpireDate(p.getExpireDate());
+				pro.setPurchaseUnitPrice(p.getPurchaseUnitPrice());
+				pro.setSellingUnitPrice(p.getSellingUnitPrice());
+				pro.setGenericStatus(p.getGenericStatus());
+				pro.setProductImage(p.getProductImage());
+				pro.setProductCategory(p.getProductCategory());
+				pro.setTotalPrice(p.getQuantity() * p.getPurchaseUnitPrice());
+				pro.setTotalSales(p.getSellingUnitPrice() * p.getQuantity());
+				productfulldetails.add(pro);
+			}
+		}
+		return (productfulldetails);
+	}
+
+	public void showBranchForm() {
+		this.rendered = false;
+		this.renderProductForm = true;
+	}
+
+	public void backBranchList() {
+		this.rendered = true;
+		this.renderproduct = false;
+	}
+	public void backProductList() {
+		this.rendered = false;
+		this.renderproduct = true;
+		this.renderassform = false;
 	}
 
 	public String saveAction(ProductCategoryDtos cat) {
@@ -126,7 +189,7 @@ public class BranchController implements Serializable, DbConstant {
 				cat.setEditable(false);
 				usercat.setUpdatedBy(usersSession.getViewId());
 				usercat.setUpDtTime(timestamp);
-				//usercat.setUsercategoryName(cat.getUsercategoryName());
+				// usercat.setUsercategoryName(cat.getUsercategoryName());
 				userCatImpl.UpdateUsercategory(usercat);
 				JSFMessagers.resetMessages();
 				setValid(true);
@@ -146,6 +209,111 @@ public class BranchController implements Serializable, DbConstant {
 		// return to current page
 		return null;
 
+	}
+
+	public String saveBranch() {
+		try {
+
+			try {
+
+				if (null == district.getDistrictName_en() && null == branch.getBranchName()) {
+					JSFMessagers.resetMessages();
+					setValid(false);
+					JSFMessagers.addErrorMessage(getProvider().getValue("com.frontend.side.error"));
+				}
+			} catch (Exception e) {
+				JSFMessagers.resetMessages();
+				setValid(false);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
+				LOGGER.info(CLASSNAME + "" + e.getMessage());
+				e.printStackTrace();
+				return null;
+			}
+
+			districtImpl.saveDistrict(district);
+			branch.setGenericStatus(ACTIVE);
+			branch.setCreatedBy(usersSession.getFname() + "  " + usersSession.getLname());
+			branch.setCrtdDtTime(timestamp);
+			branch.setLocation(district);
+			branchImpl.saveBranch(branch);
+			JSFMessagers.resetMessages();
+			setValid(true);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.branch"));
+
+			clearContactFuileds();
+			return null;
+
+		} catch (HibernateException e) {
+			LOGGER.info(CLASSNAME + ":::Product Details is fail with HibernateException  error");
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.product"));
+			LOGGER.info(CLASSNAME + "" + e.getMessage());
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	public String assignProduct() {
+		try {
+
+			try {
+				branch = showAssignBranch();
+				product = showAssignProduct();
+				if (null == branch && null == product) {
+					JSFMessagers.resetMessages();
+					setValid(false);
+					JSFMessagers.addErrorMessage(getProvider().getValue("com.frontendbranchproductinfo.side.error"));
+				}
+			} catch (Exception e) {
+				JSFMessagers.resetMessages();
+				setValid(false);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
+				LOGGER.info(CLASSNAME + "" + e.getMessage());
+				e.printStackTrace();
+				return null;
+			}
+
+			if (Integer.parseInt(range) <= product.getQuantity()) {
+				prodAssign.setGenericStatus(ACTIVE);
+				prodAssign.setCreatedBy(usersSession.getFname() + " " + usersSession.getLname());
+				prodAssign.setCrtdDtTime(timestamp);
+				prodAssign.setProduct(product);
+				prodAssign.setBranch(branch);
+				prodAssign.setAssignDate(timestamp);
+				prodAssign.setQuantity(Integer.parseInt(range));
+				Product p = new Product();
+				p = productImpl.getProductById(product.getProductId(), "productId");
+				if (null != p) {
+					p.setQuantity(p.getQuantity() - Integer.parseInt(range));
+					prodAssignImpl.saveProductAssignment(prodAssign);
+					productImpl.UpdateProduct(p);
+					JSFMessagers.resetMessages();
+					setValid(true);
+					JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.productassignment"));
+				}
+
+			} else {
+
+			}
+
+			clearContactFuileds();
+			return null;
+
+		} catch (HibernateException e) {
+			LOGGER.info(CLASSNAME + ":::Product Details is fail with HibernateException  error");
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.product"));
+			LOGGER.info(CLASSNAME + "" + e.getMessage());
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	public void clearContactFuileds() {
+		district = new District();
+		branch = new Branch();
 	}
 
 	public String addBranch() {
@@ -178,22 +346,23 @@ public class BranchController implements Serializable, DbConstant {
 	@SuppressWarnings("unchecked")
 	public String renderAction(ProductCategoryDtos cat) throws Exception {
 		cat.setNotify(true);
-		/*List<Contact>contactList= new ArrayList<Contact>();
-		contactList=contactImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
-				new Object[] { ACTIVE}, "Contact", "contactId asc");*/
-		contactDetails= new ArrayList<Contact>();
+		/*
+		 * List<Contact>contactList= new ArrayList<Contact>();
+		 * contactList=contactImpl.getGenericListWithHQLParameter(new String[] {
+		 * "genericStatus" }, new Object[] { ACTIVE}, "Contact", "contactId asc");
+		 */
+		contactDetails = new ArrayList<Contact>();
 		for (Object[] data : usersImpl.reportList(
 				"select us.fname,us.lname, us.viewId,us.address, us.userId,co.email,co.phone from Contact co right  join  co.user us join us.userCategory cat where co.user is not null and cat.usercategoryName='"
 						+ INSTITUTE_REP + "'")) {
-			LOGGER.info("users>>" + data[0] + ":: " + data[1] + "");			
-			Contact cont= new Contact();
-			cont.setEmail(data[5]+"");
-			cont.setPhone(data[6]+"");
+			LOGGER.info("users>>" + data[0] + ":: " + data[1] + "");
+			Contact cont = new Contact();
+			cont.setEmail(data[5] + "");
+			cont.setPhone(data[6] + "");
 			contactDetails.add(cont);
-		}	
+		}
 		return null;
 	}
-	
 
 	/* method for render province panel starts */
 	public void renderProvMethod() {
@@ -211,9 +380,39 @@ public class BranchController implements Serializable, DbConstant {
 		}
 	}
 
-	/* method for render province panel ends */
+	public String assignBranchProduct(Branch bList) {
+		HttpSession sessionuser = SessionUtils.getSession();
+		if (null != bList) {
+			sessionuser.setAttribute("branchassign", bList);
+			this.rendered = false;
+			this.renderproduct = true;
+		}
+		return null;
+	}
 
-	/* provinces and cells methods starts */
+	public void assignProductForm(Product details) {
+		HttpSession sessionuser = SessionUtils.getSession();
+		if (null != details) {
+			sessionuser.setAttribute("productassign", details);
+			this.rendered = false;
+			this.renderproduct = false;
+			this.renderassform = true;
+			branch = showAssignBranch();
+			product = showAssignProduct();
+		}
+	}
+
+	public Branch showAssignBranch() {
+		HttpSession session = SessionUtils.getSession();
+		branch = (Branch) session.getAttribute("branchassign");
+		return branch;
+	}
+
+	public Product showAssignProduct() {
+		HttpSession session = SessionUtils.getSession();
+		product = (Product) session.getAttribute("productassign");
+		return product;
+	}
 
 	@SuppressWarnings("unchecked")
 	public void changeDistrict() {
@@ -228,7 +427,6 @@ public class BranchController implements Serializable, DbConstant {
 			e.printStackTrace();
 		}
 	}
-
 
 	public String getCLASSNAME() {
 		return CLASSNAME;
@@ -517,9 +715,11 @@ public class BranchController implements Serializable, DbConstant {
 	public void setContactDtoDetails(List<ContactDto> contactDtoDetails) {
 		this.contactDtoDetails = contactDtoDetails;
 	}
+
 	public String getRange() {
 		return range;
 	}
+
 	public void setRange(String range) {
 		this.range = range;
 	}
@@ -627,5 +827,77 @@ public class BranchController implements Serializable, DbConstant {
 	public void setuCategoryDetails(List<UserCategory> uCategoryDetails) {
 		this.uCategoryDetails = uCategoryDetails;
 	}
-	
+
+	public boolean isRenderProductForm() {
+		return renderProductForm;
+	}
+
+	public void setRenderProductForm(boolean renderProductForm) {
+		this.renderProductForm = renderProductForm;
+	}
+
+	public List<Product> getProductfulldetails() {
+		return productfulldetails;
+	}
+
+	public void setProductfulldetails(List<Product> productfulldetails) {
+		this.productfulldetails = productfulldetails;
+	}
+
+	public ProductImpl getProductImpl() {
+		return productImpl;
+	}
+
+	public void setProductImpl(ProductImpl productImpl) {
+		this.productImpl = productImpl;
+	}
+
+	public boolean isRenderproduct() {
+		return renderproduct;
+	}
+
+	public void setRenderproduct(boolean renderproduct) {
+		this.renderproduct = renderproduct;
+	}
+
+	public boolean isRenderassform() {
+		return renderassform;
+	}
+
+	public void setRenderassform(boolean renderassform) {
+		this.renderassform = renderassform;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public ProductAssignment getProdAssign() {
+		return prodAssign;
+	}
+
+	public void setProdAssign(ProductAssignment prodAssign) {
+		this.prodAssign = prodAssign;
+	}
+
+	public ProductAssignmentImpl getProdAssignImpl() {
+		return prodAssignImpl;
+	}
+
+	public void setProdAssignImpl(ProductAssignmentImpl prodAssignImpl) {
+		this.prodAssignImpl = prodAssignImpl;
+	}
+
+	public boolean isRenderheader() {
+		return renderheader;
+	}
+
+	public void setRenderheader(boolean renderheader) {
+		this.renderheader = renderheader;
+	}
+
 }

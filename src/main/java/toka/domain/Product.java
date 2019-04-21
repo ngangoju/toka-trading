@@ -13,6 +13,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "Product")
@@ -49,7 +50,11 @@ public class Product extends CommonDomain implements Serializable {
 
 	@Column(name = "quantity")
 	private double quantity;
-
+	@Transient
+	private Double totalPrice;
+	@Transient
+	private Double totalSales;
+	
 	public int getProductId() {
 		return productId;
 	}
@@ -103,5 +108,19 @@ public class Product extends CommonDomain implements Serializable {
 	}
 	public void setProductImage(String productImage) {
 		this.productImage = productImage;
+	}
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
+	public void setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+	public Double getTotalSales() {
+		return totalSales;
+	}
+	public void setTotalSales(Double totalSales) {
+		this.totalSales = totalSales;
 	}	
+	
+	
 }

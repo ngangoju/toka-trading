@@ -17,7 +17,7 @@
 				<div class="panel-heading">
 					<ui:repeat var="time" value="#">
 
-						<p:outputPanel rendered="#{productController.rendered}"
+						<p:outputPanel rendered="#{productAssignmentController.rendered}"
 							autoUpdate="true">
 							<a
 								href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml"
@@ -27,7 +27,7 @@
 								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.PerishableProductpanel']}</label>
 							</span>
 						</p:outputPanel>
-						<p:outputPanel rendered="#{productController.renderProductForm}">
+						<p:outputPanel rendered="#{productAssignmentController.renderProductForm}">
 
 							<a
 								href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml"
@@ -49,7 +49,7 @@
 
 					<h:form>
 						<h:panelGroup layout="block"
-							rendered="#{not productController.valid and not facesContext.validationFailed}">
+							rendered="#{not productAssignmentController.valid and not facesContext.validationFailed}">
 							<ul>
 								<ui:repeat value="#{facesContext.messageList}"
 									var="facesMessage">
@@ -64,7 +64,7 @@
 						</h:panelGroup>
 
 						<h:panelGroup layout="block"
-							rendered="#{productController.valid and  not facesContext.validationFailed}">
+							rendered="#{productAssignmentController.valid and  not facesContext.validationFailed}">
 							<ul>
 								<ui:repeat value="#{facesContext.messageList}"
 									var="facesMessage">
@@ -75,7 +75,7 @@
 								</ui:repeat>
 							</ul>
 						</h:panelGroup>
-						<p:outputPanel rendered="#{productController.rendered}"
+						<p:outputPanel rendered="#{productAssignmentController.rendered}"
 							autoUpdate="true">
 
 							<div class="col-md-6 grid-margin stretch-card"
@@ -93,7 +93,7 @@
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control" id="exampleInputEmail3"
 													a:placeholder="Quantity" required="tue"
-													value="#{productController.perishedQuantity}"
+													value="#{productAssignmentController.perishedQuantity}"
 													requiredMessage="#{msg['requiered.productqty.message']}"
 													converterMessage="#{msg['error.enter.invalid.productqty']}"
 													validatorMessage="#{msg['error.enter.invalid.productqty']}">
@@ -113,7 +113,7 @@
 															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
 														<h:inputText locale="#{facesContext.viewRoot.locale}"
 															autocomplete="off" id="from_dob_date_id"
-															value="#{productController.perishedDate}"
+															value="#{productAssignmentController.perishedDate}"
 															binding="#{from_dob_date_id}" class="form-control"
 															escape="true" maxlength="35" required="true"
 															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
@@ -143,7 +143,7 @@
 												</div>
 												<h:message errorClass="errorMsg1" for="from_dob_date_id"></h:message>
 											</div>
-											<h:commandButton a:type="submit" class="btn btn-success mr-2" action="#{productController.managePerishableProduct()}"
+											<h:commandButton a:type="submit" class="btn btn-success mr-2" action="#{productAssignmentController.managePerishableProduct()}"
 												value="Submit">
 												<f:ajax render="@form" execute="@form"
 													onevent="showProgress" />

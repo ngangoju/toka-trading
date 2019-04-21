@@ -102,7 +102,7 @@
 						</h:panelGroup>
 
 					</h:form>
-					<p:outputPanel rendered="#{productController.rendered}"
+					<p:outputPanel rendered="#{productAssignmentController.rendered}"
 						autoUpdate="true">
 
 						<fieldset style="width: 100%;">
@@ -207,7 +207,7 @@
 											<h:commandLink
 												class="btn btn-danger glyphicon glyphicon-trash"
 												style="margin-left:5px;color:white" data-toggle="tooltip"
-												data-placement="right" title="#{msg['UserCategoryView.deletefile']}" action="#{productController.deleteFile(fileDetails)}">
+												data-placement="right" title="#{msg['UserCategoryView.deletefile']}" action="#{productAssignmentController.deleteFile(fileDetails)}">
 											<f:ajax render="@form" execute="@form" onevent="showProgress" />
 											</h:commandLink></h:form>
 										</div>

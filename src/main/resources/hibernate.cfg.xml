@@ -28,6 +28,7 @@
 		<mapping class="toka.domain.SoldProduct" />
 		<mapping class="toka.domain.OrderProduct" />
 		<mapping class="toka.domain.ProductCategory" />
+		<mapping class="toka.domain.ProductAssignment"/>
 	</session-factory>
 </hibernate-configuration>
 

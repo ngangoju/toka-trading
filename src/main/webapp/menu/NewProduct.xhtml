@@ -17,21 +17,21 @@
 				<div class="panel-heading">
 					<ui:repeat var="time" value="#">
 
-						<p:outputPanel rendered="#{productController.rendered}"
+						<p:outputPanel rendered="#{productAssignmentController.rendered}"
 							autoUpdate="true">
 							
 							<span style="color: white; font-size: 10pt"> <label
 								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
 							</span>
 						</p:outputPanel>
-						<p:outputPanel rendered="#{productController.renderproduct}"
+						<p:outputPanel rendered="#{productAssignmentController.renderproduct}"
 							autoUpdate="true">
 							
 							<span style="color: white; font-size: 10pt"> <label
 								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
 							</span>
 						</p:outputPanel>
-						<p:outputPanel rendered="#{productController.renderDetails}"
+						<p:outputPanel rendered="#{productAssignmentController.renderDetails}"
 							autoUpdate="true">
 							<a
 								href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml"
@@ -41,7 +41,7 @@
 								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.Productpanel']}</label>
 							</span>
 						</p:outputPanel>
-						<p:outputPanel rendered="#{productController.renderProductForm}">
+						<p:outputPanel rendered="#{productAssignmentController.renderProductForm}">
 
 							<a
 								href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml"
@@ -63,7 +63,7 @@
 
 					<h:form>
 						<h:panelGroup layout="block"
-							rendered="#{not productController.valid and not facesContext.validationFailed}">
+							rendered="#{not productAssignmentController.valid and not facesContext.validationFailed}">
 							<ul>
 								<ui:repeat value="#{facesContext.messageList}"
 									var="facesMessage">
@@ -78,7 +78,7 @@
 						</h:panelGroup>
 
 						<h:panelGroup layout="block"
-							rendered="#{productController.valid and  not facesContext.validationFailed}">
+							rendered="#{productAssignmentController.valid and  not facesContext.validationFailed}">
 							<ul>
 								<ui:repeat value="#{facesContext.messageList}" var="facesMessage">
 									<li
@@ -88,7 +88,7 @@
 								</ui:repeat>
 							</ul>
 						</h:panelGroup>
-						<p:outputPanel rendered="#{productController.renderProductForm}"
+						<p:outputPanel rendered="#{productAssignmentController.renderProductForm}"
 							autoUpdate="true">
 
 							<div class="col-md-6 grid-margin stretch-card"
@@ -105,7 +105,7 @@
 												<h:inputText
 													style="font-family:Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control" id="exampleInputName1"
-													value="#{productController.product.productName}"
+													value="#{productAssignmentController.product.productName}"
 													a:placeholder="Product name" required="true"
 													requiredMessage="#{msg['required.productname.message']}"
 													converterMessage="#{msg['error.enter.invalid.productname']}"
@@ -123,7 +123,7 @@
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control" id="exampleInputEmail3"
 													a:placeholder="Quantity" required="tue"
-													value="#{productController.quantity}"
+													value="#{productAssignmentController.quantity}"
 													requiredMessage="#{msg['requiered.productqty.message']}"
 													converterMessage="#{msg['error.enter.invalid.productqty']}"
 													validatorMessage="#{msg['error.enter.invalid.productqty']}">
@@ -139,7 +139,7 @@
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control"
-													value="#{productController.unitprice}"
+													value="#{productAssignmentController.unitprice}"
 													id="exampleInputPassword4" a:placeholder="Unit price"
 													required="true"
 													requiredMessage="#{msg['requiered.productunitprice.message']}"
@@ -162,7 +162,7 @@
 															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
 														<h:inputText locale="#{facesContext.viewRoot.locale}"
 															autocomplete="off" id="from_dob_date_id"
-															value="#{productController.manufDate}"
+															value="#{productAssignmentController.manufDate}"
 															binding="#{from_dob_date_id}" class="form-control"
 															escape="true" maxlength="35" required="true"
 															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
@@ -203,7 +203,7 @@
 															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
 														<h:inputText locale="#{facesContext.viewRoot.locale}"
 															autocomplete="off" id="from_exp_date_id"
-															value="#{productController.expDate}"
+															value="#{productAssignmentController.expDate}"
 															binding="#{from_exp_date_id}" class="form-control"
 															escape="true" maxlength="35" required="true"
 															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
@@ -234,7 +234,7 @@
 											</div>
 											<h:commandButton a:type="submit" class="btn btn-success mr-2"
 												style=" font: italic bold 13px/20px Georgia, serif;"
-												action="#{productController.saveNewProduct}"
+												action="#{productAssignmentController.saveNewProduct}"
 												value="#{msg['label.subimit.message.submit']}">
 												<f:ajax render="@form" execute="@form"
 													onevent="showProgress" />
@@ -247,7 +247,7 @@
 
 
 						<!-- LIST OF PRODUCT CATEGORY -->
-						<p:outputPanel rendered="#{productController.rendered}">
+						<p:outputPanel rendered="#{productAssignmentController.rendered}">
 						<h4 style="font: italic bold 13px/16px Georgia, serif;">
 							FEATURED PRODUCT CATEGORY <span
 								class="glyphicon glyphicon-dashboard"> <label
@@ -259,7 +259,7 @@
 						<div class="row"
 							style="font: italic bold 13px/16px Georgia, serif;">
 							<ui:repeat
-								value="#{productController.branchCatList}"
+								value="#{productAssignmentController.branchCatList}"
 								var="details">
 								<div class="col-md-4 col-sm-6">
 									<div class="card-group">
@@ -277,7 +277,7 @@
 												<h:commandLink 
 												value="#{msg['productlist.viewButton']}"
 												class="btn btn-primary"
-												action="#{productController.showproducts(details)}"
+												action="#{productAssignmentController.showproducts(details)}"
 												/>
 												
 											
@@ -291,7 +291,7 @@
 						</p:outputPanel>
 						<!-- END OF PRODUCT CATEGORY -->
 						<!-- LIST OF Product -->
-						<p:outputPanel rendered="#{productController.renderDetails}">
+						<p:outputPanel rendered="#{productAssignmentController.renderDetails}">
 
 							<div class=" col-md-12"
 								style="height: 330px; overflow-y: scroll;">
@@ -300,14 +300,14 @@
        						 -webkit-box-shadow: none;
        							 box-shadow: none !important;
        								 margin: 17px 2px 0 !important;"
-									value="#{productController.prodDto}" var="prod"
+									value="#{productAssignmentController.prodDto}" var="prod"
 									class="table table-striped table-hover table-bordered tableUpdated ">
 									<f:facet name="header">
 										<h:commandLink data-toggle="tooltip" data-placement="left"
 											value="#{msg['createProduct.editButton']}"
 											style=" font: italic bold 13px/20px Georgia, serif;"
 											class="btn btn-sm btn-info"
-											action="#{productController.showProductForm()}">
+											action="#{productAssignmentController.showProductForm()}">
 											<f:ajax render="@all" execute="@all" onevent="showProgress" />
 										</h:commandLink>
 										<label
@@ -533,14 +533,14 @@
 												data-placement="left"
 												title="#{msg['CategoryView.editButton']}"
 												class="btn btn-sm btn-success 	glyphicon glyphicon-edit"
-												action="#{productController.editAction(prod)}"
+												action="#{productAssignmentController.editAction(prod)}"
 												rendered="#{not prod.editable}" />
 
 											<h:commandLink style="color:white" data-toggle="tooltip"
 												data-placement="left"
 												title="#{msg['CategoryView.cancelButton']}"
 												class="btn btn-sm btn-danger glyphicon glyphicon-remove"
-												action="#{productController.cancel(prod)}"
+												action="#{productAssignmentController.cancel(prod)}"
 												rendered="#{prod.editable}">
 												<!-- <f:ajax rendered="@form" execute="@form"
 													onevent="showProgress" /> -->
@@ -551,7 +551,7 @@
 												style="color:white;" data-toggle="tooltip"
 												data-placement="right"
 												title="#{msg['CategoryView.savechangeButton']}"
-												action="#{productController.saveAction(prod)}"
+												action="#{productAssignmentController.saveAction(prod)}"
 												rendered="#{prod.editable}">
 												<f:ajax render="@form" execute="@form"
 													onevent="showProgress" />
@@ -562,7 +562,7 @@
 												data-placement="left"
 												title="#{msg['productView.viewButton']}"
 												class="btn btn-sm btn-info glyphicon glyphicon-list"
-												action="#{productController.viewDetails(prod)}"
+												action="#{productAssignmentController.viewDetails(prod)}"
 												rendered="#{not prod.editable}">
 												<!-- <f:ajax render="@form" execute="@form"
 												onevent="showProgress" /> -->
@@ -572,7 +572,7 @@
 												style="color:white;" data-toggle="tooltip"
 												data-placement="right"
 												title="#{msg['productView.uploadButton']}"
-												action="#{productController.uploadAction(prod)}">
+												action="#{productAssignmentController.uploadAction(prod)}">
 												<f:ajax render="@form" execute="@form"
 													onevent="showProgress" />
 
@@ -582,7 +582,7 @@
 												style="color:white;" data-toggle="tooltip"
 												data-placement="right"
 												title="#{msg['productPerishedView.uploadButton']}"
-												action="#{productController.perishableProductAction(prod)}">
+												action="#{productAssignmentController.perishableProductAction(prod)}">
 												<f:ajax render="@form" execute="@form"
 													onevent="showProgress" />
 
@@ -599,7 +599,7 @@
 							</div>
 						</p:outputPanel>
 						<!-- END OF ACTIVITIES VIEW -->
-						<p:outputPanel rendered="#{productController.renderproduct}"
+						<p:outputPanel rendered="#{productAssignmentController.renderproduct}"
 							autoUpdate="true">
 							<div class="card border-secondary mb-3 text-center"
 								style="width: 25rem; margin-left: 25%">
@@ -608,24 +608,29 @@
 									<h5 class="card-title">
 										<h:graphicImage style="width:30%;height:30%;margin:5px"
 											class="img-xs rounded-circle" alt="productImage"
-											value="/images/dynamic/?file=#{productController.uploadingFiles.documents.sysFilename}" />
+											value="/images/dynamic/?file=#{productAssignmentController.uploadingFiles.documents.sysFilename}" />
 									</h5>
 									<p class="card-text"
 										style="font: italic 13px/16px Georgia, serif;">
-										Product category:<label class=" text text-black">#{productController.uploadingFiles.product.productCategory.productCatName}</label>
+										Product name:<label class=" text text-black">#{productAssignmentController.uploadingFiles.product.productName}</label>
 									</p>
 									<p class="card-text"
 										style="font: italic 13px/16px Georgia, serif;">
-										Purchase price:<label class=" text text-black">#{productController.totalprice}</label>
+										Product category:<label class=" text text-black">#{productAssignmentController.uploadingFiles.product.productCategory.productCatName}</label>
 									</p>
 									<p class="card-text"
 										style="font: italic 13px/16px Georgia, serif;">
-										Selling price:<label class=" text text-black">#{productController.salesprice}</label>
+										Product quantity:<label class=" text text-black">#{productAssignmentController.uploadingFiles.product.quantity}</label>
 									</p>
 									<p class="card-text"
 										style="font: italic 13px/16px Georgia, serif;">
-										Product Address:<label class=" text text-black">#{productController.uploadingFiles.product.productCategory.branch.branchName}</label>
+										Purchase price:<label class=" text text-black">#{productAssignmentController.totalprice}</label>
 									</p>
+									<p class="card-text"
+										style="font: italic 13px/16px Georgia, serif;">
+										Selling price:<label class=" text text-black">#{productAssignmentController.salesprice}</label>
+									</p>
+									
 									<a
 										href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml"
 										class="btn btn-primary">Go back</a>
