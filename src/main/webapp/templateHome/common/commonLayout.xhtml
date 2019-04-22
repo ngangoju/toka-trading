@@ -102,6 +102,27 @@ h3 {
           <div class="col-lg-4 mx-auto">
             <div class="auto-form-wrapper">
               <h:form action="#">
+    <h:panelGroup layout="block" rendered="#{not login.valid and not facesContext.validationFailed}">
+<ul>
+<ui:repeat value="#{facesContext.messageList}" var="facesMessage">
+<li class="alert alert-danger" style="list-style: none;background-color:#FF2400;color:white;margin-left: -3%">
+<center><h:outputText value="#{facesMessage.summary}" escape="false" /></center>
+</li>
+</ui:repeat>
+</ul>
+</h:panelGroup>
+
+
+
+
+ <h:panelGroup layout="block" rendered="#{login.valid and  not facesContext.validationFailed}">
+        <ul>
+        <ui:repeat value="#{facesContext.messageList}" var="facesMessage">
+            <li class="alert alert-success"><h:outputText
+            value="#{facesMessage.summary}" escape="false" /></li>
+        </ui:repeat>
+        </ul>
+    </h:panelGroup>
                 <div class="form-group">
                   <label class="label">Username</label>
                   <div class="input-group">         

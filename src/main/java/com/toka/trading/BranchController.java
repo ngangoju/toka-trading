@@ -316,6 +316,7 @@ public class BranchController implements Serializable, DbConstant {
 		branch = new Branch();
 	}
 
+	
 	public String addBranch() {
 
 		return "/menu/Branch.xhtml?faces-redirect=true";
