@@ -397,8 +397,6 @@ public class BranchController implements Serializable, DbConstant {
 		HttpSession sessionuser = SessionUtils.getSession();
 		if (null != bList) {
 			sessionuser.setAttribute("branchassign", bList);
-			this.rendered = false;
-			this.renderproduct = true;
 		}
 		return null;
 	}

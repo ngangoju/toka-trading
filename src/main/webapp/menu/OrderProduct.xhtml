@@ -46,21 +46,6 @@
 
 					<h:form>
 						<h:panelGroup layout="block"
-							rendered="#{not productController.valid and not facesContext.validationFailed}">
-							<ul>
-								<ui:repeat value="#{facesContext.messageList}"
-									var="facesMessage">
-									<li class="alert alert-danger"
-										style="list-style: none; background-color: #FF2400; color: white">
-										<center>
-											<h:outputText value="#{facesMessage.summary}" escape="false" />
-										</center>
-									</li>
-								</ui:repeat>
-							</ul>
-						</h:panelGroup>
-
-						<h:panelGroup layout="block"
 							rendered="#{productController.valid and  not facesContext.validationFailed}">
 							<ul>
 								<ui:repeat value="#{facesContext.messageList}"
@@ -77,26 +62,94 @@
 
 							<div class="col-md-6 grid-margin stretch-card"
 								style="font-family: Poppins, sans-serif">
-								<div class="card">
-									<div class="card-body">
-										<h4 class="card-title"
-											style="font-family: Poppins, sans-serif; font-weight: bold; font-size: 16px !important;"> Ordering Product
-											Form</h4>
-										<h:form class="forms-sample">
+								<h:form class="forms-sample">
 											
-											<div class="form-group">
-												<label for="exampleInputEmail3">#{msg['productquantity.Productform']}<span
-													style="color: red; font-size: 15px">*</span></label>
-												<h:inputText
-													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
-													a:type="text" class="form-control" id="exampleInputEmail3"
-													a:placeholder="Quantity" />
-											</div>
-											<h:commandButton a:type="submit" class="btn btn-success mr-2"
-												value="Submit"></h:commandButton>
+											<p:dataTable value="#{groupOfMenuController.menuGroupDtoDetails}"
+						var="menu" rows="10" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15" id="tables">
+
+						<p:column headerText="Group Menu Name">
+
+							<h:inputText value="#{menu.menuGroupName}" size="10"
+								rendered="#{menu.editable}" />
+
+							<h:outputText value="#{menu.menuGroupName}"
+								rendered="#{not menu.editable}" />
+						</p:column>
+
+
+						<p:column headerText="Default Group Menu">
+
+
+							<h:inputText value="#{menu.defaultGroupMenu}" size="10"
+								rendered="#{menu.editable}" />
+
+							<h:outputText value="#{menu.defaultGroupMenu}"
+								rendered="#{not menu.editable}" />
+
+						</p:column>
+
+
+
+						<p:column headerText="User Category">
+
+							<h:selectOneMenu id="cat" styleClass="form-control"
+								rendered="#{menu.editable}" required="true"
+								value="#{menu.userCategory.userCatid}"
+								requiredMessage="#{msg['requiered.categoryname.message']}">
+								<f:selectItem
+									itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+									itemValue="#{null}" escapeItem="true" itemDisabled="false" />
+								<f:selectItems
+									value="#{groupOfMenuController.userCategoryDetails}"
+									var="option" itemValue="#{option.userCatid}"
+									itemLabel="#{option.usercategoryName}" itemLabelEscaped="true" />
+								<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
+							</h:selectOneMenu>
+
+							<h:outputText value="#{menu.userCategory.usercategoryName}"
+								rendered="#{not menu.editable}" />
+
+						</p:column>
+						<p:column headerText="Menu Status">
+							<h:outputText value="#{menu.genericStatus}" />
+
+						</p:column>
+						<p:column headerText=" Change Status">
+
+							<h:commandLink style="color:white"
+								class="btn btn-success 	glyphicon glyphicon-refresh"
+								value="#{menu.action}"
+								action="#{groupOfMenuController.updateStatus(menu)}">
+								<f:ajax render="@form" execute="@form" onevent="showProgress" />
+							</h:commandLink>
+						</p:column>
+						<p:column headerText="Action">
+
+
+							<h:commandLink style="color:white"
+								class="btn btn-success 	glyphicon glyphicon-edit" value="Edit"
+								action="#{groupOfMenuController.editAction(menu)}"
+								rendered="#{not menu.editable}" />
+
+							<h:commandLink style="margin-left:2px;color:white"
+								class="btn btn-danger 	glyphicon glyphicon-remove"
+								value="Cancel" action="#{groupOfMenuController.cancel(menu)}"
+								rendered="#{menu.editable}" />
+
+
+							<h:commandButton value="Save Changes" class="btn btn-primary"
+								action="#{groupOfMenuController.newAction(menu)}"
+								rendered="#{menu.editable}" render="menuGroupPanel">
+								<f:ajax render="@form" execute="@form" onevent="showProgress" />
+							</h:commandButton>
+						</p:column>
+
+					</p:dataTable>
+					<br />
+
 										</h:form>
-									</div>
-								</div>
 							</div>
 						</p:outputPanel>
 

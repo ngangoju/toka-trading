@@ -383,14 +383,14 @@ public class ProductController implements Serializable, DbConstant {
 			return "";
 		}
 	}
-	
-	public String viewpCategory(int pid) {
-		LOGGER.info("NEW_ID:::"+pid);
-		HttpSession sessionuser = SessionUtils.getSession();
-		sessionuser.setAttribute("branchId", pid);
-		return "/menu/ViewProdCat.xhtml?faces-redirect=true";
-	}
-	
+//	
+//	public String viewpCategory(int pid) {
+//		LOGGER.info("NEW_ID:::"+pid);
+//		HttpSession sessionuser = SessionUtils.getSession();
+//		sessionuser.setAttribute("branchId", pid);
+//		return "/menu/ViewProdCat.xhtml?faces-redirect=true";
+//	}
+//	
 	private void clearContactFuileds() {
 
 		product = new Product();

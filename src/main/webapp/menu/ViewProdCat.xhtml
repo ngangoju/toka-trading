@@ -34,7 +34,7 @@
 							</ul>
 						</h:panelGroup>
 						
-			<p:outputPanel rendered="#{productController.rendered}">
+			<p:outputPanel rendered="#{productAssignmentController.rendered}">
 				<div class="row" style="font: italic bold 13px/16px Georgia, serif;">
 					<ui:repeat value="#{productController.branchCatDetails}" var="bList">
 						<div class="col-md-4 col-sm-6">
@@ -65,7 +65,7 @@
 			</p:outputPanel>
 
 			<!-- list of Products -->
-			<p:outputPanel rendered="#{productController.renderDetails}">
+			<p:outputPanel rendered="#{productAssignmentController.renderDetails}">
 
 				<div class=" col-md-12" style="height: 330px; overflow-y: scroll;">
 					<h:form>
@@ -74,7 +74,7 @@
        						 -webkit-box-shadow: none;
        							 box-shadow: none !important;
        								 margin: 17px 2px 0 !important;"
-							value="#{productController.prodDto}" var="prod"
+							value="#{productAssignmentController.productassdetails}" var="prod"
 							class="table table-striped table-hover table-bordered tableUpdated ">
 							<f:facet name="header">
 								<label
@@ -93,199 +93,53 @@
 									<label>Product name</label>
 								</f:facet>
 								<br />
-								<h:inputText id="prodId1" value="#{prod.productName}"
-									styleClass="form-control" size="10" rendered="#{prod.editable}"
-									maxlength="250" required="true"
-									requiredMessage="#{msg['required.productname.message']}"
-									converterMessage="#{msg['error.enter.invalid.productname']}"
-									validatorMessage="#{msg['error.enter.invalid.productname']}">
-									<f:validateRegex
-										pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
-									<f:validateLength maximum="100"></f:validateLength>
-								</h:inputText>
-								<h:message for="prodId1" styleClass="help-block"></h:message>
-
-								<h:outputText value="#{prod.productName}"
-									rendered="#{not prod.editable}" />
+								<h:outputText value="#{prod.product.productName}"/>
 							</h:column>
 							<h:column>
 								<f:facet name="header">
 									<label>Quantity</label>
 								</f:facet>
 								<br />
-								<h:inputText id="qty" value="#{prod.quantity}"
-									styleClass="form-control" size="10" rendered="#{prod.editable}"
-									maxlength="250"
-									requiredMessage="#{msg['requiered.productqty.message']}"
-									converterMessage="#{msg['error.enter.invalid.productqty']}"
-									validatorMessage="#{msg['error.enter.invalid.productqty']}">
-									<f:validateRegex
-										pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
-									<f:validateLength maximum="100"></f:validateLength>
-								</h:inputText>
-								<h:message for="qty" styleClass="help-block"></h:message>
-
-								<h:outputText value="#{prod.quantity}"
-									rendered="#{not prod.editable}" />
-							</h:column>
-							<h:column>
-								<f:facet name="header">
-									<label>Unity price</label>
-								</f:facet>
-								<br />
-								<h:inputText id="price" value="#{prod.purchaseUnitPrice}"
-									styleClass="form-control" size="10" rendered="#{prod.editable}"
-									maxlength="250" required="true"
-									requiredMessage="#{msg['requiered.productunitprice.message']}"
-									converterMessage="#{msg['error.enter.invalid.productunitprice']}"
-									validatorMessage="#{msg['error.enter.invalid.productunitprice']}">
-									<f:validateRegex
-										pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
-									<f:validateLength maximum="100"></f:validateLength>
-								</h:inputText>
-								<h:message for="price" styleClass="help-block"></h:message>
-
-								<h:outputText value="#{prod.purchaseUnitPrice}"
-									rendered="#{not prod.editable}" />
+								<h:outputText value="#{prod.product.quantity}" />
 							</h:column>
 							<h:column>
 								<f:facet name="header">
 									<label>Category</label>
 								</f:facet>
 								<br />
-								<h:selectOneMenu id="category" styleClass="form-control"
-									rendered="#{prod.editable}"
-									value="#{prod.productCategory.productCatid}"
-									requiredMessage="#{msg['requiered.categoryname.message']}">
-									<f:selectItem
-										itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
-										itemValue="#{null}" escapeItem="true" itemDisabled="false" />
-									<f:selectItems value="#{productController.categoryList}"
-										var="option" itemValue="#{option.productCatid}"
-										itemLabel="#{option.productCatName}" itemLabelEscaped="true" />
-
-								</h:selectOneMenu>
-								<h:message for="category" styleClass="help-block"></h:message>
-								<h:outputText value="#{prod.productCategory.productCatName}"
-									rendered="#{not prod.editable}" />
+								<h:outputText value="#{prod.product.productCategory.productCatName}" />
 
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-									<label>Selling unit price</label>
+									<label>Unit price</label>
 								</f:facet>
 								<br />
-								<h:inputText id="saleprice" value="#{prod.sellingUnitPrice}"
-									styleClass="form-control" size="10" rendered="#{prod.editable}"
-									maxlength="250" required="true"
-									requiredMessage="#{msg['requiered.saleunitprice.message']}"
-									converterMessage="#{msg['error.enter.invalid.salesunitprice']}"
-									validatorMessage="#{msg['error.enter.invalid.salesunitprice']}">
-									<f:validateRegex
-										pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
-									<f:validateLength maximum="100"></f:validateLength>
-								</h:inputText>
-								<h:message for="saleprice" styleClass="help-block"></h:message>
-
-								<h:outputText value="#{prod.sellingUnitPrice}"
-									rendered="#{not prod.editable}" />
+								<h:outputText value="#{prod.product.sellingUnitPrice}" />
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-									<label>Manufact date</label>
+									<label>Branch</label>
+								</f:facet>
+								<br />
+								<h:outputText value="#{prod.branch.branchName}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">
+									<label>Manufacture date</label>
 								</f:facet>
 
-								<p:outputPanel rendered="#{prod.editable}">
 									<br />
-									<div class="cols-md-12">
-										<div class="input-group">
-											<span class="input-group-addon"><i
-												class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
-											<h:inputText locale="#{facesContext.viewRoot.locale}"
-												rendered="#{prod.editable}" autocomplete="off"
-												id="from_dob_date_idtable"
-												binding="#{from_dob_date_idtable}" class="form-control"
-												escape="true" value="#{prod.manufactDate}" maxlength="35"
-												required="true"
-												converterMessage="#{msg['validation.message.DATE_FORMAT']}"
-												requiredMessage="#{msg['endDate.message']}">
-												<f:convertDateTime type="date" dateType="short"
-													pattern="dd/MM/yyyy" />
-												<f:validateLength maximum="35" />
-											</h:inputText>
-											<script>
-												$(function() {
-													$(
-															'input[id*="from_dob_date_idtable"]')
-															.datepicker(
-																	{
-																		changeMonth : true,
-																		changeYear : true,
-																		//maxDate : 0,
-																		//minDate: 0,
-																		dateFormat : "dd/mm/yy",
-																		//yearRange : "-100:+0",
-																		buttonImage : "./resources/image/calendar1.png"
-																	});
-												});
-											</script>
-										</div>
-									</div>
-								</p:outputPanel>
-								<br />
-								<h:message errorClass="errorMsg1" for="from_dob_date_idtable"
-									style="font-size:12px;font-family:Time New Roman;"></h:message>
-								<h:outputText value="#{prod.manufactDate}"
-									rendered="#{not prod.editable}">
+								<h:outputText value="#{prod.product.manufactDate}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-									<label>Expired date</label>
+									<label>Expiration date</label>
 								</f:facet>
-								<p:outputPanel rendered="#{prod.editable}">
 									<br />
-									<div class="cols-md-12">
-										<div class="input-group">
-											<span class="input-group-addon"><i
-												class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
-											<h:inputText locale="#{facesContext.viewRoot.locale}"
-												rendered="#{prod.editable}" autocomplete="off"
-												id="from_dob_date_idtable2"
-												binding="#{from_dob_date_idtable2}" class="form-control"
-												escape="true" value="#{prod.expireDate}" maxlength="35"
-												required="true"
-												converterMessage="#{msg['validation.message.DATE_FORMAT']}"
-												requiredMessage="#{msg['endDate.message']}">
-												<f:convertDateTime type="date" dateType="short"
-													pattern="dd/MM/yyyy" />
-												<f:validateLength maximum="35" />
-											</h:inputText>
-											<script>
-												$(function() {
-													$(
-															'input[id*="from_dob_date_idtable2"]')
-															.datepicker(
-																	{
-																		changeMonth : true,
-																		changeYear : true,
-																		//maxDate : 0,
-																		//minDate: 0,
-																		dateFormat : "dd/mm/yy",
-																		//yearRange : "-100:+0",
-																		buttonImage : "./resources/image/calendar1.png"
-																	});
-												});
-											</script>
-										</div>
-									</div>
-								</p:outputPanel>
-								<br />
-								<h:message errorClass="errorMsg1" for="from_dob_date_idtable2"
-									style="font-size:12px;font-family:Time New Roman;"></h:message>
-								<h:outputText value="#{prod.expireDate}"
-									rendered="#{not prod.editable}">
+								<h:outputText value="#{prod.product.expireDate}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
 							</h:column>
@@ -299,10 +153,7 @@
 									<h:commandLink style="color:white" data-toggle="tooltip"
 										data-placement="left" title="#{msg['productView.viewButton']}"
 										class="btn btn-sm btn-info glyphicon glyphicon-list"
-										action="#{productController.viewDetails(prod)}"
-										rendered="#{not prod.editable}">
-										<!-- <f:ajax render="@form" execute="@form"
-												onevent="showProgress" /> -->
+										action="#{productController.viewDetails(prod.product)}">
 									</h:commandLink>
 								</div>
 							</h:column>

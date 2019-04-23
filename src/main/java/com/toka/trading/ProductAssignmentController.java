@@ -43,6 +43,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import toka.common.DbConstant;
 import toka.common.JSFMessagers;
 import toka.common.SessionUtils;
+import toka.dao.impl.BranchImpl;
 import toka.dao.impl.DocumentsImpl;
 import toka.dao.impl.OrderProductImpl;
 import toka.dao.impl.PerishedProductImpl;
@@ -101,9 +102,11 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private ProductAssignment prodAssign = new ProductAssignment();
 	ProductAssignmentImpl prodAssignImpl = new ProductAssignmentImpl();
 	private List<ProductAssignment> productAssignedList = new ArrayList<ProductAssignment>();
+	private List<ProductAssignment> prodAssigDetails = new ArrayList<ProductAssignment>();
 	private List<ProductAssignment> productassdetails = new ArrayList<ProductAssignment>();
 	ProductDto pdto = new ProductDto();
 	ProductImpl productImpl = new ProductImpl();
+	BranchImpl branchImpl = new BranchImpl();
 	OrderProductImpl orderProdImpl = new OrderProductImpl();
 	PerishedProductImpl perishImpl = new PerishedProductImpl();
 	ProductCategoryImpl categoryImpl = new ProductCategoryImpl();
@@ -140,14 +143,14 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 			orderproduct=new OrderProduct();
 		}
 		try {
-			
+
+			if(usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("ceo")) {
 			productList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "Product", " upDtTime desc");
 
 			categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "ProductCategory", " upDtTime desc");
 
-			
 			
 				for (Object[] data : uplActImpl.reportList(
 						"select  f.productCategory,f.documents,f.user,count(p.productId) from Users us,Documents d,Product p ,ProductCategory cat,UploadingFiles f where \r\n" + 
@@ -198,12 +201,26 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 			}*/
 			
 			// showAvailProduct(productBranchList);
-			this.rendered = true;
 			
 			productfulldetails=productFullDetails() ;
 			productassdetails=prodAssignImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "ProductAssignment", " assignDate desc");
 			productAssignedList=productAssignedList(productassdetails);
+			this.rendered = true;
+			}
+			else if(usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("customer")){
+				this.renderDetails=true;
+				id = (int) session.getAttribute("branchId");
+				LOGGER.info("BRANCH_ID INGANA NA:::::::"+id);
+				productassdetails=prodAssignImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","branch" },
+						new Object[] { ACTIVE, branchImpl.getBranchById(id, "branchId") }, "ProductAssignment", " assignDate desc");
+				productAssignedList=productAssignedList(productassdetails);
+				}
+			else {
+				prodAssigDetails=prodAssignImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","branch" },
+						new Object[] { ACTIVE, usersSession.getBranch() }, "ProductAssignment", " assignDate desc");
+				productAssignedList=productAssignedList(prodAssigDetails);
+			}
 		} catch (Exception e) {
 			setValid(false);
 			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.error"));
@@ -1360,6 +1377,22 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 
 	public void setProductassdetails(List<ProductAssignment> productassdetails) {
 		this.productassdetails = productassdetails;
+	}
+
+	public List<ProductAssignment> getProdAssigDetails() {
+		return prodAssigDetails;
+	}
+
+	public void setProdAssigDetails(List<ProductAssignment> prodAssigDetails) {
+		this.prodAssigDetails = prodAssigDetails;
+	}
+
+	public BranchImpl getBranchImpl() {
+		return branchImpl;
+	}
+
+	public void setBranchImpl(BranchImpl branchImpl) {
+		this.branchImpl = branchImpl;
 	}
 	
 }

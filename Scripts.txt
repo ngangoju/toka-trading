@@ -86,10 +86,9 @@ insert into listofmenu (crtdDtTime,genericStatus,description,iconImage,menucolor
 insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) 
 values(now(),'active',null,18,4);
 
-insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Assigned products','Url19','/menu/ProductAssigned.xhtml',null,11);
-insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,19,2);
-update listofmenu set iconimage='glyphicon glyphicon-list-alt',menucolor='purple2 ' where menuid=19;
 
-glyphicon glyphicon-list-alt
-glyphicon glyphicon-th-list
-glyphicon glyphicon-list
+
+
+insert into listofmenu(crtdDtTime,genericStatus,description,urlCode,urlName,listOfMenu,menuGroup) values(now(),'active','Assigned products','Url21','/menu/AssignedProduct.xhtml',null,11);
+insert  menuassignment(crtdDtTime, genericStatus,defaultMenuUrl,listOfMenu,userCategory) values(now(),'active',null,24,2);
+update listofmenu set iconimage='glyphicon glyphicon-list-alt',menucolor='purple2 ' where menuid=24;
