@@ -32,18 +32,21 @@ import toka.domain.UserCategory;
 import toka.domain.Users;
 import toka.trading.dto.ContactDto;
 import toka.trading.dto.ProductCategoryDtos;
+import toka.trading.dto.SoldProductDto;
 import toka.trading.dto.UserDto;
 import toka.dao.impl.CountryImpl;
 import toka.dao.impl.DistrictImpl;
 import toka.dao.impl.ProductAssignmentImpl;
 import toka.dao.impl.ProductImpl;
 import toka.dao.impl.ProvinceImpl;
+import toka.dao.impl.SoldProductImpl;
 import toka.domain.Country;
 import toka.domain.District;
 import toka.domain.Product;
 import toka.domain.ProductAssignment;
 import toka.domain.ProductCategory;
 import toka.domain.Province;
+import toka.domain.SoldProduct;
 
 @ManagedBean
 @ViewScoped
@@ -91,7 +94,9 @@ public class BranchController implements Serializable, DbConstant {
 	ProductImpl productImpl = new ProductImpl();
 	private ProductAssignment prodAssign = new ProductAssignment();
 	ProductAssignmentImpl prodAssignImpl = new ProductAssignmentImpl();
-
+	private SoldProduct soldproduct= new SoldProduct();
+	private List<SoldProductDto>branchSoldProduct= new ArrayList<SoldProductDto>();
+	SoldProductImpl soldImpl= new SoldProductImpl();
 	@SuppressWarnings("unchecked")
 	@PostConstruct
 	public void init() {
@@ -132,6 +137,7 @@ public class BranchController implements Serializable, DbConstant {
 
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	public List<Product> productFullDetails() throws Exception {
 		List<Product> details = new ArrayList<Product>();
@@ -291,6 +297,12 @@ public class BranchController implements Serializable, DbConstant {
 					JSFMessagers.resetMessages();
 					setValid(true);
 					JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.productassignment"));
+				p= new Product();	
+				p=productImpl.getProductById(product.getProductId(), "productId");
+				if(p.getQuantity()==0) {
+					p.setGenericStatus(DESACTIVE);
+					productImpl.UpdateProduct(p);
+				}
 				}
 
 			} else {
@@ -391,6 +403,43 @@ public class BranchController implements Serializable, DbConstant {
 		return null;
 	}
 
+	public void soldProductList(Branch b) {
+		if(null!=b) {
+			branchSoldProduct= new ArrayList<SoldProductDto>();
+			branchSoldProduct=branchSoldProduct(b);
+			this.rendered = false;
+			this.renderproduct = true;
+		}	
+	}
+	public void backBranch() {
+		this.rendered = true;
+		this.renderproduct = false;
+	}
+	public List<SoldProductDto> branchSoldProduct(Branch b) {
+		
+		if (null != b) {
+			this.rendered = false;
+			this.renderproduct = true;
+			branchSoldProduct= new ArrayList<SoldProductDto>();
+			for(Object[]data:soldImpl.reportList("select s.soldId,s.soldDate,s.quantity,s.customer,s.product,a.quantity,p.sellingUnitPrice,o.orderDate,p.purchaseUnitPrice,o.quantity from SoldProduct s,ProductAssignment a,Product p ,OrderProduct o where s.product=a.product and p.productId=a.product and p.productId=s.product and o.product=s.product and a.branch="+b.getBranchId()+"")) {
+				SoldProductDto sold= new SoldProductDto();
+				sold.setSoldProductId(Integer.parseInt(data[0]+""));
+				sold.setSoldDate((Date)data[1]);
+				sold.setQuantity(Integer.parseInt(data[5]+""));
+				sold.setCustomer((Users)data[3]);
+				sold.setProduct((Product)data[4]);
+				sold.setSoldquantity(Integer.parseInt(data[2]+""));
+				sold.setSellingUnitPrice(data[6]+"");
+				sold.setOrderDate((Date)data[7]);
+				sold.setTotalSales(Double.parseDouble(data[6]+"") * Integer.parseInt(data[2]+""));
+				sold.setTotalPurchase(Integer.parseInt(data[2]+"") * Double.parseDouble(data[8]+""));
+				sold.setPurchaseUnitPrice(Double.parseDouble(data[8]+""));
+				sold.setOrderquantity(Integer.parseInt(data[9]+""));
+				branchSoldProduct.add(sold);
+			}
+		}
+		return branchSoldProduct;
+	}
 	public void assignProductForm(Product details) {
 		HttpSession sessionuser = SessionUtils.getSession();
 		if (null != details) {
@@ -900,5 +949,38 @@ public class BranchController implements Serializable, DbConstant {
 	public void setRenderheader(boolean renderheader) {
 		this.renderheader = renderheader;
 	}
+
+
+	public SoldProduct getSoldproduct() {
+		return soldproduct;
+	}
+
+
+	public void setSoldproduct(SoldProduct soldproduct) {
+		this.soldproduct = soldproduct;
+	}
+
+
+	public List<SoldProductDto> getBranchSoldProduct() {
+		return branchSoldProduct;
+	}
+
+
+	public void setBranchSoldProduct(List<SoldProductDto> branchSoldProduct) {
+		this.branchSoldProduct = branchSoldProduct;
+	}
+
+
+	public SoldProductImpl getSoldImpl() {
+		return soldImpl;
+	}
+
+
+	public void setSoldImpl(SoldProductImpl soldImpl) {
+		this.soldImpl = soldImpl;
+	}
+
+
+	
 
 }

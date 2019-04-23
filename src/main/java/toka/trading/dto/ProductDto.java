@@ -7,7 +7,7 @@ import toka.domain.ProductCategory;
 public class ProductDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private boolean editable;
+	private boolean editable,addproduct;
 	private int productId;
 	private String productName;
 
@@ -110,6 +110,12 @@ public class ProductDto implements Serializable {
 	}
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
+	}
+	public boolean isAddproduct() {
+		return addproduct;
+	}
+	public void setAddproduct(boolean addproduct) {
+		this.addproduct = addproduct;
 	}	
 	
 }

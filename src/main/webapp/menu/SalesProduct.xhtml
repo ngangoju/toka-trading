@@ -24,19 +24,7 @@
 							</span>
 							<p:autoUpdate />
 						</p:outputPanel>
-						<p:outputPanel rendered="#{branchController.renderProductForm}">
-
-							<a
-								href="#{loadUserInformationsController.getContextPath()}/menu/Branch.xhtml"
-								class="btn btn-primary glyphicon glyphicon-chevron-left"
-								style="font-size: 14px !important;"> #{msg['BackButtom']} </a>
-							<span
-								style="color: white; font: italic bold 14px/18px Georgia, serif;">#{msg['header.title.fieldmarked']}
-								<span style="color: red">#{msg['header.title.asteriks']}</span>
-								#{msg['header.title.mandatory']}
-							</span>
-							<p:autoUpdate />
-						</p:outputPanel>
+						
 					</ui:repeat>
 				</div>
 				<div class="panel-body"
@@ -72,64 +60,6 @@
 								</ui:repeat>
 							</ul>
 						</h:panelGroup>
-						<p:outputPanel rendered="#{branchController.renderProductForm}"
-							autoUpdate="true">
-
-							<div class="col-md-6 grid-margin stretch-card"
-								style="font-family: Poppins, sans-serif">
-								<div class="card">
-									<div class="card-body">
-										<h4 class="card-title"
-											style="font-family: Poppins, sans-serif; font-weight: bold; font-size: 16px !important;">#{msg['header.title.BranchForm']}</h4>
-										<h:form class="forms-sample">
-											<div class="form-group">
-												<label for="exampleInputName1">#{msg['branchName.label']}<span
-													style="color: red; font-size: 15px">*</span></label>
-												<h:inputTextarea styleClass="form-control"
-													style="font-family: Poppins, sans-serif; font-weight: bold; font-size: 16px !important;"
-													a:placeholder="Branch name" a:type="text" maxlength="150"
-													required="true" id="branchname"
-													value="#{branchController.branch.branchName}"
-													requiredMessage="#{msg['requiered.branchname.message']}"
-													converterMessage="#{msg['error.enter.invalid.branchname']}"
-													validatorMessage="#{msg['error.enter.invalid.branchname']}">
-													<f:validateRegex
-														pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
-													<f:validateLength maximum="100"></f:validateLength>
-												</h:inputTextarea>
-												<h:message errorClass="errorMsg1" for="branchname"></h:message>
-											</div>
-											<div class="form-group">
-												<label for="exampleInputName1">#{msg['branchLocation.label']}<span
-													style="color: red; font-size: 15px">*</span></label>
-												<h:inputTextarea styleClass="form-control"
-													style="font-family: Poppins, sans-serif; font-weight: bold; font-size: 16px !important;"
-													a:placeholder="Branch  district location" a:type="text"
-													maxlength="150" required="true" id="branchLoc"
-													value="#{branchController.district.districtName_en}"
-													requiredMessage="#{msg['requiered.locaname.message']}"
-													converterMessage="#{msg['error.enter.invalid.locname']}"
-													validatorMessage="#{msg['error.enter.invalid.locname']}">
-													<f:validateRegex
-														pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
-													<f:validateLength maximum="100"></f:validateLength>
-												</h:inputTextarea>
-												<h:message errorClass="errorMsg1" for="branchLoc"></h:message>
-											</div>
-
-											<h:commandButton a:type="submit" class="btn btn-success mr-2"
-												style=" font: italic bold 13px/20px Georgia, serif;"
-												action="#{branchController.saveBranch}"
-												value="#{msg['label.subimit.message.submit']}">
-												<f:ajax render="@form" execute="@form"
-													onevent="showProgress" />
-											</h:commandButton>
-										</h:form>
-									</div>
-								</div>
-							</div>
-						</p:outputPanel>
-
 
 						<h:panelGroup rendered="#{branchController.rendered}">
 							<h4 style="font: italic bold 13px/16px Georgia, serif;">
@@ -137,13 +67,7 @@
 								<span class="glyphicon glyphicon-dashboard"> <label
 									style="font: italic 13px/18px Georgia, serif">#{msg['message.com.user.dashaboard']}</label></span>
 							</h4>
-							<h:commandLink data-toggle="tooltip" data-placement="left"
-								value="#{msg['createbranch.editButton']}"
-								style=" font: italic bold 13px/20px Georgia, serif;"
-								class="btn btn-sm btn-info"
-								action="#{branchController.showBranchForm}">
-								<f:ajax render="@all" execute="@all" onevent="showProgress" />
-							</h:commandLink>
+
 							<div
 								style="border-bottom: 1.5px solid #91DBFA; margin-bottom: 6px; margin-top: 6px;"></div>
 							<div class="row"
@@ -169,8 +93,8 @@
 													<span id="sparklineB"></span>
 												</div>
 												<h:commandButton class="btn btn-info btn-xlg btn-block"
-													action="#{branchController.assignBranchProduct(bList)}"
-													value="Assign product on this branch"
+													action="#{branchController.soldProductList(bList)}"
+													value="View product sold"
 													style="font-family: Open Sans sans-serif !important; font-size: 15px !important;">
 													<f:ajax render="@form" execute="@form"
 														onevent="showProgress" />
@@ -184,140 +108,143 @@
 							</div>
 						</h:panelGroup>
 						<h:panelGroup rendered="#{branchController.renderproduct}">
-							<h4 style="font: italic bold 13px/16px Georgia, serif;">
-								#{loadUserInformationsController.users.userCategory.usercategoryName}
-								<span class="glyphicon glyphicon-dashboard"> <label
-									style="font: italic 13px/18px Georgia, serif">#{msg['message.com.user.dashaboard']}</label></span>
-							</h4>
-							
-							<h:commandLink value="Back"
-								class="btn btn-primary glyphicon glyphicon-chevron-left"
-								style="font-size: 14px !important;" action="#{branchController.backBranchList}">
-								 <f:ajax render="@all" execute="@all" onevent="showProgress" /></h:commandLink>
-							<div
-								style="border-bottom: 1.5px solid #91DBFA; margin-bottom: 6px;margin-top:6px;"></div>
+						
+								<h:commandLink value="#{msg['BackButtom']}" action="#{branchController.backBranch}"
+									style="font-size: 14px !important;"
+									class="btn btn-primary glyphicon glyphicon-chevron-left" >
+									<f:ajax render="@form" execute="@form" onevent="showProgress" />
+									</h:commandLink>
+						
+					
 							<div class=" col-md-12"
 								style="height: 330px; overflow-y: scroll;">
-								<div class="row"
-									style="font: italic bold 13px/16px Georgia, serif;">
-									<ui:repeat
-										value="#{branchController.productfulldetails}"
-										var="bList">
+								<h:dataTable id="activityTable" binding="#{tabl}"
+									style="font: italic 14px/18px Georgia, serif;box-sizing: border-box; width:100% !important;
+       						 -webkit-box-shadow: none;
+       							 box-shadow: none !important;
+       								 margin: 17px 2px 0 !important;"
+									value="#{branchController.branchSoldProduct}" var="prod"
+									class="table table-striped table-hover table-bordered tableUpdated ">
+									<f:facet name="header">
 
-										<div
-											class=" card border-secondary mb-3 text-center col-md-4 col-sm-6 "
-											style="width: 25rem;">
-											<div class="card-header">#{bList.productName}</div>
-											<div class="card-body">
-												<p class="card-text"
-													style="font: italic 13px/16px Georgia, serif;">
-													Product name:<label class=" text text-black">#{bList.productName}</label>
-												</p>
-												<p class="card-text"
-													style="font: italic 13px/16px Georgia, serif;">
-													Product category:<label class=" text text-black">#{bList.productCategory.productCatName}</label>
-												</p>
-												<p class="card-text"
-													style="font: italic 13px/16px Georgia, serif;">
-													Product quantity:<label class=" text text-black">#{bList.quantity}</label>
-												</p>
-												<p class="card-text"
-													style="font: italic 13px/16px Georgia, serif;">
-													Purchase unit price:<label class=" text text-black">#{bList.purchaseUnitPrice}</label>
-												</p>
-												<p class="card-text"
-													style="font: italic 13px/16px Georgia, serif;">
-													Selling unit price:<label class=" text text-black">#{bList.sellingUnitPrice}</label>
-												</p>
-												<p class="card-text"
-													style="font: italic 13px/16px Georgia, serif;">
-													Purchase price:<label class=" text text-black">#{bList.totalPrice}</label>
-												</p>
-												<p class="card-text"
-													style="font: italic 13px/16px Georgia, serif;">
-													Selling price:<label class=" text text-black">#{bList.totalSales}</label>
-												</p>
-													
-													<h:commandLink class="btn btn-primary btn-xlg btn-block"
-													action="#{branchController.assignProductForm(bList)}"
-													value="Add quantity to be assigned"
-													style="font-family: Open Sans sans-serif !important; font-size: 15px !important;">
-													<f:ajax render="@form" execute="@form"
-														onevent="showProgress" />
-												</h:commandLink>
-											</div>
+										<label
+											style="margin-left: 25%; font: italic bold 13px/16px Georgia, serif;">List
+											of product sold</label>
+									</f:facet>
+									<h:column>
+										<f:facet name="header">
+											<label>No</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{tabl.rowIndex + 1}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Product name</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{prod.product.productName}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Assigned quantity</label>
+										</f:facet>
+										<br />
 
-										</div>
 
-									</ui:repeat>
-								</div>
+										<h:outputText value="#{prod.quantity}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Quantity sold</label>
+										</f:facet>
+										<br />
+
+
+										<h:outputText value="#{prod.soldquantity}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Order quantity</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{prod.orderquantity}">
+										</h:outputText>
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Order date</label>
+										</f:facet>
+										<br />
+
+
+										<h:outputText value="#{prod.orderDate}">
+											<f:convertDateTime type="date" dateType="short"
+												pattern="dd-MM-yyyy" />
+										</h:outputText>
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Sales date</label>
+										</f:facet>
+										<br />
+
+
+										<h:outputText value="#{prod.soldDate}">
+											<f:convertDateTime type="date" dateType="short"
+												pattern="dd-MM-yyyy" />
+										</h:outputText>
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label> Purchase unit price</label>
+										</f:facet>
+										<br />
+
+
+										<h:outputText value="#{prod.purchaseUnitPrice}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Selling unit price</label>
+										</f:facet>
+										<br />
+
+										<h:outputText value="#{prod.sellingUnitPrice}" />
+
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label> Purchase price</label>
+										</f:facet>
+										<br />
+
+
+										<h:outputText value="#{prod.totalPurchase}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Total sales</label>
+										</f:facet>
+										<br />
+
+										<h:outputText value="#{prod.totalSales}" />
+
+									</h:column>
+
+
+									<f:facet name="footer">
+
+									</f:facet>
+								</h:dataTable>
+
+
 							</div>
+
 						</h:panelGroup>
-						
-						
-						
-						
-						<p:outputPanel rendered="#{branchController.renderassform}"
-							autoUpdate="true">
 
-							<div class="col-md-6 grid-margin stretch-card"
-								style="font-family: Poppins, sans-serif">
-								<div class="card">
-									<div class="card-body">
-									<h:commandLink value="Back"
-								class="btn btn-primary glyphicon glyphicon-chevron-left"
-								style="font-size: 14px !important;" action="#{branchController.backProductList}">
-								 <f:ajax render="@all" execute="@all" onevent="showProgress" /></h:commandLink>
-										<h4 class="card-title"
-											style="font-family: Poppins, sans-serif; font-weight: bold; font-size: 12pt !important;font-style: italic;margin-top:16px">#{msg['header.title.BranchProduct']}&nbsp;<label style="color:orange ">#{branchController.product.productName} </label>&nbsp;product under the branch  below</h4>
-										<h:form class="forms-sample">
-											<div class="form-group">
-												<label for="branchassname">#{msg['branchName.label']}<span
-													style="color: red; font-size: 15px">*</span></label>
-												<h:inputTextarea styleClass="form-control " disabled="true"
-													style="font-family: Poppins, sans-serif; font-weight: bold; font-size: 16px !important;"
-													a:placeholder="Branch name" a:type="text" maxlength="150"
-													required="true" id="branchassname"
-													value="#{branchController.branch.branchName}"
-													requiredMessage="#{msg['requiered.categoryname.message']}"
-													converterMessage="#{msg['error.enter.invalid.catname']}"
-													validatorMessage="#{msg['error.enter.invalid.catname']}">
-													<f:validateRegex
-														pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
-													<f:validateLength maximum="100"></f:validateLength>
-												</h:inputTextarea>
-												<h:message errorClass="errorMsg1" for="branchassname"></h:message>
-											</div>
-											<div class="form-group">
-												<label for="exampleInputEmail3">#{msg['productquantity.Productform']}<span
-													style="color: red; font-size: 15px">*</span></label>
-												<h:inputText
-													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
-													a:type="number" class="form-control" id="exampleInputEmail3"
-													a:placeholder="Quantity to assign" required="tue"
-													value="#{branchController.range}"
-													requiredMessage="#{msg['requiered.productqty.message']}"
-													converterMessage="#{msg['error.enter.invalid.productqty']}"
-													validatorMessage="#{msg['error.enter.invalid.productqty']}">
-													<f:validateRegex
-														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
-													<f:validateLength maximum="100"></f:validateLength>
-												</h:inputText>
-												<h:message errorClass="errorMsg1" for="exampleInputEmail3"></h:message>
-											</div>
 
-											<h:commandButton a:type="submit" class="btn btn-success mr-2"
-												style=" font: italic bold 13px/20px Georgia, serif;"
-												action="#{branchController.assignProduct}"
-												value="#{msg['label.subimit.message.submit']}">
-												<f:ajax render="@form" execute="@form"
-													onevent="showProgress" />
-											</h:commandButton>
-										</h:form>
-									</div>
-								</div>
-							</div>
-						</p:outputPanel>
+
 					</h:form>
 
 
