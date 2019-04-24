@@ -60,90 +60,57 @@
 						<p:outputPanel rendered="#{productController.rendered}"
 							autoUpdate="true">
 
-							<div class="col-md-6 grid-margin stretch-card"
+							<div class="col-md-12 grid-margin stretch-card"
 								style="font-family: Poppins, sans-serif">
 								<h:form class="forms-sample">
 											
-											<p:dataTable value="#{groupOfMenuController.menuGroupDtoDetails}"
-						var="menu" rows="10" paginator="true"
+											<p:dataTable value="#{productController.orderDetails}"
+						var="order" rows="10" paginator="true"
 						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 						rowsPerPageTemplate="5,10,15" id="tables">
 
-						<p:column headerText="Group Menu Name">
+						<p:column headerText="Product name">
 
-							<h:inputText value="#{menu.menuGroupName}" size="10"
-								rendered="#{menu.editable}" />
-
-							<h:outputText value="#{menu.menuGroupName}"
-								rendered="#{not menu.editable}" />
+							<h:outputText value="#{order.product.productName}" />
 						</p:column>
 
+						<p:column headerText="Product category">
+							<h:outputText value="#{order.product.productCategory.productCatName}" />
 
-						<p:column headerText="Default Group Menu">
+						</p:column>
 
+						<p:column headerText="Quantity">
 
-							<h:inputText value="#{menu.defaultGroupMenu}" size="10"
-								rendered="#{menu.editable}" />
-
-							<h:outputText value="#{menu.defaultGroupMenu}"
-								rendered="#{not menu.editable}" />
+							<h:outputText value="#{order.quantity}" />
 
 						</p:column>
 
 
+						<p:column headerText="Unit price">
 
-						<p:column headerText="User Category">
-
-							<h:selectOneMenu id="cat" styleClass="form-control"
-								rendered="#{menu.editable}" required="true"
-								value="#{menu.userCategory.userCatid}"
-								requiredMessage="#{msg['requiered.categoryname.message']}">
-								<f:selectItem
-									itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
-									itemValue="#{null}" escapeItem="true" itemDisabled="false" />
-								<f:selectItems
-									value="#{groupOfMenuController.userCategoryDetails}"
-									var="option" itemValue="#{option.userCatid}"
-									itemLabel="#{option.usercategoryName}" itemLabelEscaped="true" />
-								<!-- <f:ajax event="change" execute="@this"  render="userInfoPanel" />-->
-							</h:selectOneMenu>
-
-							<h:outputText value="#{menu.userCategory.usercategoryName}"
-								rendered="#{not menu.editable}" />
+							<h:outputText value="#{order.sellingUnitPrice}" />
 
 						</p:column>
-						<p:column headerText="Menu Status">
-							<h:outputText value="#{menu.genericStatus}" />
+						
+						<p:column headerText="Total price">
+
+							<h:outputText value="#{order.totalSales}" />
 
 						</p:column>
-						<p:column headerText=" Change Status">
+						
+						<p:column headerText="Order date">
 
-							<h:commandLink style="color:white"
-								class="btn btn-success 	glyphicon glyphicon-refresh"
-								value="#{menu.action}"
-								action="#{groupOfMenuController.updateStatus(menu)}">
-								<f:ajax render="@form" execute="@form" onevent="showProgress" />
-							</h:commandLink>
+							<h:outputText value="#{order.orderDate}" />
+
 						</p:column>
+						
+						
 						<p:column headerText="Action">
 
 
 							<h:commandLink style="color:white"
-								class="btn btn-success 	glyphicon glyphicon-edit" value="Edit"
-								action="#{groupOfMenuController.editAction(menu)}"
-								rendered="#{not menu.editable}" />
+								class="btn btn-danger 	glyphicon glyphicon-edit" value="Cancel order" />
 
-							<h:commandLink style="margin-left:2px;color:white"
-								class="btn btn-danger 	glyphicon glyphicon-remove"
-								value="Cancel" action="#{groupOfMenuController.cancel(menu)}"
-								rendered="#{menu.editable}" />
-
-
-							<h:commandButton value="Save Changes" class="btn btn-primary"
-								action="#{groupOfMenuController.newAction(menu)}"
-								rendered="#{menu.editable}" render="menuGroupPanel">
-								<f:ajax render="@form" execute="@form" onevent="showProgress" />
-							</h:commandButton>
 						</p:column>
 
 					</p:dataTable>

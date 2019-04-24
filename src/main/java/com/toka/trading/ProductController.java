@@ -13,12 +13,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Logger;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.HibernateException;
@@ -32,15 +35,13 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import toka.common.DbConstant;
+import toka.common.JSFBoundleProvider;
 import toka.common.JSFMessagers;
 import toka.common.SessionUtils;
 import toka.dao.impl.DocumentsImpl;
@@ -49,24 +50,16 @@ import toka.dao.impl.PerishedProductImpl;
 import toka.dao.impl.ProductCategoryImpl;
 import toka.dao.impl.ProductImpl;
 import toka.dao.impl.UploadingFilesImpl;
-import toka.domain.Contact;
 import toka.domain.Documents;
 import toka.domain.OrderProduct;
 import toka.domain.PerishedProduct;
 import toka.domain.Product;
 import toka.domain.ProductCategory;
 import toka.domain.UploadingFiles;
-import toka.domain.UserCategory;
 import toka.domain.Users;
 import toka.trading.dto.OrderProductDto;
 import toka.trading.dto.ProductCatDetailsDto;
-import toka.trading.dto.ProductCategoryDtos;
 import toka.trading.dto.ProductDto;
-import toka.common.JSFBoundleProvider;
-
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
 
 @ManagedBean
 @ViewScoped
@@ -186,7 +179,20 @@ public class ProductController implements Serializable, DbConstant {
 					// details.setCatid(Integer.parseInt(data[3]+""));
 					// details.setProductcategoryName(data[4]+"");
 					branchCatDetails.add(details);
-					LOGGER.info("BRANCH_ID3 IS:::::::"+id);
+					LOGGER.info("BRANCH_ID3 IS:::::::"+id);					
+				}
+				for (Object[] data : uplActImpl.reportList(
+						"select o.orderProductId,o.orderDate,o.quantity,o.customer,cat.branch,o.product,p.sellingUnitPrice from OrderProduct o,Product p,ProductCategory cat,Users us,Contact co,Branch b where o.product=p.productId and o.customer=" + usersSession.getUserId() + " and co.user=us.userId  and o.genericStatus='"
+								+ ACTIVE + "' group by o.orderProductId")) {
+					OrderProductDto order = new OrderProductDto();
+					order.setOrderProductId(Integer.parseInt(data[0] + ""));
+					order.setOrderDate((Date) data[1]);
+					order.setQuantity(Integer.parseInt(data[2] + ""));
+					order.setCustomer((Users) data[3]);
+					order.setProduct((Product) data[5]);
+					order.setSellingUnitPrice(data[6] + "");
+					order.setTotalSales(Double.parseDouble(data[2] + "") * Double.parseDouble(data[6] + ""));
+					orderDetails.add(order);
 				}
 			}
 			
@@ -290,7 +296,8 @@ public class ProductController implements Serializable, DbConstant {
 
 	public void back() {
 		this.rendered = false;
-		this.renderDetails = true;
+		this.renderOrder = false;
+		this.renderproduct = true;
 		this.renderProductForm = false;
 	}
 	
@@ -425,6 +432,25 @@ public class ProductController implements Serializable, DbConstant {
 			salesprice = sellingPrice(prod);
 			this.renderDetails = false;
 			this.renderproduct = true;
+		} else {
+			JSFMessagers.resetMessages();
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.error.failtoload.productdetails"));
+		}
+		return null;
+	}
+	public String viewDetail(Product prod) throws Exception {
+		LOGGER.info(":::Product Info::" + prod.getProductId());
+		Product product = new Product();
+		product = productImpl.getProductById(prod.getProductId(), "productId");
+		uploadingFiles = uplActImpl.getModelWithMyHQL(new String[] { "product" }, new Object[] { product },
+				"from UploadingFiles");
+		// LOGGER.info(
+		// "::::Product Details:" + uploadingFiles.getProduct() + ":Documents::" +
+		// uploadingFiles.getDocuments());
+		if (null != uploadingFiles) {
+			this.renderproduct = true;
+			this.renderOrder = false;
 		} else {
 			JSFMessagers.resetMessages();
 			setValid(false);

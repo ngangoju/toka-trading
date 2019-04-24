@@ -169,7 +169,7 @@
 													<span id="sparklineB"></span>
 												</div>
 												<h:commandButton class="btn btn-info btn-xlg btn-block"
-													action="#{branchController.assignBranchProduct(bList)}"
+													action="#{productAssignmentController.viewpCategory(bList.branchId)}"
 													value="Assign product on this branch"
 													style="font-family: Open Sans sans-serif !important; font-size: 15px !important;">
 													<f:ajax render="@form" execute="@form"

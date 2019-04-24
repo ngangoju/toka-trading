@@ -153,7 +153,7 @@
 									<h:commandLink style="color:white" data-toggle="tooltip"
 										data-placement="left" title="#{msg['productView.viewButton']}"
 										class="btn btn-sm btn-info glyphicon glyphicon-list"
-										action="#{productController.viewDetails(prod.product)}">
+										action="#{productController.viewDetail(prod.product)}">
 									</h:commandLink>
 								</div>
 							</h:column>
@@ -290,11 +290,11 @@
 									</p>
 									<p class="card-text"
 										style="font: italic 13px/16px Georgia, serif;">
-										Price:<label class=" text text-black">#{productController.salesprice}</label>
+										Price:<label class=" text text-black">#{productController.uploadingFiles.product.sellingUnitPrice}</label>
 									</p>
 									<p class="card-text"
 										style="font: italic 13px/16px Georgia, serif;">
-										Product Address:<label class=" text text-black">#{productController.uploadingFiles.product.productCategory.branch.branchName}</label>
+										Expiration Date:<label class=" text text-black">#{productController.uploadingFiles.product.expireDate}</label>
 									</p>
 									<h:form>
 									<h:commandLink value="Go back" actionListener="#{productController.back()}"
