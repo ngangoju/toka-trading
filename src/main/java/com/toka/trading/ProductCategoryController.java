@@ -24,16 +24,19 @@ import toka.common.DbConstant;
 import toka.common.JSFMessagers;
 import toka.common.SessionUtils;
 import toka.dao.impl.DocumentsImpl;
+import toka.dao.impl.OrderProductImpl;
 import toka.dao.impl.ProductCategoryImpl;
 import toka.dao.impl.ProductImpl;
 import toka.dao.impl.UploadingFilesImpl;
 import toka.domain.Branch;
 import toka.domain.Contact;
 import toka.domain.Documents;
+import toka.domain.OrderProduct;
 import toka.domain.Product;
 import toka.domain.ProductCategory;
 import toka.domain.UploadingFiles;
 import toka.domain.Users;
+import toka.trading.dto.OrderProductDto;
 import toka.trading.dto.ProductCatDetailsDto;
 import toka.trading.dto.ProductCategoryDtos;
 import toka.trading.dto.ProductDto;
@@ -51,8 +54,11 @@ public class ProductCategoryController implements Serializable, DbConstant {
 	private boolean isValid;
 	private Users usersSession;
 	private ProductCategory category;
+	private OrderProduct orderproduct;
+	private OrderProductDto orderproductDto;
 	
 	private boolean rendered, renderProductForm;
+	private List<OrderProduct> orderList = new ArrayList<OrderProduct>();
 	private List<ProductCategory> categoryList = new ArrayList<ProductCategory>();
 	private List<ProductCategory> categoryDetails = new ArrayList<ProductCategory>();
 	private List<ProductCatDetailsDto> branchCatDetails = new ArrayList<ProductCatDetailsDto>();
@@ -61,6 +67,7 @@ public class ProductCategoryController implements Serializable, DbConstant {
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
 	JSFBoundleProvider provider = new JSFBoundleProvider();
 	private Documents document;
+	OrderProductImpl orderProdImpl = new OrderProductImpl();
 	private DocumentsImpl docsImpl = new DocumentsImpl();
 	private UploadingFiles uploadingFiles;
 	private UploadingFilesImpl uplActImpl = new UploadingFilesImpl();
@@ -80,13 +87,17 @@ private  Branch branch;
 		
 		
 		try {
-			
+
+			orderList=orderProdImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","customer" },
+				new Object[] { ACTIVE, usersSession }, "OrderProduct", " orderDate desc");
+		
 			categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE }, "ProductCategory", " upDtTime desc");
 //			categoryDetails = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus", "branch" },
 //					new Object[] { ACTIVE, id }, "ProductCategory", " upDtTime desc");
 			
-			
+
+			this.rendered = true;
 		showAvailProduct(categoryList);
 		categoryListDto =listCategory(categoryList);
 		} catch (Exception e) {
@@ -458,6 +469,30 @@ private  Branch branch;
 
 	public void setBranch(Branch branch) {
 		this.branch = branch;
+	}
+
+	public OrderProduct getOrderproduct() {
+		return orderproduct;
+	}
+
+	public void setOrderproduct(OrderProduct orderproduct) {
+		this.orderproduct = orderproduct;
+	}
+
+	public OrderProductDto getOrderproductDto() {
+		return orderproductDto;
+	}
+
+	public void setOrderproductDto(OrderProductDto orderproductDto) {
+		this.orderproductDto = orderproductDto;
+	}
+
+	public List<OrderProduct> getOrderList() {
+		return orderList;
+	}
+
+	public void setOrderList(List<OrderProduct> orderList) {
+		this.orderList = orderList;
 	}
 	
 }

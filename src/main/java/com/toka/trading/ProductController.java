@@ -87,6 +87,7 @@ public class ProductController implements Serializable, DbConstant {
 	private List<ProductCatDetailsDto> branchCatDetails = new ArrayList<ProductCatDetailsDto>();
 	private List<ProductCatDetailsDto> branchCatList = new ArrayList<ProductCatDetailsDto>();
 	private List<OrderProductDto> orderDetails = new ArrayList<OrderProductDto>();
+	private List<OrderProduct> orderList = new ArrayList<OrderProduct>();
 	ProductDto pdto = new ProductDto();
 	ProductImpl productImpl = new ProductImpl();
 	OrderProductImpl orderProdImpl = new OrderProductImpl();
@@ -125,7 +126,6 @@ public class ProductController implements Serializable, DbConstant {
 			orderproduct=new OrderProduct();
 		}
 		try {
-			
 			productList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "Product", " upDtTime desc");
 
@@ -180,19 +180,6 @@ public class ProductController implements Serializable, DbConstant {
 					// details.setProductcategoryName(data[4]+"");
 					branchCatDetails.add(details);
 					LOGGER.info("BRANCH_ID3 IS:::::::"+id);					
-				}
-				for (Object[] data : uplActImpl.reportList(
-						"select o.orderProductId,o.orderDate,o.quantity,o.customer,cat.branch,o.product,p.sellingUnitPrice from OrderProduct o,Product p,ProductCategory cat,Users us,Contact co,Branch b where o.product=p.productId and o.customer=" + usersSession.getUserId() + " and co.user=us.userId  and o.genericStatus='"
-								+ ACTIVE + "' group by o.orderProductId")) {
-					OrderProductDto order = new OrderProductDto();
-					order.setOrderProductId(Integer.parseInt(data[0] + ""));
-					order.setOrderDate((Date) data[1]);
-					order.setQuantity(Integer.parseInt(data[2] + ""));
-					order.setCustomer((Users) data[3]);
-					order.setProduct((Product) data[5]);
-					order.setSellingUnitPrice(data[6] + "");
-					order.setTotalSales(Double.parseDouble(data[2] + "") * Double.parseDouble(data[6] + ""));
-					orderDetails.add(order);
 				}
 			}
 			
@@ -390,14 +377,14 @@ public class ProductController implements Serializable, DbConstant {
 			return "";
 		}
 	}
-//	
-//	public String viewpCategory(int pid) {
-//		LOGGER.info("NEW_ID:::"+pid);
-//		HttpSession sessionuser = SessionUtils.getSession();
-//		sessionuser.setAttribute("branchId", pid);
+	
+	public void viewpCategory(int pid) {
+		LOGGER.info("NEW_ID:::"+pid);
+		HttpSession sessionuser = SessionUtils.getSession();
+		sessionuser.setAttribute("branchId", pid);
 //		return "/menu/ViewProdCat.xhtml?faces-redirect=true";
-//	}
-//	
+	}
+	
 	private void clearContactFuileds() {
 
 		product = new Product();
@@ -1288,6 +1275,14 @@ public class ProductController implements Serializable, DbConstant {
 
 	public void setOrderProdImpl(OrderProductImpl orderProdImpl) {
 		this.orderProdImpl = orderProdImpl;
+	}
+
+	public List<OrderProduct> getOrderList() {
+		return orderList;
+	}
+
+	public void setOrderList(List<OrderProduct> orderList) {
+		this.orderList = orderList;
 	}
 	
 }

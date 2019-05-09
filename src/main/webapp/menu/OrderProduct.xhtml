@@ -17,25 +17,12 @@
 				<div class="panel-heading">
 					<ui:repeat var="time" value="#">
 
-						<p:outputPanel rendered="#{productController.rendered}"
+						<p:outputPanel rendered="#{productCategoryController.rendered}"
 							autoUpdate="true">
 							<span style="color: white; font-size: 10pt"> <label
-								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.OrderProductpanel']}</label>
+								style="margin-left: 25%; font-family: Poppins, sans-serif;">#{msg['header.title.OrderProduct']}</label>
 							</span>
 							<p:autoUpdate />
-						</p:outputPanel>
-						<p:outputPanel rendered="#{productController.renderProductForm}">
-
-							<a
-								href="#{loadUserInformationsController.getContextPath()}/menu/NewProduct.xhtml"
-								class="btn btn-primary glyphicon glyphicon-chevron-left"
-								style="font-size: 14px !important;"> #{msg['BackButtom']} </a>
-							<span
-								style="color: white; font: italic bold 14px/18px Georgia, serif;">#{msg['header.title.fieldmarked']}
-								<span style="color: red">#{msg['header.title.asteriks']}</span>
-								#{msg['header.title.mandatory']}
-							</span>
-							
 						</p:outputPanel>
 					</ui:repeat>
 				</div>
@@ -45,26 +32,14 @@
 
 
 					<h:form>
-						<h:panelGroup layout="block"
-							rendered="#{productController.valid and  not facesContext.validationFailed}">
-							<ul>
-								<ui:repeat value="#{facesContext.messageList}"
-									var="facesMessage">
-									<li
-										style="list-style: none; background-color: #32CD32; color: white; margin-left: -4.9%"
-										class="alert alert-success"><h:outputText
-											value="#{facesMessage.summary}" escape="false" /></li>
-								</ui:repeat>
-							</ul>
-						</h:panelGroup>
-						<p:outputPanel rendered="#{productController.rendered}"
+						<p:outputPanel rendered="#{productCategoryController.rendered}"
 							autoUpdate="true">
 
 							<div class="col-md-12 grid-margin stretch-card"
 								style="font-family: Poppins, sans-serif">
 								<h:form class="forms-sample">
 											
-											<p:dataTable value="#{productController.orderDetails}"
+											<p:dataTable value="#{productCategoryController.orderList}"
 						var="order" rows="10" paginator="true"
 						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 						rowsPerPageTemplate="5,10,15" id="tables">
@@ -88,13 +63,7 @@
 
 						<p:column headerText="Unit price">
 
-							<h:outputText value="#{order.sellingUnitPrice}" />
-
-						</p:column>
-						
-						<p:column headerText="Total price">
-
-							<h:outputText value="#{order.totalSales}" />
+							<h:outputText value="#{order.product.sellingUnitPrice}" />
 
 						</p:column>
 						

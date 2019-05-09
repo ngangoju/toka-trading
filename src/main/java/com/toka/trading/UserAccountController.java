@@ -170,6 +170,7 @@ public class UserAccountController implements Serializable, DbConstant {
 		}
 
 		try {
+			if(null!=usersSession) {
 			countriesList=countryImpl.getListWithHQL(SELECT_COUNTRY);
 			provinceList = provImpl.getListWithHQL(SELECT_PROVINCE);
 			// Profile Details for user logged in
@@ -210,7 +211,7 @@ public class UserAccountController implements Serializable, DbConstant {
 			this.renderBoard = true;
 			this.renderDatePanel = true;
 			staffList = usersImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
-					new Object[] { ACTIVE }, "Users", "userId desc");
+					new Object[] { ACTIVE }, "Users", "userId desc");}
 
 		} catch (Exception e) {
 			setValid(false);
