@@ -85,6 +85,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private PerishedProduct perished;
 	private String perishedQuantity;
 	private ProductCategory category;
+	private ProductAssignment productAssignment;
 	private OrderProduct orderproduct;
 	private OrderProductDto orderproductDto;
 	private List<ProductCategory> catbranch = new ArrayList<ProductCategory>();
@@ -141,6 +142,9 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		}
 		if(orderproduct==null) {
 			orderproduct=new OrderProduct();
+		}
+		if(productAssignment==null) {
+			productAssignment=new ProductAssignment();
 		}
 		try {
 
@@ -622,7 +626,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 				orderproduct.setCrtdDtTime(timestamp);
 				orderproduct.setOrderDate(timestamp);
 				orderproduct.setQuantity(quantity);
-				orderproduct.setProduct(product);
+				orderproduct.setProductInfo(productAssignment);
 				orderproduct.setCustomer(usersSession);
 				orderProdImpl.saveIntable(orderproduct);
 				JSFMessagers.resetMessages();
@@ -899,8 +903,8 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 			HttpSession session = SessionUtils.getSession();
 			orderDto = (OrderProductDto) session.getAttribute("customerorder");
 
-			LOGGER.info("PRODUCT Info:::" + orderDto.getProduct().getProductName());
-			PdfPCell pcel1 = new PdfPCell(new Paragraph(orderDto.getProduct().getProductName(), font8));
+			LOGGER.info("PRODUCT Info:::" + orderDto.getProductAssignment().getProduct().getProductName());
+			PdfPCell pcel1 = new PdfPCell(new Paragraph(orderDto.getProductAssignment().getProduct().getProductName(), font8));
 			pcel1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel1);
 			PdfPCell pcel2 = new PdfPCell(new Paragraph(orderDto.getQuantity() + "", font8));
@@ -927,7 +931,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 			PdfPCell pcel6 = new PdfPCell(new Paragraph(orderDto.getPhone(), font8));
 			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel6);
-			PdfPCell pcel7 = new PdfPCell(new Paragraph(orderDto.getProduct().getProductCategory().getBranch().getLocation().getDistrictName_en(), font8));
+			PdfPCell pcel7 = new PdfPCell(new Paragraph(orderDto.getProductAssignment().getProduct().getProductCategory().getBranch().getLocation().getDistrictName_en(), font8));
 			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel7);
 			document.add(table);
@@ -1393,6 +1397,14 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 
 	public void setBranchImpl(BranchImpl branchImpl) {
 		this.branchImpl = branchImpl;
+	}
+
+	public ProductAssignment getProductAssignment() {
+		return productAssignment;
+	}
+
+	public void setProductAssignment(ProductAssignment productAssignment) {
+		this.productAssignment = productAssignment;
 	}
 	
 }

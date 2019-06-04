@@ -37,55 +37,71 @@
 
 							<div class="col-md-12 grid-margin stretch-card"
 								style="font-family: Poppins, sans-serif">
-								<h:form class="forms-sample">
-											
-											<p:dataTable value="#{productCategoryController.orderList}"
-						var="order" rows="10" paginator="true"
-						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-						rowsPerPageTemplate="5,10,15" id="tables">
+								<h:dataTable value="#{productCategoryController.orderList}"
+						var="order" binding="#{tabl}"
+									style="font: italic 14px/18px Georgia, serif;box-sizing: border-box; width:100% !important;
+       						 -webkit-box-shadow: none; box-shadow: none !important;
+       								 margin: 17px 2px 0 !important;" id="tables"
+									class="table table-striped table-hover table-bordered tableUpdated ">
+	
+									<h:column>
+										<f:facet name="header">
+											<label>No</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{tabl.rowIndex + 1}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Product name</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{order.productInfo.product.productName}" />
+									</h:column>
 
-						<p:column headerText="Product name">
+									<h:column>
+										<f:facet name="header">
+											<label>Product Category</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{order.productInfo.product.productCategory.productCatName}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Quantity</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{order.quantity}"/>
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Unit price</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{order.productInfo.product.sellingUnitPrice}"  />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Order date</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{order.orderDate}" />
+									</h:column>
 
-							<h:outputText value="#{order.product.productName}" />
-						</p:column>
-
-						<p:column headerText="Product category">
-							<h:outputText value="#{order.product.productCategory.productCatName}" />
-
-						</p:column>
-
-						<p:column headerText="Quantity">
-
-							<h:outputText value="#{order.quantity}" />
-
-						</p:column>
-
-
-						<p:column headerText="Unit price">
-
-							<h:outputText value="#{order.product.sellingUnitPrice}" />
-
-						</p:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Action</label>
+										</f:facet>
+										<div class="btn-group btn btn-sm" role="group"
+											aria-label="Basic example" style="margin-top: 5%;">
+							<h:commandButton style="color:white"
+								class="btn btn-danger glyphicon glyphicon-remove-circle" action="#{productCategoryController.cancelOrder(order)}" value="Cancel order"/>
 						
-						<p:column headerText="Order date">
-
-							<h:outputText value="#{order.orderDate}" />
-
-						</p:column>
-						
-						
-						<p:column headerText="Action">
-
-
-							<h:commandLink style="color:white"
-								class="btn btn-danger 	glyphicon glyphicon-edit" value="Cancel order" />
-
-						</p:column>
-
-					</p:dataTable>
+										</div>
+									</h:column>
+					</h:dataTable>
 					<br />
 
-										</h:form>
 							</div>
 						</p:outputPanel>
 

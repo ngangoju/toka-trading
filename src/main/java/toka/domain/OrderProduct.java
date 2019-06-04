@@ -26,12 +26,15 @@ public class OrderProduct extends CommonDomain implements Serializable {
 	private int orderProductId;
 
 	@ManyToOne
-	@JoinColumn(name = "product")
-	private Product product;
+	@JoinColumn(name = "productInfo")
+	private ProductAssignment productInfo;
 
 	@Column(name = "quantity")
 	private String quantity;
 
+	@Column(name = "status")
+	private String status;
+	
 	@Column(name = "orderDate", columnDefinition = "DATETIME")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date orderDate;
@@ -48,12 +51,12 @@ public class OrderProduct extends CommonDomain implements Serializable {
 		this.orderProductId = orderProductId;
 	}
 
-	public Product getProduct() {
-		return product;
+	public ProductAssignment getProductInfo() {
+		return productInfo;
 	}
 
-	public void setProduct(Product product) {
-		this.product = product;
+	public void setProductInfo(ProductAssignment productInfo) {
+		this.productInfo = productInfo;
 	}
 
 	public String getQuantity() {
@@ -62,6 +65,14 @@ public class OrderProduct extends CommonDomain implements Serializable {
 
 	public void setQuantity(String quantity) {
 		this.quantity = quantity;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Date getOrderDate() {

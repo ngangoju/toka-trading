@@ -105,7 +105,14 @@ h3 {
 			class="container-fluid page-body-wrapper full-page-wrapper auth-page">
 			<div
 				class="content-wrapper d-flex align-items-center auth register-bg-1 theme-one">
-				<div class="row w-100">
+				<div class="row w-100">						
+					<div class="col-lg-5 mx-auto">
+						
+						<div class="auto-form-wrapper">
+							<h:form action="#" >
+						<h2 class="text-center mb-4 label primary" style="color:#8b00d1;">Register</h2>
+								<div class="form-group">
+								
 						<h:panelGroup layout="block"
 							rendered="#{userAccountController.valid and  not facesContext.validationFailed}">
 							<ul>
@@ -113,39 +120,25 @@ h3 {
 									var="facesMessage">
 									<li
 										style="list-style: none; background-color: #32CD32; color: white;"
-										class="alert alert-success"><h:outputText
-											value="#{facesMessage.summary}" escape="false" /></li>
+										class="alert alert-success"><center><h:outputText
+											value="#{facesMessage.summary}" escape="false" /></center></li>
 								</ui:repeat>
 							</ul>
 						</h:panelGroup>
-						
-					<div class="col-lg-5 mx-auto">
-						<h2 class="text-center mb-4 label primary" style="color:#8b00d1;">Register</h2>
-						<div class="auto-form-wrapper">
-							<h:form action="#" >
-							
-    <h:panelGroup layout="block" rendered="#{not userAccountController.valid and not facesContext.validationFailed}">
-<ul>
-<ui:repeat value="#{facesContext.messageList}" var="facesMessage">
-<li class="alert alert-danger" style="list-style: none;background-color:#FF2400;color:white;margin-left: -3%">
-<center><h:outputText value="#{facesMessage.summary}" escape="false" /></center>
-</li>
-</ui:repeat>
-</ul>
-</h:panelGroup>
-
-
-
-
- <h:panelGroup layout="block" rendered="#{userAccountController.valid and  not facesContext.validationFailed}">
-        <ul>
-        <ui:repeat value="#{facesContext.messageList}" var="facesMessage">
-            <li class="alert alert-success"><h:outputText
-            value="#{facesMessage.summary}" escape="false" /></li>
-        </ui:repeat>
-        </ul>
-    </h:panelGroup>
-								<div class="form-group">
+						<h:panelGroup layout="block"
+							rendered="#{not userAccountController.valid and not facesContext.validationFailed}">
+							<ul>
+								<ui:repeat value="#{facesContext.messageList}"
+									var="facesMessage">
+									<li class="alert alert-danger"
+										style="list-style: none; background-color: #FF2400; color: white">
+										<center>
+											<h:outputText value="#{facesMessage.summary}" escape="false" />
+										</center>
+									</li>
+								</ui:repeat>
+							</ul>
+						</h:panelGroup>
 									<label class="label">First name</label>
 									<div class="input-group">
 										<h:inputText class="form-control" id="fname"

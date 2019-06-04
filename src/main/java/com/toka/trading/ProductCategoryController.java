@@ -88,8 +88,8 @@ private  Branch branch;
 		
 		try {
 
-			orderList=orderProdImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","customer" },
-				new Object[] { ACTIVE, usersSession }, "OrderProduct", " orderDate desc");
+			orderList=orderProdImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","customer","status" },
+				new Object[] { ACTIVE, usersSession, "ordered" }, "OrderProduct", " orderDate desc");
 		
 			categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE }, "ProductCategory", " upDtTime desc");
@@ -225,6 +225,7 @@ private  Branch branch;
 		return "";
 	}
 	}
+
 	public String deleteFile(UploadingFiles info) {
 		try {
 			ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
@@ -312,6 +313,25 @@ private  Branch branch;
 		return null;
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void cancelOrder(OrderProduct order) {
+		LOGGER.info("new Status::::"+order.getGenericStatus());
+		try {
+			orderproduct=order;
+			orderproduct.setGenericStatus("desactive");
+			orderProdImpl.UpdateOrderProduct(orderproduct);
+			LOGGER.info("new Status::::"+orderproduct.getGenericStatus());
+			orderList=orderProdImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","customer","status" },
+					new Object[] { ACTIVE, usersSession, "ordered" }, "OrderProduct", " orderDate desc");
+			JSFMessagers.resetMessages();
+			setValid(true);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.orderupdate"));
+		} catch (Exception e) {
+			LOGGER.info(e.getMessage());
+		}
+	}
+	
 	private void clearContactFuileds() {
 
 		category = new ProductCategory();

@@ -3,13 +3,14 @@ package toka.trading.dto;
 import java.io.Serializable;
 import java.util.Date;
 import toka.domain.Product;
+import toka.domain.ProductAssignment;
 import toka.domain.Users;
 
 public class OrderProductDto implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private boolean editable;
 	private int orderProductId;
-	private Product product;
+	private ProductAssignment productAssignment;
 	private int quantity;
 	private Date orderDate;
 	private Users customer;
@@ -41,11 +42,12 @@ public class OrderProductDto implements Serializable{
 	public void setOrderProductId(int orderProductId) {
 		this.orderProductId = orderProductId;
 	}
-	public Product getProduct() {
-		return product;
+	
+	public ProductAssignment getProductAssignment() {
+		return productAssignment;
 	}
-	public void setProduct(Product product) {
-		this.product = product;
+	public void setProductAssignment(ProductAssignment productAssignment) {
+		this.productAssignment = productAssignment;
 	}
 	public int getQuantity() {
 		return quantity;

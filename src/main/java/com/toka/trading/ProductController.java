@@ -54,6 +54,7 @@ import toka.domain.Documents;
 import toka.domain.OrderProduct;
 import toka.domain.PerishedProduct;
 import toka.domain.Product;
+import toka.domain.ProductAssignment;
 import toka.domain.ProductCategory;
 import toka.domain.UploadingFiles;
 import toka.domain.Users;
@@ -74,6 +75,7 @@ public class ProductController implements Serializable, DbConstant {
 	private PerishedProduct perished;
 	private String perishedQuantity;
 	private ProductCategory category;
+	private ProductAssignment productAssignment;
 	private OrderProduct orderproduct;
 	private OrderProductDto orderproductDto;
 	private List<ProductCategory> catbranch = new ArrayList<ProductCategory>();
@@ -125,6 +127,9 @@ public class ProductController implements Serializable, DbConstant {
 		if(orderproduct==null) {
 			orderproduct=new OrderProduct();
 		}
+		if (productAssignment == null) {
+			productAssignment = new ProductAssignment();
+		}
 		try {
 			productList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "Product", " upDtTime desc");
@@ -148,7 +153,7 @@ public class ProductController implements Serializable, DbConstant {
 					branchCatList.add(details);
 				}
 				for (Object[] data : uplActImpl.reportList(
-						"select o.orderProductId,o.orderDate,o.quantity,o.customer,cat.branch,o.product,p.sellingUnitPrice,co.email,co.phone from OrderProduct o,Product p,ProductCategory cat,Users us,Contact co,Branch b where o.product=p.productId and o.customer=us.userId and cat.branch="
+						"select o.orderProductId,o.orderDate,o.quantity,o.customer,assg.branch,o.productInfo,p.sellingUnitPrice,co.email,co.phone from OrderProduct o,Product p,ProductAssignment assg,Users us,Contact co,Branch b where o.productInfo.product=p.productId and o.customer=us.userId and o.productInfo=assg.prodAssId and assg.branch="
 								+ usersSession.getBranch().getBranchId() + " and co.user=us.userId  and o.genericStatus='"
 								+ ACTIVE + "' group by o.orderProductId")) {
 					OrderProductDto order = new OrderProductDto();
@@ -156,7 +161,7 @@ public class ProductController implements Serializable, DbConstant {
 					order.setOrderDate((Date) data[1]);
 					order.setQuantity(Integer.parseInt(data[2] + ""));
 					order.setCustomer((Users) data[3]);
-					order.setProduct((Product) data[5]);
+					order.setProductAssignment((ProductAssignment) data[5]);
 					order.setSellingUnitPrice(data[6] + "");
 					order.setTotalSales(Double.parseDouble(data[2] + "") * Double.parseDouble(data[6] + ""));
 					order.setEmail(data[7] + "");
@@ -181,6 +186,7 @@ public class ProductController implements Serializable, DbConstant {
 					branchCatDetails.add(details);
 					LOGGER.info("BRANCH_ID3 IS:::::::"+id);					
 				}
+					productAssignment= (ProductAssignment)session.getAttribute("prodAssgt");
 			}
 			
 			// showAvailProduct(productBranchList);
@@ -288,11 +294,11 @@ public class ProductController implements Serializable, DbConstant {
 		this.renderProductForm = false;
 	}
 	
-	public void orderProd(Product prod) {
+	public void orderProd(ProductAssignment prod) {
 		try {
 			HttpSession sessionuser = SessionUtils.getSession();
-				product = prod;
-				sessionuser.setAttribute("productOrder", product);
+				productAssignment = prod;
+				sessionuser.setAttribute("productOrder", prod);
 				this.renderOrder = true;
 				this.rendered = false;
 				this.renderDetails = false;
@@ -405,18 +411,18 @@ public class ProductController implements Serializable, DbConstant {
 		return null;
 	}
 
-	public String viewDetails(ProductDto prod) throws Exception {
-		LOGGER.info(":::Product Info::" + prod.getProductId());
+	public String viewDetails(ProductAssignment prod) throws Exception {
+		LOGGER.info(":::Product Info::" + prod.getProdAssId());
 		Product product = new Product();
-		product = productImpl.getProductById(prod.getProductId(), "productId");
+		product = prod.getProduct();
 		uploadingFiles = uplActImpl.getModelWithMyHQL(new String[] { "product" }, new Object[] { product },
 				"from UploadingFiles");
 		// LOGGER.info(
 		// "::::Product Details:" + uploadingFiles.getProduct() + ":Documents::" +
 		// uploadingFiles.getDocuments());
 		if (null != uploadingFiles) {
-			totalprice = totalPrice(prod);
-			salesprice = sellingPrice(prod);
+			totalprice = totalPrice(product);
+			salesprice = sellingPrice(product);
 			this.renderDetails = false;
 			this.renderproduct = true;
 		} else {
@@ -426,18 +432,21 @@ public class ProductController implements Serializable, DbConstant {
 		}
 		return null;
 	}
-	public String viewDetail(Product prod) throws Exception {
-		LOGGER.info(":::Product Info::" + prod.getProductId());
+	public String viewDetail(ProductAssignment prod) throws Exception {
+		LOGGER.info(":::Product Name:::" + prod.getProduct().getProductName());
+		HttpSession sessionuser = SessionUtils.getSession();
+		sessionuser.setAttribute("prodAssgt", prod);
+		productAssignment=prod;
 		Product product = new Product();
-		product = productImpl.getProductById(prod.getProductId(), "productId");
+		product = prod.getProduct();
 		uploadingFiles = uplActImpl.getModelWithMyHQL(new String[] { "product" }, new Object[] { product },
 				"from UploadingFiles");
 		// LOGGER.info(
 		// "::::Product Details:" + uploadingFiles.getProduct() + ":Documents::" +
 		// uploadingFiles.getDocuments());
 		if (null != uploadingFiles) {
-			this.renderproduct = true;
-			this.renderOrder = false;
+			this.renderproduct = false;
+			this.renderOrder = true;
 		} else {
 			JSFMessagers.resetMessages();
 			setValid(false);
@@ -446,13 +455,13 @@ public class ProductController implements Serializable, DbConstant {
 		return null;
 	}
 
-	public double totalPrice(ProductDto prod) {
-		return (Double.parseDouble(prod.getQuantity()) * Double.parseDouble(prod.getPurchaseUnitPrice()));
+	public double totalPrice(Product prod) {
+		return (prod.getQuantity() * prod.getPurchaseUnitPrice());
 	}
 
-	public double sellingPrice(ProductDto prod) {
-		if (defaultCount != Double.parseDouble(prod.getSellingUnitPrice())) {
-			return (Double.parseDouble(prod.getQuantity()) * Double.parseDouble(prod.getSellingUnitPrice()));
+	public double sellingPrice(Product prod) {
+		if (defaultCount != prod.getSellingUnitPrice()) {
+			return (prod.getQuantity() * prod.getSellingUnitPrice());
 		} else {
 			JSFMessagers.resetMessages();
 			setValid(false);
@@ -560,7 +569,8 @@ public class ProductController implements Serializable, DbConstant {
 				orderproduct.setCrtdDtTime(timestamp);
 				orderproduct.setOrderDate(timestamp);
 				orderproduct.setQuantity(quantity);
-				orderproduct.setProduct(product);
+				orderproduct.setStatus("ordered");
+				orderproduct.setProductInfo(productAssignment);
 				orderproduct.setCustomer(usersSession);
 				orderProdImpl.saveIntable(orderproduct);
 				JSFMessagers.resetMessages();
@@ -837,8 +847,8 @@ public class ProductController implements Serializable, DbConstant {
 			HttpSession session = SessionUtils.getSession();
 			orderDto = (OrderProductDto) session.getAttribute("customerorder");
 
-			LOGGER.info("PRODUCT Info:::" + orderDto.getProduct().getProductName());
-			PdfPCell pcel1 = new PdfPCell(new Paragraph(orderDto.getProduct().getProductName(), font8));
+			LOGGER.info("PRODUCT Info:::" + orderDto.getProductAssignment().getProduct().getProductName());
+			PdfPCell pcel1 = new PdfPCell(new Paragraph(orderDto.getProductAssignment().getProduct().getProductName(), font8));
 			pcel1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel1);
 			PdfPCell pcel2 = new PdfPCell(new Paragraph(orderDto.getQuantity() + "", font8));
@@ -865,7 +875,7 @@ public class ProductController implements Serializable, DbConstant {
 			PdfPCell pcel6 = new PdfPCell(new Paragraph(orderDto.getPhone(), font8));
 			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel6);
-			PdfPCell pcel7 = new PdfPCell(new Paragraph(orderDto.getProduct().getProductCategory().getBranch().getLocation().getDistrictName_en(), font8));
+			PdfPCell pcel7 = new PdfPCell(new Paragraph(orderDto.getProductAssignment().getProduct().getProductCategory().getBranch().getLocation().getDistrictName_en(), font8));
 			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel7);
 			document.add(table);
@@ -1283,6 +1293,14 @@ public class ProductController implements Serializable, DbConstant {
 
 	public void setOrderList(List<OrderProduct> orderList) {
 		this.orderList = orderList;
+	}
+
+	public ProductAssignment getProductAssignment() {
+		return productAssignment;
+	}
+
+	public void setProductAssignment(ProductAssignment productAssignment) {
+		this.productAssignment = productAssignment;
 	}
 	
 }

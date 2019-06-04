@@ -108,7 +108,7 @@
 											<label>Product name</label>
 										</f:facet>
 										<br />
-										<h:outputText value="#{order.product.productName}" />
+										<h:outputText value="#{order.productAssignment.product.productName}" />
 									</h:column>
 
 									<h:column>
@@ -192,7 +192,7 @@
 												<h:inputText
 													style="font-family:Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control"  disabled="true"
-													value="#{productController.orderproductDto.product.productName}"
+													value="#{productController.orderproductDto.productAssignment.product.productName}"
 													a:placeholder="Product name" required="true"
 													requiredMessage="#{msg['required.productname.message']}"
 													converterMessage="#{msg['error.enter.invalid.productname']}"

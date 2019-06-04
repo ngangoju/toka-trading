@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="shortcut icon" href="img/fav.png" />
+	<link rel="shortcut icon" href="image/favicon.png" />
+	<!-- Author Meta -->
+	<meta name="author" content="codepixer" />
+	<!-- Meta Description -->
+	<meta name="description" content="" />
+	<!-- Meta Keyword -->
+	<meta name="keywords" content="" />
+	<h:outputStylesheet name="materialdesignicons.min.css" library="css" />
+	<h:outputStylesheet name="style.css" library="css" />
+	<h:outputStylesheet name="bootstrap.min.css" library="css" />
+	<h:outputStylesheet name="vendor.bundle.base.css" library="css" />
+	<h:outputStylesheet name="vendor.bundle.addons.css" library="css" />
+	
+	<h:outputScript library="js" name="vendor.bundle.base.js" />
+	<h:outputScript library="js" name="vendor.bundle.addons.js" />
+	<h:outputScript library="js" name="off-canvas.js" />
+	<h:outputScript library="js" name="misc.js" />
+	<link
+		href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700"
+		rel="stylesheet" />
+	<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" />
+	<style>
+html, body, h1, h2, h3, h4, h5 {
+	font-family: "Open Sans", sans-serif
+}
+
+.errorMsg1 {
+	color: red
+}
+
+.help-block {
+	color: red
+}
+
+/*#home {
+	background: url(./resources/image/nationteam.jpg) center;
+	background-size: cover;
+}*/
+
+#sendNewsLetter {
+	background-color: #fab700;
+	color: #fff;
+	border-radius: 0;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	padding: 10px 12px;
+	border: 0;
+}
+
+.modal-header, h3, .close {
+	background-color: #5cb85c;
+	color: white !important;
+	text-align: center;
+	font-family: Open Sans sans-serif !important;
+	font-size: 20px !important;
+}
+
+.modal-footer {
+	background-color: #f9f9f9;
+	font-family: Open Sans sans-serif !important;
+	font-size: 14px !important;
+}
+
+.modal-body {
+	font-family: Open Sans sans-serif !important;
+	font-size: 14px !important;
+}
+
+h3 {
+	margin-left: 35%;
+}
+.auth.auth-bg-1 {
+  background: url("./resources/image/auth/login_1.jpg");
+  background-size: cover; }
+  
+ .auth.register-bg-1 {
+  background: url("./resources/image/auth/register.jpg") center center no-repeat;
+  background-size: cover; }
+  .label{
+   font-family: "Poppins", sans-serif;
+  } 
+</style>
+</h:head>
+
+<h:body>
+	<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper auth-page">
+      <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
+        <div class="row w-100">
+          <div class="col-lg-4 mx-auto">
+            <div class="auto-form-wrapper">
+              <h:form action="#">
+    <h:panelGroup layout="block" rendered="#{not login.valid and not facesContext.validationFailed}">
+<ul>
+<ui:repeat value="#{facesContext.messageList}" var="facesMessage">
+<li class="alert alert-danger" style="list-style: none;background-color:#FF2400;color:white;margin-left: -3%">
+<center><h:outputText value="#{facesMessage.summary}" escape="false" /></center>
+</li>
+</ui:repeat>
+</ul>
+</h:panelGroup>
+
+
+
+
+ <h:panelGroup layout="block" rendered="#{login.valid and  not facesContext.validationFailed}">
+        <ul>
+        <ui:repeat value="#{facesContext.messageList}" var="facesMessage">
+            <li class="alert alert-success"><h:outputText
+            value="#{facesMessage.summary}" escape="false" /></li>
+        </ui:repeat>
+        </ul>
+    </h:panelGroup>
+                <div class="form-group">
+                  <label class="label">Username</label>
+                  <div class="input-group">         
+							     <h:inputText  class="form-control" id="username" value="#{login.users.viewId}" required="true"   autocomplete="off" requiredMessage="#{msg['requiered.username.message']}"/>
+							       
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+<!--                         <i class="mdi mdi-check-circle-outline"></i> -->
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="label">Password</label>
+                  <div class="input-group">
+                                           	<h:inputSecret class="form-control"  required="true" requiredMessage="#{msg['requiered.username.password']}" id="password" autocomplete="off" value="#{login.users.viewName}"></h:inputSecret>
+		<div class="input-group-append">
+                      <span class="input-group-text">
+<!--                         <i class="mdi mdi-check-circle-outline"></i> -->
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <h:commandButton class="btn btn-primary submit-btn btn-block label"
+                  action="#{login.validateUsernamePassword}"
+						value="#{msg['label.subimit.message.login']}">
+                  </h:commandButton>
+                </div>
+                <div class="form-group d-flex justify-content-between">
+                  <div class="form-check form-check-flat mt-0">
+                    <label class="form-check-label label">
+                      <h:inputText a:type="checkbox" class="form-check-input"/> Keep me signed in
+                    </label>
+                  </div>
+                  <a href="#" class="text-small forgot-password text-black label">Forgot Password</a>
+                </div>
+                <div class="form-group">
+                  <button class="btn btn-block g-login label">
+                  <!-- <img src="./resources/image/header.png"
+							alt="" title="" /> -->
+                    <img class="mr-3 "  alt=""/>Log in with Google</button>
+                </div>
+                <div class="text-block text-center my-3">
+                  <span class="text-small font-weight-semibold label">Not a member ?</span>
+                  <a href="register.xhtml" class="text-black text-small label">Create new account</a>
+                </div>
+              </h:form>
+            </div>
+			<div class="container-fluid clearfix">
+			<span
+					class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+					© 2019 <a href="http://www.hoovers.com/company-information/cs/company-profile.toka_trading_coltd.53b765c966389ac5.html" >#{msg['label.text.com.message.copy.right']}</a>.
+					All rights reserved.
+				</span> <span
+					class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted
+					made with <i class="mdi mdi-heart text-danger"></i>
+				</span>
+				</div>
+			</div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+</h:body>
+
+</html>

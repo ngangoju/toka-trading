@@ -100,7 +100,7 @@
 									<label>Quantity</label>
 								</f:facet>
 								<br />
-								<h:outputText value="#{prod.product.quantity}" />
+								<h:outputText value="#{prod.quantity}" />
 							</h:column>
 							<h:column>
 								<f:facet name="header">
@@ -153,7 +153,7 @@
 									<h:commandLink style="color:white" data-toggle="tooltip"
 										data-placement="left" title="#{msg['productView.viewButton']}"
 										class="btn btn-sm btn-info glyphicon glyphicon-list"
-										action="#{productController.viewDetail(prod.product)}">
+										action="#{productController.viewDetail(prod)}">
 									</h:commandLink>
 								</div>
 							</h:column>
@@ -181,12 +181,15 @@
 											form</h4>
 										<h:form class="forms-sample">
 											<div class="form-group">
+										<h:graphicImage style="width:30%;height:30%;margin:5px"
+											class="img-xs rounded-circle" alt="productImage"
+											value="/images/dynamic/?file=#{productController.uploadingFiles.documents.sysFilename}" />
 												<label>#{msg['productname.Productform']}<span
 													style="color: red; font-size: 15px">*</span></label>
 												<h:inputText
 													style="font-family:Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control"  disabled="true"
-													value="#{productController.product.productName}"
+													value="#{productController.productAssignment.product.productName}"
 													requiredMessage="#{msg['required.productname.message']}"
 													converterMessage="#{msg['error.enter.invalid.productname']}"
 													validatorMessage="#{msg['error.enter.invalid.productname']}">
@@ -202,7 +205,7 @@
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control"  disabled="true"
-													value="#{productController.product.sellingUnitPrice}"
+													value="#{productController.productAssignment.product.sellingUnitPrice}"
 													requiredMessage="#{msg['requiered.productqty.message']}"
 													converterMessage="#{msg['error.enter.invalid.productqty']}"
 													validatorMessage="#{msg['error.enter.invalid.productqty']}">
@@ -218,7 +221,7 @@
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control"  disabled="true"
-													value="#{productController.product.expireDate}">
+													value="#{productController.productAssignment.product.expireDate}">
 													<f:validateRegex
 														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
@@ -231,7 +234,7 @@
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control" disabled="true"
-													value="#{productController.product.productCategory.productCatName}">
+													value="#{productController.productAssignment.product.productCategory.productCatName}">
 													<f:validateRegex
 														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
@@ -254,7 +257,7 @@
 														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
 												</h:inputText>
-													<span class="input-group-addon">Max: #{productController.product.quantity}</span>
+													<span class="input-group-addon">Max: #{productController.productAssignment.quantity}</span>
 											</div>
 											</div>
 											<h:commandButton a:type="submit" class="btn btn-success mr-2"
@@ -302,7 +305,7 @@
 										<f:ajax render="@form" execute="@form" onevent="showProgress" />
 									</h:commandLink>
 									<h:commandButton
-										class="btn btn-outline-success" value="Order" action="#{productController.orderProd(productController.uploadingFiles.product)}"/>
+										class="btn btn-outline-success" value="Order" action="#{productController.orderProd(productController.productAssignment)}"/>
 										</h:form>
 								</div>
 							</div>

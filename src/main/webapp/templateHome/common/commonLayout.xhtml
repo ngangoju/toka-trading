@@ -21,7 +21,7 @@
 	<h:outputStylesheet name="bootstrap.min.css" library="css" />
 	<h:outputStylesheet name="vendor.bundle.base.css" library="css" />
 	<h:outputStylesheet name="vendor.bundle.addons.css" library="css" />
-	
+
 	<h:outputScript library="js" name="vendor.bundle.base.js" />
 	<h:outputScript library="js" name="vendor.bundle.addons.js" />
 	<h:outputScript library="js" name="off-canvas.js" />
@@ -48,7 +48,6 @@ html, body, h1, h2, h3, h4, h5 {
 	background: url(./resources/image/nationteam.jpg) center;
 	background-size: cover;
 }*/
-
 #sendNewsLetter {
 	background-color: #fab700;
 	color: #fff;
@@ -81,85 +80,115 @@ html, body, h1, h2, h3, h4, h5 {
 h3 {
 	margin-left: 35%;
 }
+
 .auth.auth-bg-1 {
-  background: url("./resources/image/auth/login_1.jpg");
-  background-size: cover; }
-  
- .auth.register-bg-1 {
-  background: url("./resources/image/auth/register.jpg") center center no-repeat;
-  background-size: cover; }
-  .label{
-   font-family: "Poppins", sans-serif;
-  } 
+	background: url("./resources/image/auth/login_1.jpg");
+	background-size: cover;
+}
+
+.auth.register-bg-1 {
+	background: url("./resources/image/auth/register.jpg") center center
+		no-repeat;
+	background-size: cover;
+}
+
+.label {
+	font-family: "Poppins", sans-serif;
+}
 </style>
 </h:head>
 
 <h:body>
 	<div class="container-scroller">
-    <div class="container-fluid page-body-wrapper full-page-wrapper auth-page">
-      <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
-        <div class="row w-100">
-          <div class="col-lg-4 mx-auto">
-            <div class="auto-form-wrapper">
-              <h:form action="#">
-                <div class="form-group">
-                  <label class="label">Username</label>
-                  <div class="input-group">         
-							     <h:inputText  class="form-control" id="username" value="#{login.users.viewId}" required="true"   autocomplete="off" requiredMessage="#{msg['requiered.username.message']}"/>
-							       
-                    <div class="input-group-append">
-                      <span class="input-group-text">
-<!--                         <i class="mdi mdi-check-circle-outline"></i> -->
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="label">Password</label>
-                  <div class="input-group">
-                                           	<h:inputSecret class="form-control"  required="true" requiredMessage="#{msg['requiered.username.password']}" id="password" autocomplete="off" value="#{login.users.viewName}"></h:inputSecret>
-		<div class="input-group-append">
-                      <span class="input-group-text">
-<!--                         <i class="mdi mdi-check-circle-outline"></i> -->
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <h:commandButton class="btn btn-primary submit-btn btn-block label"
-                  action="#{login.validateUsernamePassword}"
-						value="#{msg['label.subimit.message.login']}">
-                  </h:commandButton>
-                </div>
-                <div class="form-group d-flex justify-content-between">
-                  <div class="form-check form-check-flat mt-0">
-                    <label class="form-check-label label">
-                      <h:inputText a:type="checkbox" class="form-check-input"/> Keep me signed in
-                    </label>
-                  </div>
-                  <a href="#" class="text-small forgot-password text-black label">Forgot Password</a>
-                </div>
-                <div class="text-block text-center my-3">
-                  <span class="text-small font-weight-semibold label">Not a member ?</span>
-                  <a href="register.xhtml" class="text-black text-small label">Create new account</a>
-                </div>
-              </h:form>
-            </div>
-			<div class="container-fluid clearfix">
-			<span
-					class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
-					© 2019 <a href="http://www.hoovers.com/company-information/cs/company-profile.toka_trading_coltd.53b765c966389ac5.html" >#{msg['label.text.com.message.copy.right']}</a>.
-					All rights reserved.
-				</span>
+		<div
+			class="container-fluid page-body-wrapper full-page-wrapper auth-page">
+			<div
+				class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
+				<div class="row w-100">
+					<div class="col-lg-4 mx-auto">
+						<div class="auto-form-wrapper">
+						<h2 class="text-center mb-4 label primary" style="color:#308ee0;">Login first</h2>
+							<h:form action="#">
+							<h:panelGroup layout="block"
+							rendered="#{not login.valid and not facesContext.validationFailed}">
+							<ul>
+								<ui:repeat value="#{facesContext.messageList}"
+									var="facesMessage">
+									<li class="alert alert-danger"
+										style="list-style: none; background-color: #FF2400; color: white">
+										<center>
+											<h:outputText value="#{facesMessage.summary}" escape="false" />
+										</center>
+									</li>
+								</ui:repeat>
+							</ul>
+						</h:panelGroup>
+							
+								<div class="form-group">
+									<label class="label">Username</label>
+									<div class="input-group">
+										<h:inputText a:placeholder="username" class="form-control"
+											id="username" value="#{login.users.viewId}" required="true"
+											autocomplete="off"
+											requiredMessage="#{msg['requiered.username.message']}" />
+
+										<div class="input-group-append">
+											<span class="input-group-text"> <!--                         <i class="mdi mdi-check-circle-outline"></i> -->
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="label">Password</label>
+									<div class="input-group">
+										<h:inputSecret class="form-control" a:placeholder="password"
+											required="true"
+											requiredMessage="#{msg['requiered.username.password']}"
+											id="password" autocomplete="off"
+											value="#{login.users.viewName}"></h:inputSecret>
+										<div class="input-group-append">
+											<span class="input-group-text"> <!--                         <i class="mdi mdi-check-circle-outline"></i> -->
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<h:commandButton
+										class="btn btn-primary submit-btn btn-block label"
+										action="#{login.validateUsernamePassword}"
+										value="#{msg['label.subimit.message.login']}">
+									</h:commandButton>
+								</div>
+								<div class="form-group d-flex justify-content-between">
+									<div class="form-check form-check-flat mt-0">
+										<label class="form-check-label label"> <h:inputText
+												a:type="checkbox" class="form-check-input" /> Keep me signed
+											in
+										</label>
+									</div>
+									<a href="#" class="text-small forgot-password text-black label">Forgot
+										Password</a>
+								</div>
+								<div class="text-block text-center my-3">
+									<span class="text-small font-weight-semibold label">Not
+										a member ?</span> <a href="register.xhtml"
+										class="text-black text-small label">Create new account</a>
+								</div>
+							</h:form>
+						</div>
+						<div class="container-fluid clearfix">
+							<span
+								class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+								© 2019 Toka trading. All rights reserved. </span>
+						</div>
+					</div>
 				</div>
 			</div>
-        </div>
-      </div>
-      <!-- content-wrapper ends -->
-    </div>
-    <!-- page-body-wrapper ends -->
-  </div>
-  <!-- container-scroller -->
+			<!-- content-wrapper ends -->
+		</div>
+		<!-- page-body-wrapper ends -->
+	</div>
+	<!-- container-scroller -->
 </h:body>
 
 </html>

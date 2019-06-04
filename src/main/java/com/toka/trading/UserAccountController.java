@@ -318,6 +318,7 @@ public class UserAccountController implements Serializable, DbConstant {
 				users.setViewName(loginImpl.criptPassword(password));
 				users.setStatus(ACTIVE);
 				users.setLoginStatus(OFFLINE);
+				users.setAddress("Kigali");
 				usersImpl.saveUsers(users);
 				contact.setCreatedBy("admin");
 				contact.setCrtdDtTime(timestamp);
