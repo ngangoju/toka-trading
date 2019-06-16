@@ -92,7 +92,7 @@ private  Branch branch;
 				new Object[] { ACTIVE, usersSession, "ordered" }, "OrderProduct", " orderDate desc");
 		
 			categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
-					new Object[] { ACTIVE }, "ProductCategory", " upDtTime desc");
+					new Object[] { ACTIVE }, "ProductCategory", "upDtTime desc");
 //			categoryDetails = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus", "branch" },
 //					new Object[] { ACTIVE, id }, "ProductCategory", " upDtTime desc");
 			
@@ -198,7 +198,7 @@ private  Branch branch;
 				category.setCrtdDtTime(timestamp);
 				category.setGenericStatus(ACTIVE);
 				category.setUpDtTime(timestamp);
-				//category.setBranch(usersSession.getBranch());
+				category.setBranch(usersSession.getBranch());
 				categoryImpl.saveProductCategory(category);
 				JSFMessagers.resetMessages();
 				setValid(true); 

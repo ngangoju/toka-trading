@@ -384,6 +384,22 @@ public class ProductController implements Serializable, DbConstant {
 		}
 	}
 	
+	public void cancelOrder(OrderProduct order) {
+		LOGGER.info("new Status::::"+order.getGenericStatus());
+		try {
+			orderproduct=order;
+			orderproduct.setGenericStatus("desactive");
+			orderProdImpl.UpdateOrderProduct(orderproduct);
+			LOGGER.info("new Status::::"+orderproduct.getGenericStatus());
+			JSFMessagers.resetMessages();
+			setValid(true);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.orderupdate"));
+		} catch (Exception e) {
+			LOGGER.info(e.getMessage());
+		}
+	}
+	
+	
 	public void viewpCategory(int pid) {
 		LOGGER.info("NEW_ID:::"+pid);
 		HttpSession sessionuser = SessionUtils.getSession();

@@ -164,6 +164,12 @@
 												class="btn btn-sm btn-info glyphicon glyphicon-list"
 												action="#{productController.processOrder(order)}">
 											</h:commandLink>
+											<h:commandLink style="color:white" data-toggle="tooltip"
+												data-placement="left"
+												title="#{msg['processorder.cancel']}"
+												class="btn btn-sm btn-danger glyphicon glyphicon-remove"
+												action="#{productController.cancelOrder(order)}">
+											</h:commandLink>
 										</div>
 									</h:column>
 									<f:facet name="footer">
