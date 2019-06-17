@@ -20,9 +20,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.servlet.http.HttpSession;
-
 import org.hibernate.HibernateException;
-
+import com.google.gson.Gson;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -83,7 +82,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private Users usersSession;
 	private Product product;
 	private PerishedProduct perished;
-	private String perishedQuantity;
+	private String perishedQuantity,overallDailOrderProcessed;;
 	private ProductCategory category;
 	private ProductAssignment productAssignment;
 	private OrderProduct orderproduct;
@@ -98,7 +97,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private List<PerishedProduct> perishedList = new ArrayList<PerishedProduct>();
 	private List<ProductCatDetailsDto> branchCatDetails = new ArrayList<ProductCatDetailsDto>();
 	private List<ProductCatDetailsDto> branchCatList = new ArrayList<ProductCatDetailsDto>();
-	private List<OrderProductDto> orderDetails = new ArrayList<OrderProductDto>();
+	private List<OrderProductDto> orderDetails,dailyOrder = new ArrayList<OrderProductDto>();
 	private List<Product> productfulldetails = new ArrayList<Product>();
 	private ProductAssignment prodAssign = new ProductAssignment();
 	ProductAssignmentImpl prodAssignImpl = new ProductAssignmentImpl();
@@ -149,6 +148,8 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		try {
 
 			if(usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("ceo")) {
+				
+			
 			productList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "Product", " upDtTime desc");
 
@@ -203,14 +204,17 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 					LOGGER.info("BRANCH_ID3 IS:::::::"+id);
 				}
 			}*/
-			
-			// showAvailProduct(productBranchList);
-			
+				
 			productfulldetails=productFullDetails() ;
 			productassdetails=prodAssignImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "ProductAssignment", " assignDate desc");
 			productAssignedList=productAssignedList(productassdetails);
 			this.rendered = true;
+			
+			
+			// daily successful served order and sort it buy branchs;
+			overallDailOrderProcessed=overalldailyOrderStatistics();
+			LOGGER .info("JSON VALUE HERE:::"+overallDailOrderProcessed);
 			}
 			else if(usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("customer")){
 				this.renderDetails=true;
@@ -232,6 +236,23 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 			e.printStackTrace();
 		}
 
+	}
+
+
+	public String overalldailyOrderStatistics() {
+		dailyOrder= new ArrayList<OrderProductDto>();
+		for (Object[] data : orderProdImpl.reportList("select ass.branch,ass.assignDate,o.orderDate,o.quantity,sum(o.quantity) as totalProccessedQty ,o.customer, o.productInfo \r\n" + 
+				"from OrderProduct o,ProductAssignment ass where ass. prodAssId=o.productInfo and o.orderDate between '2019-06-01' and '2019-06-02' group by ass.branch")) {
+			OrderProductDto odto= new OrderProductDto();
+			odto.setQuantity(Integer.parseInt(data[4]+""));
+			odto.setBranch(((Branch)data[0]).getBranchName());
+			LOGGER.info(":::QUANTITY::"+data[3]+"");
+			LOGGER.info(":::BRANCH::"+((Branch)data[0]).getBranchName());
+			dailyOrder.add(odto);
+		}
+		
+		this.overallDailOrderProcessed = new Gson().toJson(dailyOrder);
+		return overallDailOrderProcessed;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1405,6 +1426,26 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 
 	public void setProductAssignment(ProductAssignment productAssignment) {
 		this.productAssignment = productAssignment;
+	}
+
+
+	public String getOverallDailOrderProcessed() {
+		return overallDailOrderProcessed;
+	}
+
+
+	public void setOverallDailOrderProcessed(String overallDailOrderProcessed) {
+		this.overallDailOrderProcessed = overallDailOrderProcessed;
+	}
+
+
+	public List<OrderProductDto> getDailyOrder() {
+		return dailyOrder;
+	}
+
+
+	public void setDailyOrder(List<OrderProductDto> dailyOrder) {
+		this.dailyOrder = dailyOrder;
 	}
 	
 }

@@ -16,7 +16,7 @@ public class OrderProductDto implements Serializable{
 	private Users customer;
 	private String sellingUnitPrice;
 	private Double totalSales;
-	private String email;
+	private String email,branch;
 	private String phone;
 	public String getSellingUnitPrice() {
 		return sellingUnitPrice;
@@ -79,4 +79,11 @@ public class OrderProductDto implements Serializable{
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+	public String getBranch() {
+		return branch;
+	}
+	public void setBranch(String branch) {
+		this.branch = branch;
+	}
+	
 }
