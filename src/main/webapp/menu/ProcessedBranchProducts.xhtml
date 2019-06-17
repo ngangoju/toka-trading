@@ -53,8 +53,8 @@
 						<ui:repeat var="time" value="#">
 
 							<span style="color: white; font-size: 10pt"> <label
-								style="font: italic bold 14px/25px Georgia, serif; margin-left: 25%;">Daily
-									successful served order management </label>
+								style="font: italic bold 14px/25px Georgia, serif; margin-left: 25%;">Branch Daily
+									order statistics management panel </label>
 							</span>
 
 
@@ -72,7 +72,7 @@
 									<ui:repeat value="#{facesContext.messageList}"
 										var="facesMessage">
 										<li class="alert alert-danger"
-											style="list-style: none; background-color: #FF2400; color: white;font-size: 12pt">
+											style="list-style: none; background-color: #FF2400; color: white; font-size: 12pt">
 											<center>
 												<h:outputText value="#{facesMessage.summary}" escape="false" />
 											</center>
@@ -87,7 +87,7 @@
 									<ui:repeat value="#{facesContext.messageList}"
 										var="facesMessage">
 										<li
-											style="list-style: none; background-color: #32CD32; color: white; margin-left: -4.9%;font-size: 12pt"
+											style="list-style: none; background-color: #32CD32; color: white; margin-left: -4.9%; font-size: 12pt"
 											class="alert alert-success"><h:outputText
 												value="#{facesMessage.summary}" escape="false" /></li>
 									</ui:repeat>
@@ -95,51 +95,22 @@
 							</h:panelGroup>
 
 							<div class="row">
-								<div class="form-group" style="margin-left: 5%;">
-									<label for="exampleInputCity1" class="cols-sm-2 control-label">ENTER ANY DATE FOR  DAILY
-										SUCCESSFUL SERVED ORDER STATISTICS<span
-										style="color: red; font-size: 15px">*</span></label>
+								
+									<div class="container">
+										<h1 style="font-family: Arial; font-size: 13pt;color: #5983e8">BRANCH DAILY
+											SUCCESSFUL SERVED ORDER</h1>
+										<!-- 	<canvas id="taskperformance"
+												style="height:300px;margin-top:5%;font-size:12pt"></canvas> -->
+										<canvas id="chart"
+											style="width: 100%; height: 65vh; border: 1px solid #5983e8; margin-top: 10px;"></canvas>
 
-									<div class="input-group">
-										<span class="input-group-addon"><i
-											class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
-										<h:inputText locale="#{facesContext.viewRoot.locale}" a:placeholder="dd/MM/yyyy"
-											autocomplete="off" id="from_dob_date_id"
-											value="#{productAssignmentController.todayDate}"
-											binding="#{from_dob_date_id}" class="form-control"
-											escape="true" maxlength="35" required="true"
-											converterMessage="#{msg['validation.message.DATE_FORMAT']}"
-											requiredMessage="#{msg['todaydate.message']}">
-											<f:convertDateTime type="date" dateType="short"
-												pattern="dd/MM/yyyy" />
-											<f:validateLength maximum="35" />
-										</h:inputText>
 
 									</div>
-									<h:message errorClass="errorMsg1" for="from_dob_date_id"></h:message><br/>
-
-									<h:commandButton a:type="submit" class="btn btn-success mr-2"
-										style=" font: italic bold 13px/20px Georgia, serif; margin-top:10px"
-										action="#{productAssignmentController.overalldailyOrderStatistics}"
-										value="#{msg['label.subimit.message.submit']}">
-									</h:commandButton>
-								</div>
-								<h:panelGroup rendered="#{productAssignmentController.renderOrder}">
-								<div class="container">
-									<h1 style="font-family: Arial; font-size: 13pt">DAILY
-										SUCCESSFUL SERVED ORDER AND SORTED BY BRANCHES</h1>
-									<!-- 	<canvas id="taskperformance"
-												style="height:300px;margin-top:5%;font-size:12pt"></canvas> -->
-									<canvas id="taskperformance"
-										style=" border: 1px solid #f04c91; margin-top: 10px;width:25%;"></canvas>
-
-
-								</div></h:panelGroup>
 								<h:form class="form-horizontal">
 									<div class="form-group">
-										<h:inputText class="overallDailOrderProcessed"
+										<h:inputText class="overallDailBranchOrderProcessed"
 											style="display:none;"
-											value="#{productAssignmentController.overallDailOrderProcessed}"></h:inputText>
+											value="#{productAssignmentController.overallDailBranchOrderProcessed}"></h:inputText>
 
 
 
@@ -147,14 +118,7 @@
 
 								</h:form>
 							</div>
-							<!-- <div id="chartContainer" style="height: 360px; width: 100%;"></div>
- -->
-
-						<!-- 	<div class="container">
-					<h1>USE CHART.JS WITH MYSQL DATASETS</h1>
-					<canvas id="chart"
-						style="width: 100%; height: 65vh; border: 1px solid #555652; margin-top: 10px;"></canvas>
-				</div> -->
+							
 						</h:form>
 
 
@@ -162,101 +126,13 @@
 				</div>
 
 				<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-<!-- 
+				<!-- 
 				<script
 					src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script> -->
 				<script type="text/javascript"
 					src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
 				<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-				<script>
-					$(function Myname() {
-						var taskperform = document.getElementById(
-								'taskperformance').getContext('2d');
-						var replaceTaskData = $(".overallDailOrderProcessed")
-								.val();
-						var taskReq = replaceTaskData.replace("id", "x");
-						taskReq.replace("Rate", "y");
-
-						console.log(taskReq);
-						//CONCERN OVERALL TASK PROGRESS 
-						var amount = [];
-
-						var taskname = [];
-						function recusiveTask(n, testTaskData, n2) {
-							if (n2 >= n) {
-								amount.push(testTaskData[n].quantity);
-
-								taskname.push(testTaskData[n].branch);
-								recusiveTask(n + 1, testTaskData, n2);
-							}
-						}
-
-						var testTaskData = JSON.parse($(
-								".overallDailOrderProcessed").val());
-						console.log("::::RESULT::::");
-						recusiveTask(0, testTaskData, testTaskData.length - 1);
-
-						var mytaskChart = new Chart(taskperform, {
-							type : 'bar',
-							data : {
-								labels : taskname,
-								datasets : [ {
-									label : '# Quantity sold',
-									data : amount,
-									backgroundColor : [
-											'rgba(255, 99, 132, 0.2)',
-											'rgba(54, 162, 235, 0.2)',
-											'rgba(255, 206, 86, 0.2)',
-											'rgba(75, 192, 192, 0.2)',
-											'rgba(153, 102, 255, 0.2)',
-											'rgba(255, 159, 64, 0.2)' ],
-									borderColor : [ 'rgba(255,99,132,1)',
-											'rgba(54, 162, 235, 1)',
-											'rgba(255, 206, 86, 1)',
-											'rgba(75, 192, 192, 1)',
-											'rgba(153, 102, 255, 1)',
-											'rgba(255, 159, 64, 1)' ],
-									borderWidth : 1,
-									fill : false
-								} ]
-							},
-							options : {
-								scales : {
-									yAxes : [ {
-										ticks : {
-											beginAtZero : true
-										},
-										gridLines : {
-											display : false
-										},
-									} ],
-									xAxes : [ {
-										gridLines : {
-											display : false
-										},
-									} ]
-								},
-								legend : {
-									display : false
-								},
-
-								elements : {
-									point : {
-										radius : 0
-									}
-								},
-								title : {
-									display : true,
-
-									fontSize : 20,
-
-								},
-
-							}
-						});
-
-					});
-				</script>
+				
 				<!-- <script>
 				var chart = new CanvasJS.Chart("chartContainer",
 						{
@@ -297,9 +173,9 @@
 						chart.render();
 				</script> -->
 
-			<!-- 	<script>
+					<script>
 					var ctx = document.getElementById("chart").getContext('2d');
-					var replaceTaskData = $(".overallDailOrderProcessed").val();
+					var replaceTaskData = $(".overallDailBranchOrderProcessed").val();
 					var taskReq = replaceTaskData.replace("id", "x");
 					taskReq.replace("Rate", "y");
 
@@ -312,13 +188,13 @@
 						if (n2 >= n) {
 							amount.push(testTaskData[n].quantity);
 
-							taskname.push(testTaskData[n].branch);
+							taskname.push(testTaskData[n].branchOrderDate);
 							recusiveTask(n + 1, testTaskData, n2);
 						}
 					}
 
 					var testTaskData = JSON.parse($(
-							".overallDailOrderProcessed").val());
+							".overallDailBranchOrderProcessed").val());
 					console.log("::::RESULT::::");
 					recusiveTask(0, testTaskData, testTaskData.length - 1);
 					var myChart = new Chart(ctx, {
@@ -326,11 +202,11 @@
 						data : {
 							labels : taskname,
 							datasets : [ {
-								label : 'Data 1',
+								label : 'Quantity sold',
 								data : amount,
 								backgroundColor : 'transparent',
-								borderColor : 'rgba(255,99,132)',
-								borderWidth : 3
+								borderColor : '#5983e8',
+								borderWidth : 1
 							},
 
 							/* {
@@ -345,31 +221,19 @@
 
 						options : {
 							scales : {
-								scales : {
-									/* yAxes : [ {
-										beginAtZero : false
-									} ],
-									xAxes : [ {
-										autoskip : true,
-										maxTicketsLimit : 20
-									} ] */
-						 axisX:{
-							    gridThickness: 0,
-							    tickLength: 0,
-							    lineThickness: 0,
-							    labelFormatter: function(){
-							      return " ";
-							    }
-							  },
-							  axisY:{
-							    gridThickness: 0,
-							    tickLength: 0,
-							    lineThickness: 0,
-							    labelFormatter: function(){
-							      return " ";
-							    }
-							  },
-								}
+								yAxes : [ {
+									ticks : {
+										beginAtZero : true
+									},
+									gridLines : {
+										display : false
+									},
+								} ],
+								xAxes : [ {
+									gridLines : {
+										display : false
+									},
+								} ]
 							},
 							tooltips : {
 								mode : 'index'
@@ -384,7 +248,7 @@
 							}
 						}
 					});
-				</script> -->
+				</script>
 			</h:body>
 		</ui:define>
 	</ui:composition>

@@ -82,7 +82,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private Users usersSession;
 	private Product product;
 	private PerishedProduct perished;
-	private String perishedQuantity,overallDailOrderProcessed;;
+	private String perishedQuantity,overallDailOrderProcessed,overallDailBranchOrderProcessed;
 	private ProductCategory category;
 	private ProductAssignment productAssignment;
 	private OrderProduct orderproduct;
@@ -97,7 +97,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private List<PerishedProduct> perishedList = new ArrayList<PerishedProduct>();
 	private List<ProductCatDetailsDto> branchCatDetails = new ArrayList<ProductCatDetailsDto>();
 	private List<ProductCatDetailsDto> branchCatList = new ArrayList<ProductCatDetailsDto>();
-	private List<OrderProductDto> orderDetails,dailyOrder = new ArrayList<OrderProductDto>();
+	private List<OrderProductDto> orderDetails,dailyOrder,branchStatistics = new ArrayList<OrderProductDto>();
 	private List<Product> productfulldetails = new ArrayList<Product>();
 	private ProductAssignment prodAssign = new ProductAssignment();
 	ProductAssignmentImpl prodAssignImpl = new ProductAssignmentImpl();
@@ -117,7 +117,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private UploadingFiles uploadingFiles;
 	private UploadingFilesImpl uplActImpl = new UploadingFilesImpl();
 	private OrderProductDto orderDto = new OrderProductDto();
-	private Date manufDate, expDate, perishedDate;
+	private Date manufDate, expDate, perishedDate,todayDate;
 	private int productCatid;
 	private String unitprice;
 	private String quantity;
@@ -210,11 +210,12 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 					new Object[] { ACTIVE, }, "ProductAssignment", " assignDate desc");
 			productAssignedList=productAssignedList(productassdetails);
 			this.rendered = true;
+				
 			
 			
 			// daily successful served order and sort it buy branchs;
-			overallDailOrderProcessed=overalldailyOrderStatistics();
-			LOGGER .info("JSON VALUE HERE:::"+overallDailOrderProcessed);
+			/*overallDailOrderProcessed=overalldailyOrderStatistics();
+			LOGGER .info("JSON VALUE HERE:::"+overallDailOrderProcessed);*/
 			}
 			else if(usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("customer")){
 				this.renderDetails=true;
@@ -228,6 +229,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 				prodAssigDetails=prodAssignImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","branch" },
 						new Object[] { ACTIVE, usersSession.getBranch() }, "ProductAssignment", " assignDate desc");
 				productAssignedList=productAssignedList(prodAssigDetails);
+				branchStatistics();
 			}
 		} catch (Exception e) {
 			setValid(false);
@@ -239,10 +241,20 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	}
 
 
-	public String overalldailyOrderStatistics() {
+	public String overalldailyOrderStatistics() throws ParseException {
+		SimpleDateFormat smf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal1 = new GregorianCalendar();
+		cal1.setTime(todayDate);
+		LOGGER.info("Orginal date is ::" + smf.format(todayDate));
+		cal1.add(Calendar.DATE, 1);
+		java.util.Date dDate = cal1.getTime();
+		// cal1.add(Calendar.DATE, policy.getVariation());
+		String dt = smf.format(dDate);
+		LOGGER.info("Modified date is ::" +dt);
+		
 		dailyOrder= new ArrayList<OrderProductDto>();
 		for (Object[] data : orderProdImpl.reportList("select ass.branch,ass.assignDate,o.orderDate,o.quantity,sum(o.quantity) as totalProccessedQty ,o.customer, o.productInfo \r\n" + 
-				"from OrderProduct o,ProductAssignment ass where ass. prodAssId=o.productInfo and o.orderDate between '2019-06-01' and '2019-06-02' group by ass.branch")) {
+				"from OrderProduct o,ProductAssignment ass where ass. prodAssId=o.productInfo and o.orderDate between '"+smf.format(todayDate)+"' and '"+dt+"' group by ass.branch")) {
 			OrderProductDto odto= new OrderProductDto();
 			odto.setQuantity(Integer.parseInt(data[4]+""));
 			odto.setBranch(((Branch)data[0]).getBranchName());
@@ -250,9 +262,37 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 			LOGGER.info(":::BRANCH::"+((Branch)data[0]).getBranchName());
 			dailyOrder.add(odto);
 		}
+		if(dailyOrder.size()>0) {
+			this.overallDailOrderProcessed = new Gson().toJson(dailyOrder);
+			this.renderOrder=true;
+		}else {
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.order.date.error"));	
+		}
 		
-		this.overallDailOrderProcessed = new Gson().toJson(dailyOrder);
 		return overallDailOrderProcessed;
+	}
+	
+	public void branchStatistics() throws ParseException {
+		SimpleDateFormat smf = new SimpleDateFormat("yyyy-MM-dd");
+		branchStatistics= new ArrayList<OrderProductDto>();
+		for (Object[] data : orderProdImpl.reportList("select ass.branch,ass.assignDate ,o.orderDate,o.quantity,sum(o.quantity) as totalProccessedQty ,o.customer, o.productInfo \r\n" + 
+				"from OrderProduct o,ProductAssignment ass where ass.prodAssId=o.productInfo and ass.branch="+usersSession.getBranch().getBranchId()+" group by DATE_FORMAT(orderDate,'%d/%m/%Y')")) {
+			OrderProductDto odto= new OrderProductDto();
+			odto.setBranchOrderDate(smf.format(((Timestamp)data[2])));
+			odto.setQuantity(Integer.parseInt(data[4]+""));
+			
+			LOGGER.info(":::QUANTITY::"+data[4]+"");
+			LOGGER.info(":::Date order::"+smf.format((Timestamp)data[2]));
+			branchStatistics.add(odto);
+		}
+		if(branchStatistics.size()>0) {
+			this.overallDailBranchOrderProcessed = new Gson().toJson(branchStatistics);
+			/*this.renderOrder=true;*/
+		}else {
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("order.branch.not.yet"));	
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1446,6 +1486,36 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 
 	public void setDailyOrder(List<OrderProductDto> dailyOrder) {
 		this.dailyOrder = dailyOrder;
+	}
+
+
+	public Date getTodayDate() {
+		return todayDate;
+	}
+
+
+	public void setTodayDate(Date todayDate) {
+		this.todayDate = todayDate;
+	}
+
+
+	public String getOverallDailBranchOrderProcessed() {
+		return overallDailBranchOrderProcessed;
+	}
+
+
+	public void setOverallDailBranchOrderProcessed(String overallDailBranchOrderProcessed) {
+		this.overallDailBranchOrderProcessed = overallDailBranchOrderProcessed;
+	}
+
+
+	public List<OrderProductDto> getBranchStatistics() {
+		return branchStatistics;
+	}
+
+
+	public void setBranchStatistics(List<OrderProductDto> branchStatistics) {
+		this.branchStatistics = branchStatistics;
 	}
 	
 }
