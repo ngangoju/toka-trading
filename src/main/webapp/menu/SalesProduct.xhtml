@@ -24,7 +24,7 @@
 							</span>
 							<p:autoUpdate />
 						</p:outputPanel>
-						
+
 					</ui:repeat>
 				</div>
 				<div class="panel-body"
@@ -108,14 +108,15 @@
 							</div>
 						</h:panelGroup>
 						<h:panelGroup rendered="#{branchController.renderproduct}">
-						
-								<h:commandLink value="#{msg['BackButtom']}" action="#{branchController.backBranch}"
-									style="font-size: 14px !important;"
-									class="btn btn-primary glyphicon glyphicon-chevron-left" >
-									<f:ajax render="@form" execute="@form" onevent="showProgress" />
-									</h:commandLink>
-						
-					
+
+							<h:commandLink value="#{msg['BackButtom']}"
+								action="#{branchController.backBranch}"
+								style="font-size: 14px !important;"
+								class="btn btn-primary glyphicon glyphicon-chevron-left">
+								<f:ajax render="@form" execute="@form" onevent="showProgress" />
+							</h:commandLink>
+
+
 							<div class=" col-md-12"
 								style="height: 330px; overflow-y: scroll;">
 								<h:dataTable id="activityTable" binding="#{tabl}"
@@ -123,13 +124,13 @@
        						 -webkit-box-shadow: none;
        							 box-shadow: none !important;
        								 margin: 17px 2px 0 !important;"
-									value="#{branchController.branchSoldProduct}" var="prod"
+									value="#{branchController.productAssignedList}" var="prod"
 									class="table table-striped table-hover table-bordered tableUpdated ">
 									<f:facet name="header">
 
 										<label
-											style="margin-left: 25%; font: italic bold 13px/16px Georgia, serif;">List
-											of product sold</label>
+											style="margin-left: 35%; font: italic bold 13px/16px Georgia, serif;">List
+											of assigned product</label>
 									</f:facet>
 									<h:column>
 										<f:facet name="header">
@@ -143,96 +144,79 @@
 											<label>Product name</label>
 										</f:facet>
 										<br />
+
+
 										<h:outputText value="#{prod.product.productName}" />
 									</h:column>
 									<h:column>
 										<f:facet name="header">
-											<label>Assigned quantity</label>
+											<label>Quantity</label>
 										</f:facet>
 										<br />
-
 
 										<h:outputText value="#{prod.quantity}" />
-									</h:column>
-									<h:column>
-										<f:facet name="header">
-											<label>Quantity sold</label>
-										</f:facet>
-										<br />
-
-
-										<h:outputText value="#{prod.soldquantity}" />
-									</h:column>
-									<h:column>
-										<f:facet name="header">
-											<label>Order quantity</label>
-										</f:facet>
-										<br />
-										<h:outputText value="#{prod.orderquantity}">
-										</h:outputText>
-									</h:column>
-									<h:column>
-										<f:facet name="header">
-											<label>Order date</label>
-										</f:facet>
-										<br />
-
-
-										<h:outputText value="#{prod.orderDate}">
-											<f:convertDateTime type="date" dateType="short"
-												pattern="dd-MM-yyyy" />
-										</h:outputText>
-									</h:column>
-									<h:column>
-										<f:facet name="header">
-											<label>Sales date</label>
-										</f:facet>
-										<br />
-
-
-										<h:outputText value="#{prod.soldDate}">
-											<f:convertDateTime type="date" dateType="short"
-												pattern="dd-MM-yyyy" />
-										</h:outputText>
-									</h:column>
-									<h:column>
-										<f:facet name="header">
-											<label> Purchase unit price</label>
-										</f:facet>
-										<br />
-
-
-										<h:outputText value="#{prod.purchaseUnitPrice}" />
-									</h:column>
-									<h:column>
-										<f:facet name="header">
-											<label>Selling unit price</label>
-										</f:facet>
-										<br />
-
-										<h:outputText value="#{prod.sellingUnitPrice}" />
 
 									</h:column>
 									<h:column>
 										<f:facet name="header">
-											<label> Purchase price</label>
+											<label>Unit price</label>
+										</f:facet>
+										<br />
+
+										<h:outputText value="#{prod.unitprice}" />
+
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Sales price</label>
+										</f:facet>
+										<br />
+
+										<h:outputText value="#{prod.salesunit}" />
+
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Total price</label>
 										</f:facet>
 										<br />
 
 
-										<h:outputText value="#{prod.totalPurchase}" />
+										<h:outputText value="#{prod.totalprice}" />
 									</h:column>
 									<h:column>
 										<f:facet name="header">
 											<label>Total sales</label>
 										</f:facet>
-										<br />
 
-										<h:outputText value="#{prod.totalSales}" />
+										<br />
+										<h:outputText value="#{prod.totalsales}" />
+
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Assigned date</label>
+										</f:facet>
+
+										<br />
+										<h:outputText value="#{prod.assignDate}" />
 
 									</h:column>
 
+									<h:column>
+										<f:facet name="header">
+											<label>Action</label>
+										</f:facet>
+										<br />
+										<h:commandLink
+											action="#{branchController.checkBranchStock(prod)}"
+											style="font-size: 14px !important;" data-placement="right"
+											title="Check quantity remained"
+											class="btn btn-info glyphicon glyphicon-check">
+											<f:ajax render="@form" execute="@form" onevent="showProgress" />
+										</h:commandLink>
 
+									</h:column>
 									<f:facet name="footer">
 
 									</f:facet>
@@ -243,6 +227,41 @@
 
 						</h:panelGroup>
 
+						<h:panelGroup rendered="#{branchController.renderassform}">
+							
+
+							<h:commandLink value="Back"
+								class="btn btn-primary glyphicon glyphicon-chevron-left"
+								style="font-size: 14px !important;"
+								action="#{branchController.backProductBranchList}">
+								<f:ajax render="@all" execute="@all" onevent="showProgress" />
+							</h:commandLink>
+							<div
+								style="border-bottom: 1.5px solid #91DBFA; margin-bottom: 6px; margin-top: 6px;"></div>
+							
+								<div class="row">
+										<div
+											class=" card border-secondary mb-3 text-center col-md-6 col-sm-10 "
+											style="width: 45rem;">
+											<div class="card-header" style="font:font-family: sans-serif;font-weight: bold">PRODUCT QUANTITY REMAINING CHECK LIST</div>
+											<div class="card-body">
+												<p class="card-text"
+													style="font:font-family: sans-serif;font-weight: bold">
+													TOTAL ASSIGNED QUANTITY:<label class=" text text-primary">#{branchController.assignqty}</label>
+												</p>
+												<p class="card-text"
+													style="font:font-family: sans-serif;font-weight: bold">
+												ORDERED AND PROCESSED QUANTITY:<label class=" text text-info">#{branchController.totalorderqty}</label>
+												</p>
+												<p class="card-text"
+													style="font: font-family: sans-serif;font-weight: bold">
+													REMAING QUANTITY IN STOCK:<label class=" text text-primary">#{branchController.remainedqty}</label>
+												</p>
+											</div>
+
+										</div>
+							</div>
+						</h:panelGroup>
 
 
 					</h:form>

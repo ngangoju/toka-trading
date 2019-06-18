@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 
 import org.hibernate.HibernateException;
 
+import com.google.gson.Gson;
+
 import toka.common.DbConstant;
 import toka.common.Formating;
 import toka.common.JSFBoundleProvider;
@@ -31,11 +33,13 @@ import toka.domain.Contact;
 import toka.domain.UserCategory;
 import toka.domain.Users;
 import toka.trading.dto.ContactDto;
+import toka.trading.dto.OrderProductDto;
 import toka.trading.dto.ProductCategoryDtos;
 import toka.trading.dto.SoldProductDto;
 import toka.trading.dto.UserDto;
 import toka.dao.impl.CountryImpl;
 import toka.dao.impl.DistrictImpl;
+import toka.dao.impl.OrderProductImpl;
 import toka.dao.impl.ProductAssignmentImpl;
 import toka.dao.impl.ProductImpl;
 import toka.dao.impl.ProvinceImpl;
@@ -57,7 +61,7 @@ public class BranchController implements Serializable, DbConstant {
 	/* to manage validation messages */
 	private boolean isValid, chngDiv, skip, nextpage, frstDiv, cmpltDiv, bnchDiv, div1, div4, div2, div3, div3_1 = true,
 			hasContact, profileEditable;
-	private int cntryId, vid, pid, cid, did, sid;
+	private int cntryId, vid, pid, cid, did, sid,totalorderqty,remainedqty,assignqty;
 	/* end manage validation messages */
 	private Branch branch;
 	private Users usersSession;
@@ -97,6 +101,12 @@ public class BranchController implements Serializable, DbConstant {
 	private SoldProduct soldproduct= new SoldProduct();
 	private List<SoldProductDto>branchSoldProduct= new ArrayList<SoldProductDto>();
 	SoldProductImpl soldImpl= new SoldProductImpl();
+	private List<OrderProductDto> orderDetails,dailyOrder,branchStatistics = new ArrayList<OrderProductDto>();
+	private OrderProductDto orderDto = new OrderProductDto();
+	OrderProductImpl orderProdImpl = new OrderProductImpl();
+	private List<ProductAssignment> productAssignedList = new ArrayList<ProductAssignment>();
+	private List<ProductAssignment> prodAssigDetails = new ArrayList<ProductAssignment>();
+	private List<ProductAssignment> productassdetails = new ArrayList<ProductAssignment>();
 	@SuppressWarnings("unchecked")
 	@PostConstruct
 	public void init() {
@@ -173,6 +183,11 @@ public class BranchController implements Serializable, DbConstant {
 	public void backBranchList() {
 		this.rendered = true;
 		this.renderproduct = false;
+	}
+	
+	public void backProductBranchList() {
+		this.renderproduct=true;
+		this.renderassform=false;
 	}
 	public void backProductList() {
 		this.rendered = false;
@@ -403,19 +418,10 @@ public class BranchController implements Serializable, DbConstant {
 		return null;
 	}
 
-	public void soldProductList(Branch b) {
-		if(null!=b) {
-			branchSoldProduct= new ArrayList<SoldProductDto>();
-			branchSoldProduct=branchSoldProduct(b);
-			this.rendered = false;
-			this.renderproduct = true;
-		}	
-	}
-	public void backBranch() {
-		this.rendered = true;
-		this.renderproduct = false;
-	}
-	public List<SoldProductDto> branchSoldProduct(Branch b) {
+	
+	
+	
+public List<SoldProductDto> branchSoldProduct(Branch b) {
 		
 		if (null != b) {
 			this.rendered = false;
@@ -440,6 +446,118 @@ public class BranchController implements Serializable, DbConstant {
 		}
 		return branchSoldProduct;
 	}
+	
+
+
+@SuppressWarnings("unchecked")
+public void soldProductList(Branch b) throws Exception {
+	if(null!=b) {	
+		productassdetails=prodAssignImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","branch" },
+				new Object[] { ACTIVE,b}, "ProductAssignment", " assignDate desc");
+		productAssignedList= new ArrayList<ProductAssignment>();
+		productAssignedList=productAssignedList(productassdetails);
+		/*branchSoldProduct= new ArrayList<SoldProductDto>();
+		branchSoldProduct=branchSoldProduct(b);*/
+		HttpSession sessionuser = SessionUtils.getSession();
+		sessionuser.setAttribute("branchId", b);
+		this.rendered = false;
+		this.renderproduct = true;
+	}	
+}
+
+
+public List<ProductAssignment>productAssignedList(List<ProductAssignment>list){
+	productAssignedList = new ArrayList<ProductAssignment>();
+	for(ProductAssignment ass:list) {
+		ProductAssignment assign= new ProductAssignment();
+		assign.setTotalprice(ass.getQuantity()*ass.getProduct().getPurchaseUnitPrice());
+		assign.setTotalsales(ass.getQuantity()*ass.getProduct().getSellingUnitPrice());
+		assign.setProdAssId(ass.getProdAssId());
+		assign.setQuantity(ass.getQuantity());
+		assign.setAssignDate(ass.getAssignDate());
+		assign.setProduct(ass.getProduct());
+		assign.setBranch(ass.getBranch());
+		assign.setUnitprice(ass.getProduct().getPurchaseUnitPrice());
+		assign.setSalesunit(ass.getProduct().getSellingUnitPrice());
+		productAssignedList.add(assign);
+	
+	}
+	return(productAssignedList);
+}
+	public void checkBranchStock(ProductAssignment p) {
+		if(null!=p) {
+			
+			LOGGER.info(":::PRODUCTASSIGNMENT ::::"+p.getProduct().getProductId());
+			totalorderqty=totalOrderQuantity(p);
+			assignqty=totalAssignedBranchQtyProduct(p);
+			LOGGER.info("::TOTAL ORDERED QUANTITY::"+totalorderqty+":::TOTAL ASSIGNED QTY:::"+assignqty);
+			if(assignqty>totalorderqty) {
+				remainedqty=assignqty-totalorderqty;
+				LOGGER.info("::REMAINING QTY FOR PRODUCT ID:"+p.getProduct().getProductId()+"::##::"+remainedqty);
+				this.renderproduct = false;
+				renderassform=true;
+			}
+		}	
+	}
+	public void backBranch() {
+		this.rendered = true;
+		this.renderproduct = false;
+	}
+	public int totalOrderQuantity(ProductAssignment b) {
+		int totalOrderQty=0;
+		HttpSession session = SessionUtils.getSession();
+		branch = (Branch) session.getAttribute("branchId");
+		if (null != b && null !=branch) {
+			/*this.rendered = false;
+			this.renderproduct = true;*/
+			
+			LOGGER.info("::Product ID:"+b.getProduct().getProductId());
+			branchStatistics= new ArrayList<OrderProductDto>();
+			for (Object[] data : orderProdImpl.reportList("select sum(o.quantity)as totalOrderQty,ass.branch,ass.product from OrderProduct o,ProductAssignment ass where o.productInfo=ass.prodAssId and ass.branch="+branch.getBranchId()+" and ass.product="+b.getProduct().getProductId()+"")) {
+				OrderProductDto odto= new OrderProductDto();
+				odto.setQuantity(Integer.parseInt(data[0]+""));
+				totalOrderQty=Integer.parseInt(data[0]+"");
+				LOGGER.info(":::PRODUCT QTY ORDERED::::"+totalOrderQty);
+				branchStatistics.add(odto);
+			}
+			if(branchStatistics.size()>0) {
+				return (totalOrderQty);
+			}else {
+				setValid(false);
+				JSFMessagers.addErrorMessage(getProvider().getValue("order.branch.not.yet"));	
+			}	
+	}
+		return totalOrderQty;
+	}
+	
+	
+	
+	public int totalAssignedBranchQtyProduct(ProductAssignment b) {
+		int totalAssQty=0;
+		HttpSession session = SessionUtils.getSession();
+		branch = (Branch) session.getAttribute("branchId");
+		if (null != b && null!=branch) {
+			/*this.rendered = false;
+			this.renderproduct = true;*/
+			LOGGER.info("::PRODUCT ID:"+b.getProduct().getProductId()+"::BRANCH INFO :"+branch.getBranchId());
+			branchStatistics= new ArrayList<OrderProductDto>();
+			for (Object[] data : orderProdImpl.reportList(" select sum(ass.quantity)as totalAssignedBranchQty,ass.branch,ass.product from ProductAssignment ass where ass.branch="+branch.getBranchId()+" and ass.product="+b.getProduct().getProductId()+"")) {
+				OrderProductDto odto= new OrderProductDto();
+				odto.setQuantity(Integer.parseInt(data[0]+""));
+				totalAssQty=Integer.parseInt(data[0]+"");
+				LOGGER.info(":::PRODUCT QTY ASSIGNED TO BRANCH"+branch.getBranchId()+"::::"+totalAssQty);
+				branchStatistics.add(odto);
+			}
+			if(branchStatistics.size()>0) {
+				return (totalAssQty);
+			}else {
+				setValid(false);
+				JSFMessagers.addErrorMessage(getProvider().getValue("order.branch.not.yet"));	
+			}	
+	}
+		return totalAssQty;
+	}
+	
 	public void assignProductForm(Product details) {
 		HttpSession sessionuser = SessionUtils.getSession();
 		if (null != details) {
@@ -981,6 +1099,112 @@ public class BranchController implements Serializable, DbConstant {
 	}
 
 
-	
+	public List<OrderProductDto> getOrderDetails() {
+		return orderDetails;
+	}
 
+
+	public void setOrderDetails(List<OrderProductDto> orderDetails) {
+		this.orderDetails = orderDetails;
+	}
+
+
+	public List<OrderProductDto> getDailyOrder() {
+		return dailyOrder;
+	}
+
+
+	public void setDailyOrder(List<OrderProductDto> dailyOrder) {
+		this.dailyOrder = dailyOrder;
+	}
+
+
+	public List<OrderProductDto> getBranchStatistics() {
+		return branchStatistics;
+	}
+
+
+	public void setBranchStatistics(List<OrderProductDto> branchStatistics) {
+		this.branchStatistics = branchStatistics;
+	}
+
+
+	public OrderProductDto getOrderDto() {
+		return orderDto;
+	}
+
+
+	public void setOrderDto(OrderProductDto orderDto) {
+		this.orderDto = orderDto;
+	}
+
+
+	public OrderProductImpl getOrderProdImpl() {
+		return orderProdImpl;
+	}
+
+
+	public void setOrderProdImpl(OrderProductImpl orderProdImpl) {
+		this.orderProdImpl = orderProdImpl;
+	}
+
+
+	public int getTotalorderqty() {
+		return totalorderqty;
+	}
+
+
+	public void setTotalorderqty(int totalorderqty) {
+		this.totalorderqty = totalorderqty;
+	}
+
+
+	public int getRemainedqty() {
+		return remainedqty;
+	}
+
+
+	public void setRemainedqty(int remainedqty) {
+		this.remainedqty = remainedqty;
+	}
+
+
+	public int getAssignqty() {
+		return assignqty;
+	}
+
+	public void setAssignqty(int assignqty) {
+		this.assignqty = assignqty;
+	}
+
+
+	public List<ProductAssignment> getProductAssignedList() {
+		return productAssignedList;
+	}
+
+
+	public void setProductAssignedList(List<ProductAssignment> productAssignedList) {
+		this.productAssignedList = productAssignedList;
+	}
+
+
+	public List<ProductAssignment> getProdAssigDetails() {
+		return prodAssigDetails;
+	}
+
+
+	public void setProdAssigDetails(List<ProductAssignment> prodAssigDetails) {
+		this.prodAssigDetails = prodAssigDetails;
+	}
+
+
+	public List<ProductAssignment> getProductassdetails() {
+		return productassdetails;
+	}
+
+
+	public void setProductassdetails(List<ProductAssignment> productassdetails) {
+		this.productassdetails = productassdetails;
+	}	
+	
 }

@@ -88,7 +88,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private OrderProduct orderproduct;
 	private OrderProductDto orderproductDto;
 	private List<ProductCategory> catbranch = new ArrayList<ProductCategory>();
-	private boolean rendered, renderProductForm, renderDetails, renderproduct, renderbilling, renderOrder;
+	private boolean rendered, renderProductForm, renderDetails, renderproduct, renderbilling, renderOrder,renderheader;
 	private List<Product> productList = new ArrayList<Product>();
 	private List<Product> productBranchList = new ArrayList<Product>();
 	private List<ProductCategory> categoryList = new ArrayList<ProductCategory>();
@@ -106,6 +106,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private List<ProductAssignment> productassdetails = new ArrayList<ProductAssignment>();
 	ProductDto pdto = new ProductDto();
 	ProductImpl productImpl = new ProductImpl();
+	private List<Branch> branchDetails = new ArrayList<Branch>();
 	BranchImpl branchImpl = new BranchImpl();
 	OrderProductImpl orderProdImpl = new OrderProductImpl();
 	PerishedProductImpl perishImpl = new PerishedProductImpl();
@@ -118,6 +119,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private UploadingFilesImpl uplActImpl = new UploadingFilesImpl();
 	private OrderProductDto orderDto = new OrderProductDto();
 	private Date manufDate, expDate, perishedDate,todayDate;
+	private Branch branch ;
 	private int productCatid;
 	private String unitprice;
 	private String quantity;
@@ -144,6 +146,9 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		}
 		if(productAssignment==null) {
 			productAssignment=new ProductAssignment();
+		}
+		if(null==branch) {
+			branch= new Branch();
 		}
 		try {
 
@@ -216,6 +221,20 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 			// daily successful served order and sort it buy branchs;
 			/*overallDailOrderProcessed=overalldailyOrderStatistics();
 			LOGGER .info("JSON VALUE HERE:::"+overallDailOrderProcessed);*/
+			
+			
+			
+			branchDetails = branchImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
+					new Object[] { ACTIVE }, "Branch", "branchId asc");
+			if (branchDetails.size() > 0) {
+				this.rendered = true;
+//				renderheader=true;
+			}
+			
+			
+			
+			
+			
 			}
 			else if(usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("customer")){
 				this.renderDetails=true;
@@ -241,7 +260,21 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	}
 
 
+	
+	public void branchProductStat( Branch bList) {
+		if(null!=bList) {
+			this.rendered=false;
+			this.renderheader=true;
+			HttpSession sessionuser = SessionUtils.getSession();
+			sessionuser.setAttribute("branchdetails", bList);
+		}
+	}
 	public String overalldailyOrderStatistics() throws ParseException {
+		
+		HttpSession session = SessionUtils.getSession();
+		branch = (Branch) session.getAttribute("branchdetails");
+		
+		LOGGER.info("::::BRANCH DETAILS:::"+branch.getBranchName());
 		SimpleDateFormat smf = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar cal1 = new GregorianCalendar();
 		cal1.setTime(todayDate);
@@ -253,11 +286,11 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		LOGGER.info("Modified date is ::" +dt);
 		
 		dailyOrder= new ArrayList<OrderProductDto>();
-		for (Object[] data : orderProdImpl.reportList("select ass.branch,ass.assignDate,o.orderDate,o.quantity,sum(o.quantity) as totalProccessedQty ,o.customer, o.productInfo \r\n" + 
-				"from OrderProduct o,ProductAssignment ass where ass. prodAssId=o.productInfo and o.orderDate between '"+smf.format(todayDate)+"' and '"+dt+"' group by ass.branch")) {
+		for (Object[] data : orderProdImpl.reportList("select ass.branch,ass.assignDate,o.orderDate,o.quantity,sum(o.quantity) as totalProccessedQty ,ass.product,o.customer, o.productInfo \r\n" + 
+				"from OrderProduct o,ProductAssignment ass where ass. prodAssId=o.productInfo and o.orderDate between '"+smf.format(todayDate)+"' and '"+dt+"' and ass.branch="+branch.getBranchId()+" group by ass.product")) {
 			OrderProductDto odto= new OrderProductDto();
 			odto.setQuantity(Integer.parseInt(data[4]+""));
-			odto.setBranch(((Branch)data[0]).getBranchName());
+			odto.setBranch(((Product)data[5]).getProductName());
 			LOGGER.info(":::QUANTITY::"+data[3]+"");
 			LOGGER.info(":::BRANCH::"+((Branch)data[0]).getBranchName());
 			dailyOrder.add(odto);
@@ -1516,6 +1549,27 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 
 	public void setBranchStatistics(List<OrderProductDto> branchStatistics) {
 		this.branchStatistics = branchStatistics;
+	}
+
+
+	public boolean isRenderheader() {
+		return renderheader;
+	}
+
+	public void setRenderheader(boolean renderheader) {
+		this.renderheader = renderheader;
+	}
+	public List<Branch> getBranchDetails() {
+		return branchDetails;
+	}
+	public void setBranchDetails(List<Branch> branchDetails) {
+		this.branchDetails = branchDetails;
+	}
+	public Branch getBranch() {
+		return branch;
+	}
+	public void setBranch(Branch branch) {
+		this.branch = branch;
 	}
 	
 }

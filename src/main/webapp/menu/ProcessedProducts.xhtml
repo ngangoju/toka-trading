@@ -72,7 +72,7 @@
 									<ui:repeat value="#{facesContext.messageList}"
 										var="facesMessage">
 										<li class="alert alert-danger"
-											style="list-style: none; background-color: #FF2400; color: white;font-size: 12pt">
+											style="list-style: none; background-color: #FF2400; color: white; font-size: 12pt">
 											<center>
 												<h:outputText value="#{facesMessage.summary}" escape="false" />
 											</center>
@@ -87,24 +87,76 @@
 									<ui:repeat value="#{facesContext.messageList}"
 										var="facesMessage">
 										<li
-											style="list-style: none; background-color: #32CD32; color: white; margin-left: -4.9%;font-size: 12pt"
+											style="list-style: none; background-color: #32CD32; color: white; margin-left: -4.9%; font-size: 12pt"
 											class="alert alert-success"><h:outputText
 												value="#{facesMessage.summary}" escape="false" /></li>
 									</ui:repeat>
 								</ul>
 							</h:panelGroup>
 
+							<h:panelGroup rendered="#{productAssignmentController.rendered}">
+								<h4 style="font: italic bold 13px/16px Georgia, serif;">
+									#{loadUserInformationsController.users.userCategory.usercategoryName}
+									<span class="glyphicon glyphicon-dashboard"> <label
+										style="font: italic 13px/18px Georgia, serif">#{msg['message.com.user.dashaboard']}</label></span>
+								</h4>
+
+								<div
+									style="border-bottom: 1.5px solid #91DBFA; margin-bottom: 6px; margin-top: 6px;"></div>
+								<div class="row"
+									style="font: italic bold 13px/16px Georgia, serif;">
+									<ui:repeat value="#{productAssignmentController.branchDetails}"
+										var="bList">
+										<div class="col-md-4 col-sm-6">
+											<div class="circle-tile2">
+
+												<div class="circle-tile-heading2 blue2">
+													<i class="glyphicon glyphicon-star-empty fa-fw fa-3x"></i>
+												</div>
+
+												<div class="circle-tile-content2 blue2">
+													<div class="circle-tile-description text-faded2">
+														#{bList.branchName}</div>
+													<div class="circle-tile-number2 text-faded2">
+														<span class="fa fa-building-o"></span> <span
+															id="sparklineB"></span>
+													</div>
+													<div class="circle-tile-description text-faded2">situated
+														at #{bList.location.districtName_en} district</div>
+													<div class="circle-tile-number2 text-faded2">
+														<span id="sparklineB"></span>
+													</div>
+													<h:commandButton class="btn btn-info btn-xlg btn-block"
+														action="#{productAssignmentController.branchProductStat(bList)}"
+														value="View product sold"
+														style="font-family: Open Sans sans-serif !important; font-size: 15px !important;">
+														<f:ajax render="@form" execute="@form"
+															onevent="showProgress" />
+													</h:commandButton>
+												</div>
+											</div>
+
+										</div>
+
+									</ui:repeat>
+								</div>
+							</h:panelGroup>
+
+								
 							<div class="row">
+							<h:panelGroup rendered="#{productAssignmentController.renderheader}">
 								<div class="form-group" style="margin-left: 5%;">
-									<label for="exampleInputCity1" class="cols-sm-2 control-label">ENTER ANY DATE FOR  DAILY
-										SUCCESSFUL SERVED ORDER STATISTICS<span
-										style="color: red; font-size: 15px">*</span></label>
+									<label for="exampleInputCity1" class="cols-sm-2 control-label">ENTER
+										ANY DATE FOR DAILY SUCCESSFUL SERVED ORDER STATISTICS<span
+										style="color: red; font-size: 15px">*</span>
+									</label>
 
 									<div class="input-group">
 										<span class="input-group-addon"><i
 											class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
-										<h:inputText locale="#{facesContext.viewRoot.locale}" a:placeholder="dd/MM/yyyy"
-											autocomplete="off" id="from_dob_date_id"
+										<h:inputText locale="#{facesContext.viewRoot.locale}"
+											a:placeholder="dd/MM/yyyy" autocomplete="off"
+											id="from_dob_date_id"
 											value="#{productAssignmentController.todayDate}"
 											binding="#{from_dob_date_id}" class="form-control"
 											escape="true" maxlength="35" required="true"
@@ -116,25 +168,29 @@
 										</h:inputText>
 
 									</div>
-									<h:message errorClass="errorMsg1" for="from_dob_date_id"></h:message><br/>
+									<h:message errorClass="errorMsg1" for="from_dob_date_id"></h:message>
+									<br />
 
 									<h:commandButton a:type="submit" class="btn btn-success mr-2"
 										style=" font: italic bold 13px/20px Georgia, serif; margin-top:10px"
 										action="#{productAssignmentController.overalldailyOrderStatistics}"
 										value="#{msg['label.subimit.message.submit']}">
 									</h:commandButton>
-								</div>
-								<h:panelGroup rendered="#{productAssignmentController.renderOrder}">
-								<div class="container">
-									<h1 style="font-family: Arial; font-size: 13pt">DAILY
-										SUCCESSFUL SERVED ORDER AND SORTED BY BRANCHES</h1>
-									<!-- 	<canvas id="taskperformance"
-												style="height:300px;margin-top:5%;font-size:12pt"></canvas> -->
-									<canvas id="taskperformance"
-										style=" border: 1px solid #f04c91; margin-top: 10px;width:25%;"></canvas>
-
-
 								</div></h:panelGroup>
+								
+								<h:panelGroup
+									rendered="#{productAssignmentController.renderOrder}">
+									<div class="container">
+										<h1 style="font-family: Arial; font-size: 13pt">DAILY
+											SUCCESSFUL SERVED ORDER AND SORTED BY BRANCHES</h1>
+										<!-- 	<canvas id="taskperformance"
+												style="height:300px;margin-top:5%;font-size:12pt"></canvas> -->
+										<canvas id="taskperformance"
+											style=" border: 1px solid #f04c91; margin-top: 10px;width:25%;"></canvas>
+
+
+									</div>
+								</h:panelGroup>
 								<h:form class="form-horizontal">
 									<div class="form-group">
 										<h:inputText class="overallDailOrderProcessed"
@@ -150,7 +206,7 @@
 							<!-- <div id="chartContainer" style="height: 360px; width: 100%;"></div>
  -->
 
-						<!-- 	<div class="container">
+							<!-- 	<div class="container">
 					<h1>USE CHART.JS WITH MYSQL DATASETS</h1>
 					<canvas id="chart"
 						style="width: 100%; height: 65vh; border: 1px solid #555652; margin-top: 10px;"></canvas>
@@ -162,7 +218,7 @@
 				</div>
 
 				<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-<!-- 
+				<!-- 
 				<script
 					src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script> -->
 				<script type="text/javascript"
@@ -297,7 +353,7 @@
 						chart.render();
 				</script> -->
 
-			<!-- 	<script>
+				<!-- 	<script>
 					var ctx = document.getElementById("chart").getContext('2d');
 					var replaceTaskData = $(".overallDailOrderProcessed").val();
 					var taskReq = replaceTaskData.replace("id", "x");
