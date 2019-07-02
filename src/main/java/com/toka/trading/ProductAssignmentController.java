@@ -82,13 +82,14 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private Users usersSession;
 	private Product product;
 	private PerishedProduct perished;
-	private String perishedQuantity,overallDailOrderProcessed,overallDailBranchOrderProcessed;
+	private String perishedQuantity, overallDailOrderProcessed, overallDailBranchOrderProcessed;
 	private ProductCategory category;
 	private ProductAssignment productAssignment;
 	private OrderProduct orderproduct;
 	private OrderProductDto orderproductDto;
 	private List<ProductCategory> catbranch = new ArrayList<ProductCategory>();
-	private boolean rendered, renderProductForm, renderDetails, renderproduct, renderbilling, renderOrder,renderheader;
+	private boolean rendered, renderProductForm, renderDetails, renderproduct, renderbilling, renderOrder, renderheader,
+			renderForm;
 	private List<Product> productList = new ArrayList<Product>();
 	private List<Product> productBranchList = new ArrayList<Product>();
 	private List<ProductCategory> categoryList = new ArrayList<ProductCategory>();
@@ -97,7 +98,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private List<PerishedProduct> perishedList = new ArrayList<PerishedProduct>();
 	private List<ProductCatDetailsDto> branchCatDetails = new ArrayList<ProductCatDetailsDto>();
 	private List<ProductCatDetailsDto> branchCatList = new ArrayList<ProductCatDetailsDto>();
-	private List<OrderProductDto> orderDetails,dailyOrder,branchStatistics = new ArrayList<OrderProductDto>();
+	private List<OrderProductDto> orderDetails, dailyOrder, branchStatistics = new ArrayList<OrderProductDto>();
 	private List<Product> productfulldetails = new ArrayList<Product>();
 	private ProductAssignment prodAssign = new ProductAssignment();
 	ProductAssignmentImpl prodAssignImpl = new ProductAssignmentImpl();
@@ -118,14 +119,18 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	private UploadingFiles uploadingFiles;
 	private UploadingFilesImpl uplActImpl = new UploadingFilesImpl();
 	private OrderProductDto orderDto = new OrderProductDto();
-	private Date manufDate, expDate, perishedDate,todayDate;
-	private Branch branch ;
+	private Date manufDate, expDate, perishedDate, todayDate;
+	private Branch branch;
 	private int productCatid;
 	private String unitprice;
 	private String quantity;
+	private String quantit;
 	private double totalprice;
 	private double salesprice;
 	private int id;
+	private int branchId;
+	private Date startDate;
+	private Date endDate;
 
 	@SuppressWarnings("unchecked")
 	@PostConstruct
@@ -138,35 +143,33 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		if (perished == null) {
 			perished = new PerishedProduct();
 		}
-		if(orderDto==null) {
-			orderDto=new OrderProductDto();
+		if (orderDto == null) {
+			orderDto = new OrderProductDto();
 		}
-		if(orderproduct==null) {
-			orderproduct=new OrderProduct();
+		if (orderproduct == null) {
+			orderproduct = new OrderProduct();
 		}
-		if(productAssignment==null) {
-			productAssignment=new ProductAssignment();
+		if (productAssignment == null) {
+			productAssignment = new ProductAssignment();
 		}
-		if(null==branch) {
-			branch= new Branch();
+		if (null == branch) {
+			branch = new Branch();
 		}
 		try {
 
-			if(usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("ceo")) {
-				
-			
-			productList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
-					new Object[] { ACTIVE, }, "Product", " upDtTime desc");
+			if (usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("ceo")) {
 
-			categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
-					new Object[] { ACTIVE, }, "ProductCategory", " upDtTime desc");
+				productList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
+						new Object[] { ACTIVE, }, "Product", " upDtTime desc");
 
-			
+				categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
+						new Object[] { ACTIVE, }, "ProductCategory", " upDtTime desc");
+
 				for (Object[] data : uplActImpl.reportList(
-						"select  f.productCategory,f.documents,f.user,count(p.productId) from Users us,Documents d,Product p ,ProductCategory cat,UploadingFiles f where \r\n" + 
-						"f.documents=d.DocId and p.productCategory=cat.productCatid and p.productCategory=f.productCategory and f.productCategory=cat.productCatid \r\n" + 
-						"and f.user=us.userId   group by p.productCategory")) {
-					ProductCatDetailsDto details = new ProductCatDetailsDto();				
+						"select  f.productCategory,f.documents,f.user,count(p.productId) from Users us,Documents d,Product p ,ProductCategory cat,UploadingFiles f where \r\n"
+								+ "f.documents=d.DocId and p.productCategory=cat.productCatid and p.productCategory=f.productCategory and f.productCategory=cat.productCatid \r\n"
+								+ "and f.user=us.userId   group by p.productCategory")) {
+					ProductCatDetailsDto details = new ProductCatDetailsDto();
 					details.setProdCategory((ProductCategory) data[0]);
 					details.setDocuments((Documents) data[1]);
 					details.setUser((Users) data[2]);
@@ -175,79 +178,70 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 					// details.setProductcategoryName(data[4]+"");
 					branchCatList.add(details);
 				}
-				/*for (Object[] data : uplActImpl.reportList(
-						"select o.orderProductId,o.orderDate,o.quantity,o.customer,cat.branch,o.product,p.sellingUnitPrice,co.email,co.phone from OrderProduct o,Product p,ProductCategory cat,Users us,Contact co,Branch b where o.product=p.productId and o.customer=us.userId and cat.branch="
-								+ usersSession.getBranch().getBranchId() + " and co.user=us.userId  and o.genericStatus='"
-								+ ACTIVE + "' group by o.orderProductId")) {
-					OrderProductDto order = new OrderProductDto();
-					order.setOrderProductId(Integer.parseInt(data[0] + ""));
-					order.setOrderDate((Date) data[1]);
-					order.setQuantity(Integer.parseInt(data[2] + ""));
-					order.setCustomer((Users) data[3]);
-					order.setProduct((Product) data[5]);
-					order.setSellingUnitPrice(data[6] + "");
-					order.setTotalSales(Double.parseDouble(data[2] + "") * Double.parseDouble(data[6] + ""));
-					order.setEmail(data[7] + "");
-					order.setPhone(data[8] + "");
-					orderDetails.add(order);
-				}*/
-				/*id = (int) session.getAttribute("branchId");
-				LOGGER.info("BRANCH_ID IS:::::::"+id);
-				for (Object[] data : uplActImpl.reportList(
-						"select f.productCategory,f.documents,f.user,count(prod.productCategory) from UploadingFiles f,ProductCategory cat,Users us,Documents d,Product prod  where f.documents=d.DocId and f.productCategory=cat.productCatid and f.user=us.userId and cat.branch="
-								+ id
-								+ " and prod.productCategory=cat.productCatid group by f.productCategory")) {
-					LOGGER.info("BRANCH_ID2 IS:::::::"+id);
-					ProductCatDetailsDto details = new ProductCatDetailsDto();				
-					details.setProdCategory((ProductCategory) data[0]);
-					details.setDocuments((Documents) data[1]);
-					details.setUser((Users) data[2]);
-					details.setProductCount(Integer.parseInt(data[3] + ""));
-					// details.setCatid(Integer.parseInt(data[3]+""));
-					// details.setProductcategoryName(data[4]+"");
-					branchCatDetails.add(details);
-					LOGGER.info("BRANCH_ID3 IS:::::::"+id);
-				}
-			}*/
-				
-			productfulldetails=productFullDetails() ;
-			productassdetails=prodAssignImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
-					new Object[] { ACTIVE, }, "ProductAssignment", " assignDate desc");
-			productAssignedList=productAssignedList(productassdetails);
-			this.rendered = true;
-				
-			
-			
-			// daily successful served order and sort it buy branchs;
-			/*overallDailOrderProcessed=overalldailyOrderStatistics();
-			LOGGER .info("JSON VALUE HERE:::"+overallDailOrderProcessed);*/
-			
-			
-			
-			branchDetails = branchImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
-					new Object[] { ACTIVE }, "Branch", "branchId asc");
-			if (branchDetails.size() > 0) {
+				/*
+				 * for (Object[] data : uplActImpl.reportList(
+				 * "select o.orderProductId,o.orderDate,o.quantity,o.customer,cat.branch,o.product,p.sellingUnitPrice,co.email,co.phone from OrderProduct o,Product p,ProductCategory cat,Users us,Contact co,Branch b where o.product=p.productId and o.customer=us.userId and cat.branch="
+				 * + usersSession.getBranch().getBranchId() +
+				 * " and co.user=us.userId  and o.genericStatus='" + ACTIVE +
+				 * "' group by o.orderProductId")) { OrderProductDto order = new
+				 * OrderProductDto(); order.setOrderProductId(Integer.parseInt(data[0] + ""));
+				 * order.setOrderDate((Date) data[1]);
+				 * order.setQuantity(Integer.parseInt(data[2] + "")); order.setCustomer((Users)
+				 * data[3]); order.setProduct((Product) data[5]);
+				 * order.setSellingUnitPrice(data[6] + "");
+				 * order.setTotalSales(Double.parseDouble(data[2] + "") *
+				 * Double.parseDouble(data[6] + "")); order.setEmail(data[7] + "");
+				 * order.setPhone(data[8] + ""); orderDetails.add(order); }
+				 */
+				/*
+				 * id = (int) session.getAttribute("branchId");
+				 * LOGGER.info("BRANCH_ID IS:::::::"+id); for (Object[] data :
+				 * uplActImpl.reportList(
+				 * "select f.productCategory,f.documents,f.user,count(prod.productCategory) from UploadingFiles f,ProductCategory cat,Users us,Documents d,Product prod  where f.documents=d.DocId and f.productCategory=cat.productCatid and f.user=us.userId and cat.branch="
+				 * + id +
+				 * " and prod.productCategory=cat.productCatid group by f.productCategory")) {
+				 * LOGGER.info("BRANCH_ID2 IS:::::::"+id); ProductCatDetailsDto details = new
+				 * ProductCatDetailsDto(); details.setProdCategory((ProductCategory) data[0]);
+				 * details.setDocuments((Documents) data[1]); details.setUser((Users) data[2]);
+				 * details.setProductCount(Integer.parseInt(data[3] + "")); //
+				 * details.setCatid(Integer.parseInt(data[3]+"")); //
+				 * details.setProductcategoryName(data[4]+""); branchCatDetails.add(details);
+				 * LOGGER.info("BRANCH_ID3 IS:::::::"+id); } }
+				 */
+
+				productfulldetails = productFullDetails();
+				productassdetails = prodAssignImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
+						new Object[] { ACTIVE, }, "ProductAssignment", " assignDate desc");
+				productAssignedList = productAssignedList(productassdetails);
 				this.rendered = true;
+
+				// daily successful served order and sort it buy branchs;
+				/*
+				 * overallDailOrderProcessed=overalldailyOrderStatistics(); LOGGER
+				 * .info("JSON VALUE HERE:::"+overallDailOrderProcessed);
+				 */
+
+				branchDetails = branchImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
+						new Object[] { ACTIVE }, "Branch", "branchId asc");
+				if (branchDetails.size() > 0) {
+					this.rendered = true;
 //				renderheader=true;
-			}
-			
-			
-			
-			
-			
-			}
-			else if(usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("customer")){
-				this.renderDetails=true;
-				id = (int) session.getAttribute("branchId");
-				LOGGER.info("BRANCH_ID INGANA NA:::::::"+id);
-				productassdetails=prodAssignImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","branch" },
-						new Object[] { ACTIVE, branchImpl.getBranchById(id, "branchId") }, "ProductAssignment", " assignDate desc");
-				productAssignedList=productAssignedList(productassdetails);
 				}
-			else {
-				prodAssigDetails=prodAssignImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","branch" },
-						new Object[] { ACTIVE, usersSession.getBranch() }, "ProductAssignment", " assignDate desc");
-				productAssignedList=productAssignedList(prodAssigDetails);
+
+			} else if (usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("customer")) {
+				this.renderDetails = true;
+				id = (int) session.getAttribute("branchId");
+				LOGGER.info("BRANCH_ID INGANA NA:::::::" + id);
+				productassdetails = prodAssignImpl.getGenericListWithHQLParameter(
+						new String[] { "genericStatus", "branch" },
+						new Object[] { ACTIVE, branchImpl.getBranchById(id, "branchId") }, "ProductAssignment",
+						" assignDate desc");
+				productAssignedList = productAssignedList(productassdetails);
+			} else {
+				prodAssigDetails = prodAssignImpl.getGenericListWithHQLParameter(
+						new String[] { "genericStatus", "branch" }, new Object[] { ACTIVE, usersSession.getBranch() },
+						"ProductAssignment", " assignDate desc");
+				productAssignedList = productAssignedList(prodAssigDetails);
 				branchStatistics();
 			}
 		} catch (Exception e) {
@@ -259,22 +253,22 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 
 	}
 
-
-	
-	public void branchProductStat( Branch bList) {
-		if(null!=bList) {
-			this.rendered=false;
-			this.renderheader=true;
+	public void branchProductStat(Branch bList) {
+		if (null != bList) {
+//			this.renderForm = false;
+			this.rendered = false;
+			this.renderheader = true;
 			HttpSession sessionuser = SessionUtils.getSession();
 			sessionuser.setAttribute("branchdetails", bList);
 		}
 	}
+
 	public String overalldailyOrderStatistics() throws ParseException {
-		
+
 		HttpSession session = SessionUtils.getSession();
 		branch = (Branch) session.getAttribute("branchdetails");
-		
-		LOGGER.info("::::BRANCH DETAILS:::"+branch.getBranchName());
+
+		LOGGER.info("::::BRANCH DETAILS:::" + branch.getBranchName());
 		SimpleDateFormat smf = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar cal1 = new GregorianCalendar();
 		cal1.setTime(todayDate);
@@ -283,86 +277,91 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		java.util.Date dDate = cal1.getTime();
 		// cal1.add(Calendar.DATE, policy.getVariation());
 		String dt = smf.format(dDate);
-		LOGGER.info("Modified date is ::" +dt);
-		
-		dailyOrder= new ArrayList<OrderProductDto>();
-		for (Object[] data : orderProdImpl.reportList("select ass.branch,ass.assignDate,o.orderDate,o.quantity,sum(o.quantity) as totalProccessedQty ,ass.product,o.customer, o.productInfo \r\n" + 
-				"from OrderProduct o,ProductAssignment ass where ass. prodAssId=o.productInfo and o.orderDate between '"+smf.format(todayDate)+"' and '"+dt+"' and ass.branch="+branch.getBranchId()+" group by ass.product")) {
-			OrderProductDto odto= new OrderProductDto();
-			odto.setQuantity(Integer.parseInt(data[4]+""));
-			odto.setBranch(((Product)data[5]).getProductName());
-			LOGGER.info(":::QUANTITY::"+data[3]+"");
-			LOGGER.info(":::BRANCH::"+((Branch)data[0]).getBranchName());
+		LOGGER.info("Modified date is ::" + dt);
+
+		dailyOrder = new ArrayList<OrderProductDto>();
+		for (Object[] data : orderProdImpl.reportList(
+				"select ass.branch,ass.assignDate,o.orderDate,o.quantity,sum(o.quantity) as totalProccessedQty ,ass.product,o.customer, o.productInfo \r\n"
+						+ "from OrderProduct o,ProductAssignment ass where ass. prodAssId=o.productInfo and o.orderDate between '"
+						+ smf.format(todayDate) + "' and '" + dt + "' and ass.branch=" + branch.getBranchId()
+						+ " group by ass.product")) {
+			OrderProductDto odto = new OrderProductDto();
+			odto.setQuantity(Integer.parseInt(data[4] + ""));
+			odto.setBranch(((Product) data[5]).getProductName());
+			LOGGER.info(":::QUANTITY::" + data[3] + "");
+			LOGGER.info(":::BRANCH::" + ((Branch) data[0]).getBranchName());
 			dailyOrder.add(odto);
 		}
-		if(dailyOrder.size()>0) {
+		if (dailyOrder.size() > 0) {
 			this.overallDailOrderProcessed = new Gson().toJson(dailyOrder);
-			this.renderOrder=true;
-		}else {
+			this.renderOrder = true;
+		} else {
 			setValid(false);
-			JSFMessagers.addErrorMessage(getProvider().getValue("com.order.date.error"));	
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.order.date.error"));
 		}
-		
+
 		return overallDailOrderProcessed;
 	}
-	
+
 	public void branchStatistics() throws ParseException {
 		SimpleDateFormat smf = new SimpleDateFormat("yyyy-MM-dd");
-		branchStatistics= new ArrayList<OrderProductDto>();
-		for (Object[] data : orderProdImpl.reportList("select ass.branch,ass.assignDate ,o.orderDate,o.quantity,sum(o.quantity) as totalProccessedQty ,o.customer, o.productInfo \r\n" + 
-				"from OrderProduct o,ProductAssignment ass where ass.prodAssId=o.productInfo and ass.branch="+usersSession.getBranch().getBranchId()+" group by DATE_FORMAT(orderDate,'%d/%m/%Y')")) {
-			OrderProductDto odto= new OrderProductDto();
-			odto.setBranchOrderDate(smf.format(((Timestamp)data[2])));
-			odto.setQuantity(Integer.parseInt(data[4]+""));
-			
-			LOGGER.info(":::QUANTITY::"+data[4]+"");
-			LOGGER.info(":::Date order::"+smf.format((Timestamp)data[2]));
+		branchStatistics = new ArrayList<OrderProductDto>();
+		for (Object[] data : orderProdImpl.reportList(
+				"select ass.branch,ass.assignDate ,o.orderDate,o.quantity,sum(o.quantity) as totalProccessedQty ,o.customer, o.productInfo \r\n"
+						+ "from OrderProduct o,ProductAssignment ass where ass.prodAssId=o.productInfo and ass.branch="
+						+ usersSession.getBranch().getBranchId() + " group by DATE_FORMAT(orderDate,'%d/%m/%Y')")) {
+			OrderProductDto odto = new OrderProductDto();
+			odto.setBranchOrderDate(smf.format(((Timestamp) data[2])));
+			odto.setQuantity(Integer.parseInt(data[4] + ""));
+
+			LOGGER.info(":::QUANTITY::" + data[4] + "");
+			LOGGER.info(":::Date order::" + smf.format((Timestamp) data[2]));
 			branchStatistics.add(odto);
 		}
-		if(branchStatistics.size()>0) {
+		if (branchStatistics.size() > 0) {
 			this.overallDailBranchOrderProcessed = new Gson().toJson(branchStatistics);
-			/*this.renderOrder=true;*/
-		}else {
+			/* this.renderOrder=true; */
+		} else {
 			setValid(false);
-			JSFMessagers.addErrorMessage(getProvider().getValue("order.branch.not.yet"));	
+			JSFMessagers.addErrorMessage(getProvider().getValue("order.branch.not.yet"));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Product> productFullDetails() throws Exception{
-		List<Product>details= new ArrayList<Product>();
-		details = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus"},
-				new Object[] { ACTIVE, }, "Product", " upDtTime desc");
-		
-		
-		for(Product p:details) {
+	public List<Product> productFullDetails() throws Exception {
+		List<Product> details = new ArrayList<Product>();
+		details = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" }, new Object[] { ACTIVE, },
+				"Product", " upDtTime desc");
+
+		for (Product p : details) {
 			Product pro = new Product();
-			if(p.getSellingUnitPrice()>0) {
-			pro.setProductId(p.getProductId());
-			pro.setProductName(p.getProductName());
-			pro.setQuantity(p.getQuantity());
-			pro.setManufactDate(p.getManufactDate());
-			pro.setExpireDate(p.getExpireDate());
-			pro.setPurchaseUnitPrice(p.getPurchaseUnitPrice());
-			pro.setSellingUnitPrice(p.getSellingUnitPrice());
-			pro.setGenericStatus(p.getGenericStatus());
-			pro.setProductImage(p.getProductImage());
-			pro.setProductCategory(p.getProductCategory());
-			pro.setTotalPrice(p.getQuantity()*p.getPurchaseUnitPrice());
-			pro.setTotalSales(p.getSellingUnitPrice()*p.getQuantity());
-			productfulldetails.add(pro);
+			if (p.getSellingUnitPrice() > 0) {
+				pro.setProductId(p.getProductId());
+				pro.setProductName(p.getProductName());
+				pro.setQuantity(p.getQuantity());
+				pro.setManufactDate(p.getManufactDate());
+				pro.setExpireDate(p.getExpireDate());
+				pro.setPurchaseUnitPrice(p.getPurchaseUnitPrice());
+				pro.setSellingUnitPrice(p.getSellingUnitPrice());
+				pro.setGenericStatus(p.getGenericStatus());
+				pro.setProductImage(p.getProductImage());
+				pro.setProductCategory(p.getProductCategory());
+				pro.setTotalPrice(p.getQuantity() * p.getPurchaseUnitPrice());
+				pro.setTotalSales(p.getSellingUnitPrice() * p.getQuantity());
+				productfulldetails.add(pro);
 			}
 		}
-		return(productfulldetails);
+		return (productfulldetails);
 	}
-	
-	public List<ProductAssignment>productAssignedList(List<ProductAssignment>list){
+
+	public List<ProductAssignment> productAssignedList(List<ProductAssignment> list) {
 		productAssignedList = new ArrayList<ProductAssignment>();
-	
-		for(ProductAssignment ass:list) {
-			ProductAssignment assign= new ProductAssignment();
-			assign.setTotalprice(ass.getQuantity()*ass.getProduct().getPurchaseUnitPrice());
-			assign.setTotalsales(ass.getQuantity()*ass.getProduct().getSellingUnitPrice());
+
+		for (ProductAssignment ass : list) {
+			ProductAssignment assign = new ProductAssignment();
+			assign.setEditable(false);
+			assign.setTotalprice(ass.getQuantity() * ass.getProduct().getPurchaseUnitPrice());
+			assign.setTotalsales(ass.getQuantity() * ass.getProduct().getSellingUnitPrice());
 			assign.setProdAssId(ass.getProdAssId());
 			assign.setQuantity(ass.getQuantity());
 			assign.setAssignDate(ass.getAssignDate());
@@ -371,10 +370,11 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 			assign.setUnitprice(ass.getProduct().getPurchaseUnitPrice());
 			assign.setSalesunit(ass.getProduct().getSellingUnitPrice());
 			productAssignedList.add(assign);
-		
+
 		}
-		return(productAssignedList);
+		return (productAssignedList);
 	}
+
 	public void createReport() {
 		LOGGER.info("Arrived!!!!!");
 	}
@@ -461,20 +461,33 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		this.renderProductForm = true;
 	}
 
+	public void showGraph() {
+		this.rendered = false;
+		this.renderDetails = false;
+		this.renderProductForm = false;
+		this.renderForm = true;
+	}
+
 	public void back() {
 		this.rendered = false;
 		this.renderDetails = true;
 		this.renderProductForm = false;
 	}
 	
+	public void backBtn() {
+		this.rendered = true;
+		this.renderDetails= false;
+		this.renderForm = false;
+	}
+
 	public void orderProd(Product prod) {
 		try {
 			HttpSession sessionuser = SessionUtils.getSession();
-				product = prod;
-				sessionuser.setAttribute("productOrder", product);
-				this.renderOrder = true;
-				this.rendered = false;
-				this.renderDetails = false;
+			product = prod;
+			sessionuser.setAttribute("productOrder", product);
+			this.renderOrder = true;
+			this.rendered = false;
+			this.renderDetails = false;
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -521,10 +534,8 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 				product.setCrtdDtTime(timestamp);
 				product.setGenericStatus(ACTIVE);
 				product.setUpDtTime(timestamp);
-				product.setCreatedBy(usersSession.getViewId());
-				product.setCrtdDtTime(timestamp);
 				product.setGenericStatus(ACTIVE);
-				product.setUpDtTime(timestamp);
+				product.setUpdatedBy(usersSession.getViewId());
 				product.setPurchaseUnitPrice(Double.parseDouble(unitprice));
 				product.setQuantity(Double.parseDouble(quantity));
 				product.setManufactDate(new java.sql.Date(manufDate.getTime()));
@@ -556,14 +567,14 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 			return "";
 		}
 	}
-	
+
 	public String viewpCategory(int pid) {
-		LOGGER.info("NEW_ID:::"+pid);
+		LOGGER.info("NEW_ID:::" + pid);
 		HttpSession sessionuser = SessionUtils.getSession();
 		sessionuser.setAttribute("branchId", pid);
 		return "/menu/ViewProdCat.xhtml?faces-redirect=true";
 	}
-	
+
 	private void clearContactFuileds() {
 
 		product = new Product();
@@ -580,6 +591,16 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	}
 
 	public String cancel(ProductDto prod) {
+		prod.setEditable(false);
+		return null;
+	}
+
+	public String edit(ProductAssignment prod) {
+		prod.setEditable(true);
+		return null;
+	}
+
+	public String cancell(ProductAssignment prod) {
 		prod.setEditable(false);
 		return null;
 	}
@@ -691,7 +712,36 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		// return to current page
 		return null;
 	}
-	
+
+	public String saveAct(ProductAssignment prod) {
+		LOGGER.info("update  saveAction method");
+		// get all existing value but set "editable" to false
+		try {
+			LOGGER.info("product:++++++++++++++++++++++++++" + prod.getProduct().getProductName());
+
+			prod.setEditable(false);
+			prod.setCreatedBy(usersSession.getViewId());
+			prod.setCrtdDtTime(timestamp);
+			prod.setGenericStatus(ACTIVE);
+			prod.setUpdatedBy(usersSession.getViewId());
+			prod.setUpDtTime(timestamp);
+			prod.setQuantity(Integer.parseInt(quantit));
+			prodAssignImpl.UpdateProductAssignment(prod);
+			JSFMessagers.resetMessages();
+			setValid(true);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.productupdate"));
+			this.setQuantit(null);
+		} catch (Exception e) {
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.updateError"));
+			LOGGER.info(e.getMessage());
+			e.printStackTrace();
+		}
+
+		// return to current page
+		return null;
+	}
+
 	public void finalOrder() {
 		try {
 //			try {
@@ -712,20 +762,20 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 //				e.printStackTrace();
 //			}
 
-				orderproduct.setCreatedBy(usersSession.getViewId());
-				orderproduct.setCrtdDtTime(timestamp);
-				orderproduct.setGenericStatus(ACTIVE);
-				orderproduct.setUpDtTime(timestamp);
-				orderproduct.setCreatedBy(usersSession.getViewId());
-				orderproduct.setCrtdDtTime(timestamp);
-				orderproduct.setOrderDate(timestamp);
-				orderproduct.setQuantity(quantity);
-				orderproduct.setProductInfo(productAssignment);
-				orderproduct.setCustomer(usersSession);
-				orderProdImpl.saveIntable(orderproduct);
-				JSFMessagers.resetMessages();
-				setValid(true);
-				JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.orderProduct"));
+			orderproduct.setCreatedBy(usersSession.getViewId());
+			orderproduct.setCrtdDtTime(timestamp);
+			orderproduct.setGenericStatus(ACTIVE);
+			orderproduct.setUpDtTime(timestamp);
+			orderproduct.setCreatedBy(usersSession.getViewId());
+			orderproduct.setCrtdDtTime(timestamp);
+			orderproduct.setOrderDate(timestamp);
+			orderproduct.setQuantity(quantity);
+			orderproduct.setProductInfo(productAssignment);
+			orderproduct.setCustomer(usersSession);
+			orderProdImpl.saveIntable(orderproduct);
+			JSFMessagers.resetMessages();
+			setValid(true);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.orderProduct"));
 //				QrGenerator qr = new QrGenerator();
 //				qr.generator(product);
 			clearContactFuileds();
@@ -799,7 +849,7 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 				perished.setGenericStatus(ACTIVE);
 				perished.setUpDtTime(timestamp);
 				perished.setCreatedBy(usersSession.getViewId());
-				//perished.setProduct(product);
+				// perished.setProduct(product);
 				perished.setQuantity(Integer.parseInt(perishedQuantity));
 				perished.setPerichedDate(new java.sql.Date(perishedDate.getTime()));
 				perishImpl.savePerishedProduct(perished);
@@ -877,41 +927,43 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	}
 	// CREATING FOOTER AND HEADER FOR PAGES
 
-	/*class MyFooter extends PdfPageEventHelper {
+	/*
+	 * class MyFooter extends PdfPageEventHelper {
+	 * 
+	 * Font ffont1 = new Font(Font.FontFamily.UNDEFINED, 12, Font.ITALIC);
+	 * 
+	 * Font ffont2 = new Font(Font.FontFamily.UNDEFINED, 16, Font.ITALIC);
+	 * 
+	 * public void onEndPage(PdfWriter writer, Document document) {
+	 * 
+	 * try { PdfContentByte cb = writer.getDirectContent(); Phrase header = new
+	 * Phrase(""); document.add(new Paragraph("\n")); Phrase footer = new
+	 * Phrase("@Copyright Toka trading...!\n", ffont2);
+	 * ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, header,
+	 * (document.right() - document.left()) / 2 + document.leftMargin(),
+	 * document.top() + 10, 0); ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+	 * footer, (document.right() - document.left()) / 2 + document.leftMargin(),
+	 * document.bottom() - 10, 0);
+	 * 
+	 * } catch (DocumentException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); }
+	 * 
+	 * } }
+	 */
 
-		Font ffont1 = new Font(Font.FontFamily.UNDEFINED, 12, Font.ITALIC);
-
-		Font ffont2 = new Font(Font.FontFamily.UNDEFINED, 16, Font.ITALIC);
-
-		public void onEndPage(PdfWriter writer, Document document) {
-
-			try {
-				PdfContentByte cb = writer.getDirectContent();
-				Phrase header = new Phrase("");
-				document.add(new Paragraph("\n"));
-				Phrase footer = new Phrase("@Copyright Toka trading...!\n", ffont2);
-				ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, header,
-						(document.right() - document.left()) / 2 + document.leftMargin(), document.top() + 10, 0);
-				ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, footer,
-						(document.right() - document.left()) / 2 + document.leftMargin(), document.bottom() - 10, 0);
-
-			} catch (DocumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-	}*/
-
-	public void generateCustomerOrderReport() throws IOException, DocumentException {
-
+	public void generateBranchReview() throws IOException, DocumentException {
+		LOGGER.info(":::::From " + startDate + " to " + endDate + " the branch with an id of ");
+//		branch=branchImpl.getBranchById(branchId,"branchId");
+//		if(branch!=null) {
 		Font font0 = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD);
 		Font font18 = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLDITALIC, BaseColor.BLUE);
 		Font font8 = new Font(Font.FontFamily.TIMES_ROMAN, 11);
 		Font font2 = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD, BaseColor.BLACK);
 		Date date = new Date();
-		SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 		String xdate = dt.format(date);
+		String sdate = dt.format(startDate);
+		String edate = dt.format(endDate);
 		FacesContext context = FacesContext.getCurrentInstance();
 		Document document = new Document();
 		Rectangle rect = new Rectangle(20, 20, 800, 600);
@@ -944,12 +996,12 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		Image img = Image.getInstance("" + destination);
 		img.scaleAbsolute(50f, 50f);
 		document.add(img);
-		//document.add(img1);
+		// document.add(img1);
 		document.add(new Paragraph("\n"));
-		PdfPTable table = new PdfPTable(8);
+		PdfPTable table = new PdfPTable(9);
 
 		table.setWidthPercentage(105);
-		Paragraph header1 = new Paragraph("CUSTOMER ORDER REPORT MADE ON  " + xdate + "");
+		Paragraph header1 = new Paragraph("BRANCHES ORDER REPORT MADE FROM  " + sdate + " TO " + edate + "");
 		// header.setAlignment(Element.ALIGN_RIGHT);
 		header1.setAlignment(Element.ALIGN_CENTER);
 		// header.add(header1);
@@ -957,17 +1009,21 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		document.add(new Paragraph("                                        "));
 		// String myBoardName=t.getBoardName();
 
-		PdfPCell pc = new PdfPCell(new Paragraph("REPORT FOR PRODUCT SOLD ", font2));
-		pc.setColspan(8);
+		PdfPCell pc = new PdfPCell(new Paragraph(""+branch.getBranchName(), font2));
+		pc.setColspan(9);
 		pc.setBackgroundColor(BaseColor.CYAN);
 		pc.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pc);
 
+		PdfPCell pc0 = new PdfPCell(new Paragraph("No", font0));
+		pc0.setHorizontalAlignment(Element.ALIGN_CENTER);
+		table.addCell(pc0);
+		
 		PdfPCell pc1 = new PdfPCell(new Paragraph("PRODUCT NAME", font0));
 		pc1.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pc1);
 
-		PdfPCell pc2 = new PdfPCell(new Paragraph("QUANTITY", font0));
+		PdfPCell pc2 = new PdfPCell(new Paragraph("BRANCH", font0));
 		pc2.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pc2);
 
@@ -975,81 +1031,104 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		pc3.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pc3);
 
-		PdfPCell pcS = new PdfPCell(new Paragraph("TOTAL SALES", font0));
+		PdfPCell pcS = new PdfPCell(new Paragraph("PURCHASE PRICE PER UNIT", font0));
 		pcS.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pcS);
-		PdfPCell pc5 = new PdfPCell(new Paragraph("CUSTOMER NAMES", font0));
+		PdfPCell pc5 = new PdfPCell(new Paragraph("QUANTITY", font0));
 		pc5.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pc5);
 
-		PdfPCell pc6 = new PdfPCell(new Paragraph("CUSTOMER EMAIL", font0));
+		PdfPCell pc6 = new PdfPCell(new Paragraph("STATUS", font0));
 		pc5.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pc6);
 
-		PdfPCell pc7 = new PdfPCell(new Paragraph("CUSTOMER PHONE", font0));
+		PdfPCell pc7 = new PdfPCell(new Paragraph("ORDER DATE", font0));
 		pc5.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pc7);
-		PdfPCell pc8 = new PdfPCell(new Paragraph("BRANCH ADDRESS", font0));
+		PdfPCell pc8 = new PdfPCell(new Paragraph("CREATED BY", font0));
 		pc5.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(pc8);
 		table.setHeaderRows(1);
-		try {
-			HttpSession session = SessionUtils.getSession();
-			orderDto = (OrderProductDto) session.getAttribute("customerorder");
 
-			LOGGER.info("PRODUCT Info:::" + orderDto.getProductAssignment().getProduct().getProductName());
-			PdfPCell pcel1 = new PdfPCell(new Paragraph(orderDto.getProductAssignment().getProduct().getProductName(), font8));
+		LOGGER.info("PRODUCT Info:::::From " + startDate + " to " + endDate + "");
+		
+		int i = 1;
+
+		String query;
+		if(usersSession.getUserCategory().getUsercategoryName().equalsIgnoreCase("ceo")) {
+			query = "SELECT pro.productName, b.branchName, pro.sellingUnitPrice, pro.purchaseUnitPrice, o.quantity, o.status, o.orderDate, o.createdBy from OrderProduct o, ProductAssignment p, Product pro, Branch b where p.prodAssId=o.productInfo and pro.productId=p.product and b.branchId=p.branch and p.branch="
+					+ branchId + " and o.orderDate between '" + sdate + "' and '" + edate
+					+ "' group by o.orderDate";}
+		else {
+			query = "SELECT pro.productName, b.branchName, pro.sellingUnitPrice, pro.purchaseUnitPrice, o.quantity, o.status, o.orderDate, o.createdBy from OrderProduct o, ProductAssignment p, Product pro, Branch b where p.prodAssId=o.productInfo and pro.productId=p.product and b.branchId=p.branch and p.branch="
+					+ usersSession.getBranch().getBranchId() + " and o.orderDate between '" + sdate + "' and '" + edate
+					+ "' group by o.orderDate";
+		}
+		for (Object[] data : orderProdImpl.reportList(query)) {
+			LOGGER.info("PRODUCT Infos:::");
+			PdfPCell pcel1 = new PdfPCell(new Paragraph(i + "", font8));
 			pcel1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel1);
-			PdfPCell pcel2 = new PdfPCell(new Paragraph(orderDto.getQuantity() + "", font8));
+
+			PdfPCell pcel2 = new PdfPCell(new Paragraph(data[0] + "", font8));
 			pcel2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel2);
 
-			PdfPCell pcel3 = new PdfPCell(new Paragraph(orderDto.getSellingUnitPrice(), font8));
+			PdfPCell pcel3 = new PdfPCell(new Paragraph(data[1] + "", font8));
 			pcel3.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel3);
 
-			PdfPCell pcel4 = new PdfPCell(new Paragraph(orderDto.getTotalSales() + "", font8));
+			PdfPCell pcel4 = new PdfPCell(new Paragraph(data[2] + "", font8));
 			pcel4.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel4);
 
-			PdfPCell pcele = new PdfPCell(
-					new Paragraph(orderDto.getCustomer().getFname() + " " + orderDto.getCustomer().getLname(), font8));
+			PdfPCell pcele = new PdfPCell(new Paragraph(data[3] + "", font8));
 			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcele);
 
-			PdfPCell pcel5 = new PdfPCell(new Paragraph(orderDto.getEmail(), font8));
+			PdfPCell pcel5 = new PdfPCell(new Paragraph(data[4] + "", font8));
 			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel5);
 
-			PdfPCell pcel6 = new PdfPCell(new Paragraph(orderDto.getPhone(), font8));
+			PdfPCell pcel6 = new PdfPCell(new Paragraph(data[5] + "", font8));
 			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel6);
-			PdfPCell pcel7 = new PdfPCell(new Paragraph(orderDto.getProductAssignment().getProduct().getProductCategory().getBranch().getLocation().getDistrictName_en(), font8));
+
+			PdfPCell pcel7 = new PdfPCell(new Paragraph(data[6] + "", font8));
 			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(pcel7);
-			document.add(table);
-			document.add(new Paragraph("\n"));
-			document.add(new Paragraph("\n"));
-			document.add(new Paragraph(new Chunk("Printed By:  " + usersSession.getViewId() + "",
-					FontFactory.getFont(FontFactory.TIMES_BOLD, 14, Font.BOLD, BaseColor.BLUE))));
-			document.add(new Paragraph("\n"));
-			Image img2 = Image.getInstance("C:\\Users\\dff\\Documents\\"+orderDto.getOrderProductId()+".png");
-			img.scaleAbsolute(150f, 150f);
-			document.add(img2);
-			document.close();
 
-			writePDFToResponse(context.getExternalContext(), baos, "staff_report");
-
-			context.responseComplete();
-			product.setQuantity(product.getQuantity() - orderDto.getQuantity());
-			productImpl.saveIntable(product);
-			
-		} catch (Exception e) {
-
-			LOGGER.info(e.getMessage() + "kamana arahari");
-			e.printStackTrace();
+			PdfPCell pcel8 = new PdfPCell(new Paragraph(data[7] + "", font8));
+			pcele.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(pcel8);
+			i++;
 		}
+		LOGGER.info("PRODUCT DETAILS:::::From " + sdate + " to " + edate + "");
+		
+		document.add(table);
+		document.add(new Paragraph("\n"));
+		document.add(new Paragraph("\n"));
+		document.add(new Paragraph(new Chunk("Printed By:  " + usersSession.getViewId() + "on "+xdate,
+				FontFactory.getFont(FontFactory.TIMES_BOLD, 14, Font.BOLD, BaseColor.ORANGE))));
+		document.add(new Paragraph("\n"));
+//		Image img2 = Image.getInstance("C:\\Users\\dff\\Documents\\" + orderDto.getOrderProductId() + ".png");
+//		img.scaleAbsolute(150f, 150f);
+//		document.add(img2);
+		document.close();
+
+		writePDFToResponse(context.getExternalContext(), baos, usersSession.getUserCategory().getUsercategoryName()+"_report_"+date);
+
+		context.responseComplete();
+//		branch = new Branch();
+//		}
+//		else {
+//
+//			JSFMessagers.resetMessages();
+//			setValid(false);
+//			JSFMessagers.addErrorMessage(getProvider().getValue("com.branch.select.nullvalue"));
+//			LOGGER.info(CLASSNAME + "sivaserside validation ::Branch must be selected ");
+//		}
+
 	}
 
 	public void writePDFToResponse(ExternalContext externalContext, ByteArrayOutputStream baos, String fileName) {
@@ -1501,56 +1580,45 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 		this.productAssignment = productAssignment;
 	}
 
-
 	public String getOverallDailOrderProcessed() {
 		return overallDailOrderProcessed;
 	}
-
 
 	public void setOverallDailOrderProcessed(String overallDailOrderProcessed) {
 		this.overallDailOrderProcessed = overallDailOrderProcessed;
 	}
 
-
 	public List<OrderProductDto> getDailyOrder() {
 		return dailyOrder;
 	}
-
 
 	public void setDailyOrder(List<OrderProductDto> dailyOrder) {
 		this.dailyOrder = dailyOrder;
 	}
 
-
 	public Date getTodayDate() {
 		return todayDate;
 	}
-
 
 	public void setTodayDate(Date todayDate) {
 		this.todayDate = todayDate;
 	}
 
-
 	public String getOverallDailBranchOrderProcessed() {
 		return overallDailBranchOrderProcessed;
 	}
-
 
 	public void setOverallDailBranchOrderProcessed(String overallDailBranchOrderProcessed) {
 		this.overallDailBranchOrderProcessed = overallDailBranchOrderProcessed;
 	}
 
-
 	public List<OrderProductDto> getBranchStatistics() {
 		return branchStatistics;
 	}
 
-
 	public void setBranchStatistics(List<OrderProductDto> branchStatistics) {
 		this.branchStatistics = branchStatistics;
 	}
-
 
 	public boolean isRenderheader() {
 		return renderheader;
@@ -1559,17 +1627,61 @@ public class ProductAssignmentController implements Serializable, DbConstant {
 	public void setRenderheader(boolean renderheader) {
 		this.renderheader = renderheader;
 	}
+
 	public List<Branch> getBranchDetails() {
 		return branchDetails;
 	}
+
 	public void setBranchDetails(List<Branch> branchDetails) {
 		this.branchDetails = branchDetails;
 	}
+
 	public Branch getBranch() {
 		return branch;
 	}
+
 	public void setBranch(Branch branch) {
 		this.branch = branch;
 	}
-	
+
+	public String getQuantit() {
+		return quantit;
+	}
+
+	public void setQuantit(String quantit) {
+		this.quantit = quantit;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public boolean isRenderForm() {
+		return renderForm;
+	}
+
+	public void setRenderForm(boolean renderForm) {
+		this.renderForm = renderForm;
+	}
+
+	public int getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(int branchId) {
+		this.branchId = branchId;
+	}
+
 }

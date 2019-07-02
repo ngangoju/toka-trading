@@ -22,7 +22,7 @@ public class OrderProductImpl extends AbstractDao<Long, OrderProduct> implements
 				return (OrderProduct) getModelById(orderProductId, primaryKeyclomunName);
 			}
 
-			public OrderProduct UpdateOrderProduct(OrderProduct orderProduct) {
+			public OrderProduct updateOrderProduct(OrderProduct orderProduct) {
 				return updateIntable(orderProduct);
 			}
 

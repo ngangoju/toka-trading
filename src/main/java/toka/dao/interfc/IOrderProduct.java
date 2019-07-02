@@ -10,7 +10,7 @@ public interface IOrderProduct {
 
 	public List<OrderProduct> getListOrderProduct();
 
-	public OrderProduct UpdateOrderProduct(OrderProduct orderProduct);
+	public OrderProduct updateOrderProduct(OrderProduct orderProduct);
 	
 	public OrderProduct getOrderProductById(int orderProductId, String primaryKeyclomunName);
 

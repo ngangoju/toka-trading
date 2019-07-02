@@ -13,6 +13,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "OrderProduct")
@@ -43,6 +44,9 @@ public class OrderProduct extends CommonDomain implements Serializable {
 	@JoinColumn(name = "customer")
 	private Users customer;
 
+	@Transient
+	private boolean editable;
+	
 	public int getOrderProductId() {
 		return orderProductId;
 	}
@@ -89,6 +93,14 @@ public class OrderProduct extends CommonDomain implements Serializable {
 
 	public void setCustomer(Users customer) {
 		this.customer = customer;
+	}
+
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 
 }

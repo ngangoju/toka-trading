@@ -44,6 +44,7 @@ import toka.common.JSFBoundleProvider;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 
+@SuppressWarnings({ "unused" })
 @ManagedBean
 @ViewScoped
 public class ProductCategoryController implements Serializable, DbConstant {
@@ -88,8 +89,8 @@ private  Branch branch;
 		
 		try {
 
-			orderList=orderProdImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","customer","status" },
-				new Object[] { ACTIVE, usersSession, "ordered" }, "OrderProduct", " orderDate desc");
+			orderList=orderProdImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","customer" },
+				new Object[] { ACTIVE, usersSession }, "OrderProduct", " orderDate desc");
 		
 			categoryList = categoryImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE }, "ProductCategory", "upDtTime desc");
@@ -316,26 +317,41 @@ private  Branch branch;
 	
 	@SuppressWarnings("unchecked")
 	public void cancelOrder(OrderProduct order) {
-		LOGGER.info("new Status::::"+order.getGenericStatus());
+		LOGGER.info("new Status::::"+order.getStatus());
 		try {
-			orderproduct=order;
-			orderproduct.setGenericStatus("desactive");
-			orderProdImpl.UpdateOrderProduct(orderproduct);
-			LOGGER.info("new Status::::"+orderproduct.getGenericStatus());
-			orderList=orderProdImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","customer","status" },
-					new Object[] { ACTIVE, usersSession, "ordered" }, "OrderProduct", " orderDate desc");
-			JSFMessagers.resetMessages();
-			setValid(true);
-			JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.orderupdate"));
+			if(order.getStatus().equalsIgnoreCase("pending")) {
+				orderproduct=order;
+				orderproduct.setGenericStatus("desactive");
+				orderProdImpl.updateOrderProduct(orderproduct);
+				LOGGER.info("new Status::::"+orderproduct.getGenericStatus());
+				orderList=orderProdImpl.getGenericListWithHQLParameter(new String[] { "genericStatus","customer" },
+						new Object[] { ACTIVE, usersSession }, "OrderProduct", " orderDate desc");
+				JSFMessagers.resetMessages();
+				setValid(true);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.orderupdate"));
+			}
+			else {
+				JSFMessagers.resetMessages();
+				setValid(false);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.canceled.order"));
+			}
+//			else if(order.getStatus().equalsIgnoreCase("processed")) {
+//				JSFMessagers.resetMessages();
+//				setValid(false);
+//				JSFMessagers.addErrorMessage(getProvider().getValue("com.not.update.order"));
+//			}
+//			else {
+//				JSFMessagers.resetMessages();
+//				setValid(false);
+//				JSFMessagers.addErrorMessage(getProvider().getValue("com.sold.order"));
+//			}
 		} catch (Exception e) {
-			LOGGER.info(e.getMessage());
+			LOGGER.info(e.getMessage()+"::::::Can't update the status!!!!");
 		}
-	}
+}
 	
-	private void clearContactFuileds() {
-
+	public void clearContactFuileds() {
 		category = new ProductCategory();
-
 		// usersDetails=null;
 	}
 

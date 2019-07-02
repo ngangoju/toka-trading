@@ -18,6 +18,7 @@ public class OrderProductDto implements Serializable{
 	private Double totalSales;
 	private String email,branch,branchOrderDate;
 	private String phone;
+	private String status;
 	public String getSellingUnitPrice() {
 		return sellingUnitPrice;
 	}
@@ -90,6 +91,12 @@ public class OrderProductDto implements Serializable{
 	}
 	public void setBranchOrderDate(String branchOrderDate) {
 		this.branchOrderDate = branchOrderDate;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 }

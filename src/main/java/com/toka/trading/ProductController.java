@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.channels.CancelledKeyException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -44,14 +45,18 @@ import toka.common.DbConstant;
 import toka.common.JSFBoundleProvider;
 import toka.common.JSFMessagers;
 import toka.common.SessionUtils;
+import toka.dao.impl.CommentImpl;
 import toka.dao.impl.DocumentsImpl;
+import toka.dao.impl.OrderProductCommentImpl;
 import toka.dao.impl.OrderProductImpl;
 import toka.dao.impl.PerishedProductImpl;
 import toka.dao.impl.ProductCategoryImpl;
 import toka.dao.impl.ProductImpl;
 import toka.dao.impl.UploadingFilesImpl;
+import toka.domain.Comment;
 import toka.domain.Documents;
 import toka.domain.OrderProduct;
+import toka.domain.OrderProductComment;
 import toka.domain.PerishedProduct;
 import toka.domain.Product;
 import toka.domain.ProductAssignment;
@@ -79,7 +84,7 @@ public class ProductController implements Serializable, DbConstant {
 	private OrderProduct orderproduct;
 	private OrderProductDto orderproductDto;
 	private List<ProductCategory> catbranch = new ArrayList<ProductCategory>();
-	private boolean rendered, renderProductForm, renderDetails, renderproduct, renderbilling, renderOrder;
+	private boolean rendered, renderProductForm, renderDetails, renderproduct, renderbilling, renderOrder, rendeer;
 	private List<Product> productList = new ArrayList<Product>();
 	private List<Product> productBranchList = new ArrayList<Product>();
 	private List<ProductCategory> categoryList = new ArrayList<ProductCategory>();
@@ -95,9 +100,13 @@ public class ProductController implements Serializable, DbConstant {
 	OrderProductImpl orderProdImpl = new OrderProductImpl();
 	PerishedProductImpl perishImpl = new PerishedProductImpl();
 	ProductCategoryImpl categoryImpl = new ProductCategoryImpl();
+	CommentImpl commentImpl = new CommentImpl();
+	OrderProductCommentImpl orderProdCImpl = new OrderProductCommentImpl();
 	Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
 	JSFBoundleProvider provider = new JSFBoundleProvider();
 	private Documents document;
+	private Comment comment;
+	private OrderProductComment orderProductComment;
 	private DocumentsImpl docsImpl = new DocumentsImpl();
 	private UploadingFiles uploadingFiles;
 	private UploadingFilesImpl uplActImpl = new UploadingFilesImpl();
@@ -105,6 +114,7 @@ public class ProductController implements Serializable, DbConstant {
 	private Date manufDate, expDate, perishedDate;
 	private int productCatid;
 	private String unitprice;
+	private String quantit;
 	private String quantity;
 	private double totalprice;
 	private double salesprice;
@@ -130,6 +140,12 @@ public class ProductController implements Serializable, DbConstant {
 		if (productAssignment == null) {
 			productAssignment = new ProductAssignment();
 		}
+		if (orderProductComment==null) {
+			orderProductComment=new OrderProductComment();
+		}
+		if (comment == null) {
+			comment = new Comment();
+		}
 		try {
 			productList = productImpl.getGenericListWithHQLParameter(new String[] { "genericStatus" },
 					new Object[] { ACTIVE, }, "Product", " upDtTime desc");
@@ -153,19 +169,22 @@ public class ProductController implements Serializable, DbConstant {
 					branchCatList.add(details);
 				}
 				for (Object[] data : uplActImpl.reportList(
-						"select o.orderProductId,o.orderDate,o.quantity,o.customer,assg.branch,o.productInfo,p.sellingUnitPrice,co.email,co.phone from OrderProduct o,Product p,ProductAssignment assg,Users us,Contact co,Branch b where o.productInfo.product=p.productId and o.customer=us.userId and o.productInfo=assg.prodAssId and assg.branch="
+						"select o.orderProductId,o.orderDate,o.quantity,o.customer,assg.branch,o.productInfo,o.status,p.sellingUnitPrice,co.email,co.phone from OrderProduct o,Product p,ProductAssignment assg,Users us,Contact co,Branch b where o.productInfo.product=p.productId and o.customer=us.userId and o.productInfo=assg.prodAssId and assg.branch="
 								+ usersSession.getBranch().getBranchId() + " and co.user=us.userId  and o.genericStatus='"
 								+ ACTIVE + "' group by o.orderProductId")) {
 					OrderProductDto order = new OrderProductDto();
+					order.setEditable(false);
 					order.setOrderProductId(Integer.parseInt(data[0] + ""));
 					order.setOrderDate((Date) data[1]);
 					order.setQuantity(Integer.parseInt(data[2] + ""));
 					order.setCustomer((Users) data[3]);
 					order.setProductAssignment((ProductAssignment) data[5]);
-					order.setSellingUnitPrice(data[6] + "");
-					order.setTotalSales(Double.parseDouble(data[2] + "") * Double.parseDouble(data[6] + ""));
-					order.setEmail(data[7] + "");
-					order.setPhone(data[8] + "");
+					order.setStatus(data[6]+"");
+					order.setSellingUnitPrice(data[7] + "");
+					order.setTotalSales(Double.parseDouble(data[2] + "") * Double.parseDouble(data[7] + ""));
+					order.setEmail(data[8] + "");
+					order.setPhone(data[9] + "");
+					
 					orderDetails.add(order);
 				}
 			}else {
@@ -322,7 +341,7 @@ public class ProductController implements Serializable, DbConstant {
 					JSFMessagers.resetMessages();
 					setValid(false);
 					JSFMessagers.addErrorMessage(getProvider().getValue("error.server.side.nullvalue"));
-					LOGGER.info(CLASSNAME + "sivaserside validation ::product details must be supplied ");
+					LOGGER.info(CLASSNAME + "serverside validation ::product details must be supplied ");
 					return null;
 				}
 
@@ -383,14 +402,83 @@ public class ProductController implements Serializable, DbConstant {
 			return "";
 		}
 	}
-	
-	public void cancelOrder(OrderProduct order) {
-		LOGGER.info("new Status::::"+order.getGenericStatus());
+	public String saveAct(OrderProductDto prod) {
+		LOGGER.info("update  saveAction method");
+		// get all existing value but set "editable" to false
 		try {
-			orderproduct=order;
-			orderproduct.setGenericStatus("desactive");
-			orderProdImpl.UpdateOrderProduct(orderproduct);
+				LOGGER.info("product:++++++++++++++++++++++++++" + prod.getProductAssignment().getProduct().getProductName());
+				orderproduct=orderProdImpl.getOrderProductById(prod.getOrderProductId(), "orderProductId");
+				LOGGER.info("product:+++++" + orderproduct.getProductInfo().getProduct().getProductName());
+				prod.setEditable(false);
+//				orderproduct.setCreatedBy(usersSession.getViewId());
+//				orderproduct.setCrtdDtTime(timestamp);
+//				orderproduct.setGenericStatus(ACTIVE);
+//				orderproduct.setUpdatedBy(usersSession.getViewId());
+//				orderproduct.setUpDtTime(timestamp);
+				orderproduct.setQuantity(quantit);
+				orderProdImpl.updateOrderProduct(orderproduct);
+				for (Object[] data : uplActImpl.reportList(
+						"select o.orderProductId,o.orderDate,o.quantity,o.customer,assg.branch,o.productInfo,o.status,p.sellingUnitPrice,co.email,co.phone from OrderProduct o,Product p,ProductAssignment assg,Users us,Contact co,Branch b where o.productInfo.product=p.productId and o.customer=us.userId and o.productInfo=assg.prodAssId and assg.branch="
+								+ usersSession.getBranch().getBranchId() + " and co.user=us.userId  and o.genericStatus='"
+								+ ACTIVE + "' group by o.orderProductId")) {
+					OrderProductDto order = new OrderProductDto();
+					order.setEditable(false);
+					order.setOrderProductId(Integer.parseInt(data[0] + ""));
+					order.setOrderDate((Date) data[1]);
+					order.setQuantity(Integer.parseInt(data[2] + ""));
+					order.setCustomer((Users) data[3]);
+					order.setProductAssignment((ProductAssignment) data[5]);
+					order.setStatus(data[6]+"");
+					order.setSellingUnitPrice(data[7] + "");
+					order.setTotalSales(Double.parseDouble(data[2] + "") * Double.parseDouble(data[7] + ""));
+					order.setEmail(data[8] + "");
+					order.setPhone(data[9] + "");
+					
+					orderDetails.add(order);
+				}
+				JSFMessagers.resetMessages();
+				setValid(true);
+				JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.productupdate"));
+				this.setQuantit(null);
+		} catch (Exception e) {
+			setValid(false);
+			JSFMessagers.addErrorMessage(getProvider().getValue("com.server.side.internal.updateError"));
+			LOGGER.info(e.getMessage());
+			e.printStackTrace();
+		}
+
+		// return to current page
+		return null;
+	}
+	
+	public void cancelOrder(OrderProductDto order) {
+		LOGGER.info("new Status::::"+order.getProductAssignment().getProduct().getProductName());
+		try {
+//			this.setRenderbilling(false);
+//			this.setRendeer(false);
+			orderproduct=orderProdImpl.getModelWithMyHQL(new String[] { "orderProductId" },
+					new Object[] { order.getOrderProductId() }, "from OrderProduct");
+			orderproduct.setStatus("canceled");
+			orderProdImpl.updateOrderProduct(orderproduct);
+//			comment.setCreatedBy(usersSession.getViewId());
+//			comment.setCrtdDtTime(timestamp);
+//			comment.setGenericStatus(ACTIVE);
+//			comment.setUpdatedBy(usersSession.getViewId());
+//			comment.setUpDtTime(timestamp);
+//			commentImpl.saveComment(comment);
+//
+//			orderProductComment.setCreatedBy(usersSession.getViewId());
+//			orderProductComment.setCrtdDtTime(timestamp);
+//			orderProductComment.setGenericStatus(ACTIVE);
+//			orderProductComment.setUpdatedBy(usersSession.getViewId());
+//			orderProductComment.setUpDtTime(timestamp);
+//			orderProductComment.setComment(comment);
+//			orderProductComment.setOrderProduct(orderproduct);
+//			orderProdCImpl.saveOrderProductComment(orderProductComment);
+			
 			LOGGER.info("new Status::::"+orderproduct.getGenericStatus());
+			orderproduct=new OrderProduct();
+			orderproductDto = new OrderProductDto();
 			JSFMessagers.resetMessages();
 			setValid(true);
 			JSFMessagers.addErrorMessage(getProvider().getValue("com.save.form.orderupdate"));
@@ -399,6 +487,11 @@ public class ProductController implements Serializable, DbConstant {
 		}
 	}
 	
+	public String commentO() {
+		this.setRenderbilling(true);
+		this.setRendeer(true);
+		return null;
+	}
 	
 	public void viewpCategory(int pid) {
 		LOGGER.info("NEW_ID:::"+pid);
@@ -423,6 +516,16 @@ public class ProductController implements Serializable, DbConstant {
 	}
 
 	public String cancel(ProductDto prod) {
+		prod.setEditable(false);
+		return null;
+	}
+
+	public String edit(OrderProductDto prod) {
+		prod.setEditable(true);
+		return null;
+	}
+
+	public String cancell(OrderProductDto prod) {
 		prod.setEditable(false);
 		return null;
 	}
@@ -585,7 +688,7 @@ public class ProductController implements Serializable, DbConstant {
 				orderproduct.setCrtdDtTime(timestamp);
 				orderproduct.setOrderDate(timestamp);
 				orderproduct.setQuantity(quantity);
-				orderproduct.setStatus("ordered");
+				orderproduct.setStatus("pending");
 				orderproduct.setProductInfo(productAssignment);
 				orderproduct.setCustomer(usersSession);
 				orderProdImpl.saveIntable(orderproduct);
@@ -900,7 +1003,7 @@ public class ProductController implements Serializable, DbConstant {
 			document.add(new Paragraph(new Chunk("Printed By:  " + usersSession.getViewId() + "",
 					FontFactory.getFont(FontFactory.TIMES_BOLD, 14, Font.BOLD, BaseColor.BLUE))));
 			document.add(new Paragraph("\n"));
-			Image img2 = Image.getInstance("C:\\Users\\dff\\Documents\\"+orderDto.getOrderProductId()+".png");
+			Image img2 = Image.getInstance("C:\\Users\\dff\\Documents\\QR_Code\\"+orderDto.getOrderProductId()+".png");
 			img.scaleAbsolute(150f, 150f);
 			document.add(img2);
 			document.close();
@@ -908,12 +1011,14 @@ public class ProductController implements Serializable, DbConstant {
 			writePDFToResponse(context.getExternalContext(), baos, "staff_report");
 
 			context.responseComplete();
-			product.setQuantity(product.getQuantity() - orderDto.getQuantity());
-			productImpl.saveIntable(product);
+			orderproduct=orderProdImpl.getModelWithMyHQL(new String[] { "orderProductId" },
+					new Object[] { orderDto.getOrderProductId() }, "from OrderProduct");
+			orderproduct.setStatus("processed");
+			orderProdImpl.updateOrderProduct(orderproduct);
 			
 		} catch (Exception e) {
 
-			LOGGER.info(e.getMessage() + "kamana arahari");
+			LOGGER.info(e.getMessage() + "::::::NOT PRINTING!!!!");
 			e.printStackTrace();
 		}
 	}
@@ -1207,6 +1312,14 @@ public class ProductController implements Serializable, DbConstant {
 		this.catbranch = catbranch;
 	}
 
+	public String getQuantit() {
+		return quantit;
+	}
+
+	public void setQuantit(String quantit) {
+		this.quantit = quantit;
+	}
+
 	public List<ProductCatDetailsDto> getBranchCatDetails() {
 		return branchCatDetails;
 	}
@@ -1317,6 +1430,46 @@ public class ProductController implements Serializable, DbConstant {
 
 	public void setProductAssignment(ProductAssignment productAssignment) {
 		this.productAssignment = productAssignment;
+	}
+
+	public Comment getComment() {
+		return comment;
+	}
+
+	public void setComment(Comment comment) {
+		this.comment = comment;
+	}
+
+	public OrderProductComment getOrderProductComment() {
+		return orderProductComment;
+	}
+
+	public void setOrderProductComment(OrderProductComment orderProductComment) {
+		this.orderProductComment = orderProductComment;
+	}
+
+	public boolean isRendeer() {
+		return rendeer;
+	}
+
+	public void setRendeer(boolean rendeer) {
+		this.rendeer = rendeer;
+	}
+
+	public CommentImpl getCommentImpl() {
+		return commentImpl;
+	}
+
+	public void setCommentImpl(CommentImpl commentImpl) {
+		this.commentImpl = commentImpl;
+	}
+
+	public OrderProductCommentImpl getOrderProdCImpl() {
+		return orderProdCImpl;
+	}
+
+	public void setOrderProdCImpl(OrderProductCommentImpl orderProdCImpl) {
+		this.orderProdCImpl = orderProdCImpl;
 	}
 	
 }

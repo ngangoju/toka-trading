@@ -67,14 +67,16 @@
 						</h:panelGroup>
 
 						<h:panelGroup layout="block"
-							rendered="#{productController.valid and  not facesContext.validationFailed}">
+							rendered="#{not productController.valid and not facesContext.validationFailed}">
 							<ul>
 								<ui:repeat value="#{facesContext.messageList}"
 									var="facesMessage">
-									<li
-										style="list-style: none; background-color: #32CD32; color: white;"
-										class="alert alert-success"><h:outputText
-											value="#{facesMessage.summary}" escape="false" /></li>
+									<li class="alert alert-danger"
+										style="list-style: none; background-color: #FF2400; color: white">
+										<center>
+											<h:outputText value="#{facesMessage.summary}" escape="false" />
+										</center>
+									</li>
 								</ui:repeat>
 							</ul>
 						</h:panelGroup>
@@ -108,7 +110,8 @@
 											<label>Product name</label>
 										</f:facet>
 										<br />
-										<h:outputText value="#{order.productAssignment.product.productName}" />
+										<h:outputText
+											value="#{order.productAssignment.product.productName}" />
 									</h:column>
 
 									<h:column>
@@ -133,9 +136,21 @@
 											<label>Quantity</label>
 										</f:facet>
 										<br />
+										<h:inputText id="qty" value="#{productController.quantit}"
+											styleClass="form-control" size="10"
+											a:placeholder="#{order.quantity}"
+											rendered="#{order.editable}" maxlength="250"
+											requiredMessage="#{msg['requiered.productqty.message']}"
+											converterMessage="#{msg['error.enter.invalid.productqty']}"
+											validatorMessage="#{msg['error.enter.invalid.productqty']}">
+											<f:validateRegex
+												pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
+											<f:validateLength maximum="100"></f:validateLength>
+										</h:inputText>
+										<h:message for="qty" styleClass="help-block"></h:message>
 
-
-										<h:outputText value="#{order.quantity}" />
+										<h:outputText value="#{order.quantity}"
+											rendered="#{not order.editable}" />
 									</h:column>
 									<h:column>
 										<f:facet name="header">
@@ -154,29 +169,69 @@
 
 									<h:column>
 										<f:facet name="header">
+											<label>Status</label>
+										</f:facet>
+										<br />
+										<h:outputText value="#{order.status}" />
+									</h:column>
+
+									<h:column>
+										<f:facet name="header">
 											<label>Action</label>
 										</f:facet>
 										<div class="btn-group btn btn-sm" role="group"
 											aria-label="Basic example" style="margin-top: 5%;">
 											<h:commandLink style="color:white" data-toggle="tooltip"
 												data-placement="left"
-												title="#{msg['processorder.viewButton']}"
-												class="btn btn-sm btn-info glyphicon glyphicon-list"
-												action="#{productController.processOrder(order)}">
-											</h:commandLink>
+												title="#{msg['CategoryView.editButton']}"
+												class="btn btn-sm btn-success glyphicon glyphicon-edit"
+												action="#{productController.edit(order)}"
+												rendered="#{not order.editable}" />
+
 											<h:commandLink style="color:white" data-toggle="tooltip"
 												data-placement="left"
-												title="#{msg['processorder.cancel']}"
+												title="#{msg['CategoryView.cancelButton']}"
+												class="btn btn-sm btn-warning glyphicon glyphicon-remove"
+												action="#{productController.cancelOrder(order)}"
+												rendered="#{order.editable}">
+												<!-- action="#{productController.commentO()}" -->
+												<f:ajax rendered="@form" execute="@form"
+													onevent="showProgress" />
+											</h:commandLink>
+
+											<h:commandLink
+												class="btn btn-sm btn-info glyphicon glyphicon-floppy-disk"
+												style="color:white;" data-toggle="tooltip"
+												data-placement="right"
+												title="#{msg['CategoryView.savechangeButton']}"
+												action="#{productController.saveAct(order)}"
+												rendered="#{order.editable}">
+												<f:ajax render="@form" execute="@form"
+													onevent="showProgress" />
+
+											</h:commandLink>
+
+											<h:commandLink style="color:white" data-toggle="tooltip"
+												data-placement="left" title="#{msg['processorder.cancel']}"
 												class="btn btn-sm btn-danger glyphicon glyphicon-remove"
-												action="#{productController.cancelOrder(order)}">
+												action="#{productController.cancell(order)}"
+												rendered="#{not order.editable}">
+											</h:commandLink>
+
+											<h:commandLink style="color:white" data-toggle="tooltip"
+												data-placement="left"
+												title="#{msg['processorder.viewButton']}"
+												class="btn btn-sm btn-primary glyphicon glyphicon-cog"
+												action="#{productController.processOrder(order)}"
+												rendered="#{not order.editable}">
 											</h:commandLink>
 										</div>
 									</h:column>
+
 									<f:facet name="footer">
 
 									</f:facet>
 								</h:dataTable>
-
 							</div>
 
 						</p:outputPanel>
@@ -189,15 +244,15 @@
 								<div class="card">
 									<div class="card-body">
 										<h4 class="card-title"
-											style="font-family: Poppins, sans-serif; font-weight: bold; font-size: 16px !important;">Customer order processing
-											form</h4>
+											style="font-family: Poppins, sans-serif; font-weight: bold; font-size: 16px !important;">Customer
+											order processing form</h4>
 										<h:form class="forms-sample">
 											<div class="form-group">
 												<label>#{msg['productname.Productform']}<span
 													style="color: red; font-size: 15px">*</span></label>
 												<h:inputText
 													style="font-family:Poppins, sans-serif;font-size: 14px !important;"
-													a:type="text" class="form-control"  disabled="true"
+													a:type="text" class="form-control" disabled="true"
 													value="#{productController.orderproductDto.productAssignment.product.productName}"
 													a:placeholder="Product name" required="true"
 													requiredMessage="#{msg['required.productname.message']}"
@@ -207,14 +262,14 @@
 														pattern="#{regex['regex.validation.message.VALID.FIRST_NAME']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
 												</h:inputText>
-												
+
 											</div>
 											<div class="form-group">
-												<label >#{msg['productquantity.Productform']}<span
+												<label>#{msg['productquantity.Productform']}<span
 													style="color: red; font-size: 15px">*</span></label>
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
-													a:type="text" class="form-control"  disabled="true"
+													a:type="text" class="form-control" disabled="true"
 													a:placeholder="Quantity" required="tue"
 													value="#{productController.orderproductDto.quantity}"
 													requiredMessage="#{msg['requiered.productqty.message']}"
@@ -224,14 +279,14 @@
 														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
 												</h:inputText>
-												
+
 											</div>
-												<div class="form-group">
-												<label >#{msg['productsaleunit.Productform']}<span
+											<div class="form-group">
+												<label>#{msg['productsaleunit.Productform']}<span
 													style="color: red; font-size: 15px">*</span></label>
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
-													a:type="text" class="form-control"  disabled="true"
+													a:type="text" class="form-control" disabled="true"
 													a:placeholder="Sales price per unit" required="tue"
 													value="#{productController.orderproductDto.sellingUnitPrice}"
 													requiredMessage="#{msg['requiered.productqty.message']}"
@@ -241,14 +296,14 @@
 														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
 												</h:inputText>
-												
+
 											</div>
 											<div class="form-group">
-												<label >#{msg['producttotalunit.Productform']}<span
+												<label>#{msg['producttotalunit.Productform']}<span
 													style="color: red; font-size: 15px">*</span></label>
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
-													a:type="text" class="form-control"  disabled="true"
+													a:type="text" class="form-control" disabled="true"
 													a:placeholder="Total sales" required="tue"
 													value="#{productController.orderproductDto.totalSales}"
 													requiredMessage="#{msg['requiered.productqty.message']}"
@@ -258,17 +313,16 @@
 														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
 												</h:inputText>
-												
+
 											</div>
 											<div class="form-group">
-												<label >#{msg['customernames.Productform']}<span
+												<label>#{msg['customernames.Productform']}<span
 													style="color: red; font-size: 15px">*</span></label>
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control" disabled="true"
 													value="#{productController.orderproductDto.customer.fname} &nbsp;#{productController.orderproductDto.customer.lname}"
-													a:placeholder="Full names"
-													required="true"
+													a:placeholder="Full names" required="true"
 													requiredMessage="#{msg['requiered.productunitprice.message']}"
 													converterMessage="#{msg['error.enter.invalid.productunitprice']}"
 													validatorMessage="#{msg['error.enter.invalid.productunitprice']}">
@@ -276,7 +330,7 @@
 														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
 												</h:inputText>
-												
+
 											</div>
 											<div class="form-group">
 												<label>#{msg['customerAddress.Productform']}<span
@@ -285,8 +339,7 @@
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control" disabled="true"
 													value="#{productController.orderproductDto.customer.address}"
-													 a:placeholder="Customer address"
-													required="true"
+													a:placeholder="Customer address" required="true"
 													requiredMessage="#{msg['requiered.productunitprice.message']}"
 													converterMessage="#{msg['error.enter.invalid.productunitprice']}"
 													validatorMessage="#{msg['error.enter.invalid.productunitprice']}">
@@ -294,17 +347,16 @@
 														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
 												</h:inputText>
-												
+
 											</div>
 											<div class="form-group">
-												<label >#{msg['customeremail.Productform']}<span
+												<label>#{msg['customeremail.Productform']}<span
 													style="color: red; font-size: 15px">*</span></label>
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control" disabled="true"
 													value="#{productController.orderproductDto.email}"
-													a:placeholder="Customer email"
-													required="true"
+													a:placeholder="Customer email" required="true"
 													requiredMessage="#{msg['requiered.productunitprice.message']}"
 													converterMessage="#{msg['error.enter.invalid.productunitprice']}"
 													validatorMessage="#{msg['error.enter.invalid.productunitprice']}">
@@ -312,17 +364,16 @@
 														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
 												</h:inputText>
-												
+
 											</div>
 											<div class="form-group">
-												<label >#{msg['customerphone.Productform']}<span
+												<label>#{msg['customerphone.Productform']}<span
 													style="color: red; font-size: 15px">*</span></label>
 												<h:inputText
 													style="font-family: Poppins, sans-serif;font-size: 14px !important;"
 													a:type="text" class="form-control" disabled="true"
 													value="#{productController.orderproductDto.phone}"
-													 a:placeholder="Customer phone"
-													required="true"
+													a:placeholder="Customer phone" required="true"
 													requiredMessage="#{msg['requiered.productunitprice.message']}"
 													converterMessage="#{msg['error.enter.invalid.productunitprice']}"
 													validatorMessage="#{msg['error.enter.invalid.productunitprice']}">
@@ -330,7 +381,7 @@
 														pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
 													<f:validateLength maximum="100"></f:validateLength>
 												</h:inputText>
-												
+
 											</div>
 											<h:commandButton a:type="submit" class="btn btn-success mr-2"
 												style=" font: italic bold 13px/20px Georgia, serif;"
@@ -347,6 +398,7 @@
 					</h:form>
 				</div>
 			</div>
+
 		</ui:define>
 	</ui:composition>
 </h:body>

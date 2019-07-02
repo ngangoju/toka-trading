@@ -96,9 +96,63 @@
 
 							<div class="row">
 								
-									<div class="container">
-										<h1 style="font-family: Arial; font-size: 12pt;color: #5983e8">BRANCH GENERAL  DAILY
-											STATISTICS FOR SUCCESSFUL SERVED ORDER OF PRODUCTS</h1>
+							<h:form>
+									
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<label class="control-label">From<span
+													style="color: red; font-size: 15px">*</span></label>
+													<div class="input-group">
+														<span class="input-group-addon"><i
+															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
+														<h:inputText locale="#{facesContext.viewRoot.locale}"
+															a:placeholder="dd/MM/yyyy" autocomplete="off" id="from_date_id"
+															value="#{productAssignmentController.startDate}"
+															binding="#{from_date_id}" class="form-control"
+															escape="true" maxlength="35" required="true"
+															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
+															requiredMessage="#{msg['dob.message']}">
+															<f:convertDateTime type="date" dateType="short"
+																pattern="dd/MM/yyyy" />
+															<f:validateLength maximum="35" />
+														</h:inputText>
+												</div>
+												<h:message errorClass="errorMsg1" for="from_date_id"></h:message>
+								</div>
+								
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<label class="control-label">To<span
+													style="color: red; font-size: 15px">*</span></label>
+													<div class="input-group">
+														<span class="input-group-addon"><i
+															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
+														<h:inputText locale="#{facesContext.viewRoot.locale}"
+															a:placeholder="dd/MM/yyyy" autocomplete="off" id="to_date_id"
+															value="#{productAssignmentController.endDate}"
+															binding="#{to_date_id}" class="form-control"
+															escape="true" maxlength="35" required="true"
+															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
+															requiredMessage="#{msg['dob.message']}">
+															<f:convertDateTime type="date" dateType="short"
+																pattern="dd/MM/yyyy" />
+															<f:validateLength maximum="35" />
+														</h:inputText>
+													</div>
+												<h:message errorClass="errorMsg1" for="to_date_id"></h:message>
+								</div>
+								
+								
+								<div class="col-md-4 col-sm-6 col-xs-12 pt-3">
+									<h:commandButton style=" font: italic bold 13px/20px Georgia, serif;"
+										class="btn btn-primary submit-btn center-block"
+										action="#{productAssignmentController.generateBranchReview}"
+										value="#{msg['label.print.message.submit']}">
+									</h:commandButton>
+								</div>
+							</h:form>		
+							<br/>
+									<div class="container pt-5">
+										<h2 style="font-family: Arial; font-size: 12pt;color: #5983e8">BRANCH GENERAL  DAILY
+											STATISTICS FOR SUCCESSFUL SERVED ORDER OF PRODUCTS</h2>
 										<!-- 	<canvas id="taskperformance"
 												style="height:300px;margin-top:5%;font-size:12pt"></canvas> -->
 										<canvas id="chart"

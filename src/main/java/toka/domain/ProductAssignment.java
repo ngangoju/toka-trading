@@ -51,6 +51,8 @@ public class ProductAssignment extends CommonDomain implements Serializable {
 	private double unitprice;
 	@Transient
 	private double salesunit;
+	@Transient
+	private boolean editable;
 	public int getProdAssId() {
 		return prodAssId;
 	}
@@ -110,6 +112,12 @@ public class ProductAssignment extends CommonDomain implements Serializable {
 	}
 	public void setSalesunit(double salesunit) {
 		this.salesunit = salesunit;
+	}
+	public boolean isEditable() {
+		return editable;
+	}
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 	
 }

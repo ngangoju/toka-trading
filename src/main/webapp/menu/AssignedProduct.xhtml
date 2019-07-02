@@ -6,6 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
 <h:body>
 
@@ -21,6 +22,7 @@
 			<div style="border-bottom: 1.5px solid #91DBFA; margin-bottom: 6px;"></div>
 					<div class=" col-md-12"
 								style="height: 330px; overflow-y: scroll;">
+								<h:form>
 								<h:dataTable id="activityTable" binding="#{tabl}"
 									style="font: italic 14px/18px Georgia, serif;box-sizing: border-box; width:100% !important;
        						 -webkit-box-shadow: none;
@@ -55,9 +57,21 @@
 											<label>Quantity</label>
 										</f:facet>
 										<br />
+										<h:inputText id="qty" value="#{productAssignmentController.quantit}"
+											styleClass="form-control" size="10"
+											a:placeholder="#{prod.quantity}"
+											rendered="#{prod.editable}" maxlength="250"
+											requiredMessage="#{msg['requiered.productqty.message']}"
+											converterMessage="#{msg['error.enter.invalid.productqty']}"
+											validatorMessage="#{msg['error.enter.invalid.productqty']}">
+											<f:validateRegex
+												pattern="#{regex['regex.validation.message.DIGITS_GRT_ZERO']}"></f:validateRegex>
+											<f:validateLength maximum="100"></f:validateLength>
+										</h:inputText>
+										<h:message for="qty" styleClass="help-block"></h:message>
 										
 										<h:outputText value="#{prod.quantity}"
-										 />
+											rendered="#{not prod.editable}" />
 
 									</h:column>
 									<h:column>
@@ -138,11 +152,48 @@
 											<h:outputText value="#{prod.assignDate}"/>
 											
 									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<label>Action</label>
+										</f:facet>
+										<div class="btn-group btn btn-sm" role="group"
+											aria-label="Basic example" style="margin-top: 5%;">
+											<h:commandLink style="color:white" data-toggle="tooltip"
+												data-placement="left"
+												title="#{msg['CategoryView.editButton']}"
+												class="btn btn-sm btn-success 	glyphicon glyphicon-edit"
+												action="#{productAssignmentController.edit(prod)}"
+												rendered="#{not prod.editable}" />
+
+											<h:commandLink style="color:white" data-toggle="tooltip"
+												data-placement="left"
+												title="#{msg['CategoryView.cancelButton']}"
+												class="btn btn-sm btn-danger glyphicon glyphicon-remove"
+												action="#{productAssignmentController.cancell(prod)}"
+												rendered="#{prod.editable}">
+												<!-- <f:ajax rendered="@form" execute="@form"
+													onevent="showProgress" /> -->
+											</h:commandLink>
+
+											<h:commandLink
+												class="btn btn-sm btn-primary glyphicon glyphicon-floppy-disk"
+												style="color:white;" data-toggle="tooltip"
+												data-placement="right"
+												title="#{msg['CategoryView.savechangeButton']}"
+												action="#{productAssignmentController.saveAct(prod)}"
+												rendered="#{prod.editable}">
+												<f:ajax render="@form" execute="@form"
+													onevent="showProgress" />
+
+											</h:commandLink>
+
+										</div>
+									</h:column>
 									<f:facet name="footer">
 
 									</f:facet>
 								</h:dataTable>
-
+</h:form>
 
 							</div>	
 						

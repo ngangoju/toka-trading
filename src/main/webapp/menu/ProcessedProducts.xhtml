@@ -95,16 +95,89 @@
 							</h:panelGroup>
 
 							<h:panelGroup rendered="#{productAssignmentController.rendered}">
-								<h4 style="font: italic bold 13px/16px Georgia, serif;">
-									#{loadUserInformationsController.users.userCategory.usercategoryName}
-									<span class="glyphicon glyphicon-dashboard"> <label
-										style="font: italic 13px/18px Georgia, serif">#{msg['message.com.user.dashaboard']}</label></span>
-								</h4>
+							<h:form>
+									
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<label class="control-label">From<span
+													style="color: red; font-size: 15px">*</span></label>
+													<div class="input-group">
+														<span class="input-group-addon"><i
+															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
+														<h:inputText locale="#{facesContext.viewRoot.locale}"
+															a:placeholder="dd/MM/yyyy" autocomplete="off" id="from_date_id"
+															value="#{productAssignmentController.startDate}"
+															binding="#{from_date_id}" class="form-control"
+															escape="true" maxlength="35" required="true"
+															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
+															requiredMessage="#{msg['dob.message']}">
+															<f:convertDateTime type="date" dateType="short"
+																pattern="dd/MM/yyyy" />
+															<f:validateLength maximum="35" />
+														</h:inputText>
+												</div>
+												<h:message errorClass="errorMsg1" for="from_date_id"></h:message>
+								</div>
+								
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<label class="control-label">To<span
+													style="color: red; font-size: 15px">*</span></label>
+													<div class="input-group">
+														<span class="input-group-addon"><i
+															class="glyphicon glyphicon-calendar" aria-hidden="true"></i></span>
+														<h:inputText locale="#{facesContext.viewRoot.locale}"
+															a:placeholder="dd/MM/yyyy" autocomplete="off" id="to_date_id"
+															value="#{productAssignmentController.endDate}"
+															binding="#{to_date_id}" class="form-control"
+															escape="true" maxlength="35" required="true"
+															converterMessage="#{msg['validation.message.DATE_FORMAT']}"
+															requiredMessage="#{msg['dob.message']}">
+															<f:convertDateTime type="date" dateType="short"
+																pattern="dd/MM/yyyy" />
+															<f:validateLength maximum="35" />
+														</h:inputText>
+													</div>
+												<h:message errorClass="errorMsg1" for="to_date_id"></h:message>
+								</div>
+								
+								
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<label class="control-label">Branches<span
+													style="color: red; font-size: 15px">*</span></label>
+										<h:selectOneMenu id="BranchId" styleClass="form-control"
+											required="false" value="#{productAssignmentController.branchId}"
+											requiredMessage="#{msg['parent.task.required']}">
+											<f:selectItem
+												itemLabel="#{msg['common.message.select.PLACEHOLDER']}"
+												itemValue="#{null}" escapeItem="true" />
+											<f:selectItems value="#{productAssignmentController.branchDetails}"
+												var="option" itemValue="#{option.branchId}"
+												itemLabel="#{option.branchName}" itemLabelEscaped="true" />
+											<!-- 									<f:ajax render="@form" execute="@form" onevent="showProgress" /> -->
+										</h:selectOneMenu>
+												<h:message errorClass="errorMsg1" for="BranchId"></h:message>
+									</div>
+								
+								
+							<br/>
+							<br/>
+							<br/>
+							<br/>
+								<div class="form-group pt-auto">
+									<h:commandButton style=" font: italic bold 13px/20px Georgia, serif;"
+										class="btn btn-primary submit-btn center-block"
+										action="#{productAssignmentController.generateBranchReview}"
+										value="#{msg['label.print.message.submit']}">
+									</h:commandButton>
+								</div>
+							</h:form>		
+							<br/>
+								<h2 style="font: italic bold 13px/16px Georgia, serif; text-align:center;">
+									#{msg['label.show.message.graph']}
+								</h2>
 
 								<div
 									style="border-bottom: 1.5px solid #91DBFA; margin-bottom: 6px; margin-top: 6px;"></div>
-								<div class="row"
-									style="font: italic bold 13px/16px Georgia, serif;">
+								<div class="row" style="font: italic bold 13px/16px Georgia, serif;">
 									<ui:repeat value="#{productAssignmentController.branchDetails}"
 										var="bList">
 										<div class="col-md-4 col-sm-6">
@@ -224,6 +297,7 @@
 				<script type="text/javascript"
 					src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
 				<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+				
 				<script>
 					$(function Myname() {
 						var taskperform = document.getElementById(
